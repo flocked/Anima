@@ -28,7 +28,7 @@ Many objects provide animatable properties:
  - iOS: `UIView`, `UILabel`, `UIImageView` and many more.
  - Shared: `NSLayoutConstraint` and `CALayer`
 
-They can can be accessed via the object's `animator`. Use `Anima.animate()` to animate them.
+The properties can can be accessed via the object's `animator`. Use `Anima.animate(…)` to animate them.
 
 ```swift
 // Spring animation
@@ -57,7 +57,7 @@ Updating a property outside an animation block stops its animation and updates i
  
 #### Retargeting of spring animated values
  
-When changing values of properties that are currently spring animated, the animation’s velocity is preserved. It provides fluid animations. That's why spring animations are the recommended animation for a responsive and interactive UI.
+When changing values of properties that are currently spring animated, the animation’s velocity is preserved for providing fluid animations. That's why spring animations are the recommended animation for a responsive and interactive UI.
 
 You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
 
