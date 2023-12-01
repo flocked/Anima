@@ -1,0 +1,144 @@
+//
+//  ApproximateEquatable.swift
+//
+//
+//  Created by Florian Zand on 27.10.23.
+//
+
+import CoreGraphics
+import Foundation
+import SwiftUI
+
+/// A type that can be compared for approximate value equality.
+internal protocol ApproximateEquatable {
+    associatedtype Epsilon: FloatingPointInitializable
+    /**
+     A Boolean value that indicates whether `self` and the specified `other` value are approximately equal.
+     
+     - Parameters:
+        - other: The value to compare.
+        - epsilon: The margin by which both values can differ and still be considered the same value.
+     */
+    func isApproximatelyEqual(to: Self, epsilon: Epsilon) -> Bool
+}
+
+extension Float: ApproximateEquatable {
+    public func isApproximatelyEqual(to other: Float, epsilon: Float) -> Bool {
+        isApproximatelyEqual(to: other, absoluteTolerance: epsilon)
+    }
+}
+
+extension Double: ApproximateEquatable {
+    public func isApproximatelyEqual(to other: Double, epsilon: Double) -> Bool {
+        isApproximatelyEqual(to: other, absoluteTolerance: epsilon)
+    }
+}
+
+extension CGFloat: ApproximateEquatable {
+    public func isApproximatelyEqual(to other: CGFloat, epsilon: CGFloat) -> Bool {
+        isApproximatelyEqual(to: other, absoluteTolerance: epsilon)
+    }
+}
+
+extension Array: ApproximateEquatable where Element: FloatingPointInitializable {
+    public func isApproximatelyEqual(to other: Self, epsilon: Element) -> Bool {
+        for i in 0..<indices.count {
+            if !self[i].isApproximatelyEqual(to: other[i], absoluteTolerance: epsilon) {
+                return false
+            }
+        }
+        return true
+    }
+}
+
+extension Set: ApproximateEquatable where Element: FloatingPointInitializable {
+    public func isApproximatelyEqual(to other: Self, epsilon: Element) -> Bool {
+        let check = Array(self)
+        let other = Array(other)
+        
+        for i in 0..<indices.count {
+            if !check[i].isApproximatelyEqual(to: other[i], absoluteTolerance: epsilon) {
+                return false
+            }
+        }
+        return true
+    }
+}
+
+extension AnimatablePair: ApproximateEquatable  where First: ApproximateEquatable, Second: ApproximateEquatable {
+    internal func isApproximatelyEqual(to other: AnimatablePair<First, Second>, epsilon: Double) -> Bool {
+        self.first.isApproximatelyEqual(to: other.first, epsilon: First.Epsilon(epsilon)) &&  self.second.isApproximatelyEqual(to: other.second, epsilon: Second.Epsilon(epsilon))
+    }
+}
+
+extension Numeric where Magnitude: FloatingPoint {
+    /**
+     A Boolean value that indicates whether the value and the specified `other` value are approximately equal.
+     
+     - Parameters:
+        - other: The value to which `self` is compared.
+        - relativeTolerance: The tolerance to use in the comparison. Defaults to `.ulpOfOne.squareRoot()`.
+        - norm: The norm to use for the comparison. Defaults to `\.magnitude`.
+     */
+    internal func isApproximatelyEqual(to other: Self, relativeTolerance: Magnitude = Magnitude.ulpOfOne.squareRoot(), norm: (Self) -> Magnitude = \.magnitude) -> Bool {
+        return isApproximatelyEqual(to: other, absoluteTolerance: relativeTolerance * Magnitude.leastNormalMagnitude, relativeTolerance: relativeTolerance, norm: norm)
+    }
+    
+    /**
+     A Boolean value that indicates whether the value and the specified `other` value are approximately equal.
+     
+     - Parameters:
+        - other: The value to which `self` is compared.
+        - absoluteTolerance: The absolute tolerance to use in the comparison.
+        - relativeTolerance: The relative tolerance to use in the comparison. Defaults to `0`.
+        - norm: The norm to use for the comparison. Defaults to `\.magnitude`.
+     */
+    @inlinable @inline(__always)
+    internal func isApproximatelyEqual(
+        to other: Self,
+        absoluteTolerance: Magnitude,
+        relativeTolerance: Magnitude = 0
+    ) -> Bool {
+        self.isApproximatelyEqual(
+            to: other,
+            absoluteTolerance: absoluteTolerance,
+            relativeTolerance: relativeTolerance,
+            norm: \.magnitude
+        )
+    }
+}
+
+extension AdditiveArithmetic {
+    /**
+     A Boolean value that indicates whether the value and the specified `other` value are approximately equal.
+     
+     - Parameters:
+     - other: The value to which `self` is compared.
+     - absoluteTolerance: The absolute tolerance to use in the comparison.
+     - relativeTolerance: The relative tolerance to use in the comparison. Defaults to `0`.
+     - norm: The norm to use for the comparison. Defaults is `\.magnitude`.
+     */
+    @inlinable
+    internal func isApproximatelyEqual<Magnitude>(
+        to other: Self,
+        absoluteTolerance: Magnitude,
+        relativeTolerance: Magnitude = 0,
+        norm: (Self) -> Magnitude
+    ) -> Bool where Magnitude: FloatingPoint {
+        assert(
+            absoluteTolerance >= 0 && absoluteTolerance.isFinite,
+            "absoluteTolerance should be non-negative and finite, " +
+            "but is \(absoluteTolerance)."
+        )
+        assert(
+            relativeTolerance >= 0 && relativeTolerance <= 1,
+            "relativeTolerance should be non-negative and <= 1, " +
+            "but is \(relativeTolerance)."
+        )
+        if self == other { return true }
+        let delta = norm(self - other)
+        let scale = max(norm(self), norm(other))
+        let bound = max(absoluteTolerance, scale*relativeTolerance)
+        return delta.isFinite && delta <= bound
+    }
+}
