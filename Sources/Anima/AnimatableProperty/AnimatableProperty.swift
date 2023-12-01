@@ -129,13 +129,13 @@ extension CGPoint: AnimatableProperty {
 
 extension CGSize: AnimatableProperty {
     public init(_ animatableData: AnimatablePair<CGFloat, CGFloat>) {
-        self.init(animatableData.first, animatableData.second)
+        self.init(width: animatableData.first, height: animatableData.second)
     }
 }
 
 extension CGRect: AnimatableProperty {
     public init(_ animatableData: AnimatablePair<CGPoint.AnimatableData, CGSize.AnimatableData>) {
-        self.init(CGPoint(animatableData.first), CGSize(animatableData.second))
+        self.init(origin: CGPoint(animatableData.first), size: CGSize(animatableData.second))
     }
 }
 

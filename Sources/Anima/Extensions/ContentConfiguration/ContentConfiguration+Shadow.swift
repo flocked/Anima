@@ -23,21 +23,7 @@ public extension ContentConfiguration {
      */
     struct Shadow: Hashable {
         /// The color of the shadow.
-        public var color: NSUIColor? = .shadowColor {
-            didSet { updateResolvedColor() } }
-        
-        /// The color transformer for resolving the shadow color.
-        public var colorTransform: ColorTransformer? = nil {
-            didSet { updateResolvedColor() } }
-        
-        /// Generates the resolved shadow color for the specified shadow color, using the shadow color and color transformer.
-        public func resolvedColor(withOpacity: Bool = false) -> NSUIColor? {
-            if let color = withOpacity == true ? color?.withAlphaComponent(opacity) : color {
-                return colorTransform?(color) ?? color
-            }
-            return nil
-        }
-        
+        public var color: NSUIColor? = .shadowColor
         /// The opacity of the shadow.
         public var opacity: CGFloat = 0.5
         /// The blur radius of the shadow.
@@ -47,12 +33,7 @@ public extension ContentConfiguration {
 
         /// A Boolean value that indicates whether the shadow is invisible (when the color is `nil`, `clear` or the opacity `0`).
         public var isInvisible: Bool {
-            return (_resolvedColor == nil || _resolvedColor == .clear || opacity == 0.0)
-        }
-        
-        internal var _resolvedColor: NSUIColor? = nil
-        internal mutating func updateResolvedColor() {
-            _resolvedColor = resolvedColor()
+            return (color?.alphaComponent == 0.0 || opacity == 0.0 || color == nil)
         }
         
         /// Initalizes a shadow configuration.
@@ -65,7 +46,6 @@ public extension ContentConfiguration {
             self.opacity = opacity
             self.radius = radius
             self.offset = offset
-            self.updateResolvedColor()
         }
 
         /// A configuration without shadow.

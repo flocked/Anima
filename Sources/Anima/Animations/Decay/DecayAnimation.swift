@@ -96,7 +96,6 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
     
     var _velocity: Value.AnimatableData {
         didSet {
-            CGRect.zero.center
             guard state != .running, oldValue != _velocity else { return }
             _fromVelocity = _velocity
             if autoStarts, _velocity != .zero {

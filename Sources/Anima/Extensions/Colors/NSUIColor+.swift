@@ -31,17 +31,6 @@ internal extension NSUIColor {
       #endif
     }
     
-    /**
-     A Boolean value that indicates whether the color is light or dark.
-
-     It is useful when you need to know whether you should display the text in black or white.
-     */
-    func isLight() -> Bool {
-      let components = rgbaComponents()
-      let brightness = ((components.red * 299.0) + (components.green * 587.0) + (components.blue * 114.0)) / 1000.0
-
-      return brightness >= 0.5
-    }
     
     #if os(macOS) || os(iOS) || os(tvOS)
     /**

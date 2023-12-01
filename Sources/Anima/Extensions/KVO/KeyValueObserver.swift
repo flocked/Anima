@@ -75,27 +75,7 @@ internal class KeyValueObserver<Object>: NSObject where Object: NSObject {
         }
     }
     
-    /**
-     Adds observers for the specified keypaths which calls the specified handler whenever any of the keypaths properties changes.
-     
-     - Parameters keyPaths: The keypaths to the values to observe.
-     - Parameters handler: The handler to be called whenever any of keypaths values changes.
-     */
-    public func add(_ keyPaths: [PartialKeyPath<Object>], handler: @escaping ((_ keyPath: PartialKeyPath<Object>)->())) {
-        for keyPath in keyPaths {
-            if let name = keyPath._kvcKeyPathString {
-                self.add(name) { old, new in
-                    if let old = old as? any Equatable, let new = new as? any Equatable {
-                        if old.isEqual(new) == false {
-                            handler(keyPath)
-                        }
-                    } else {
-                        handler(keyPath)
-                    }
-                }
-            }
-        }
-    }
+
     
     /**
      Removes the observer for the specified keypath.

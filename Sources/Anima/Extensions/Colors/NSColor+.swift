@@ -11,8 +11,8 @@ import AppKit
 internal extension NSColor {
     /// Returns the dynamic light and dark colors.
     var dynamicColors: (light: NSColor, dark: NSColor) {
-        let light = self.resolvedColor(for: .aqua)
-        let dark = self.resolvedColor(for: .darkAqua)
+        let light = self.resolvedColor(for: NSAppearance(named: .aqua)!)
+        let dark = self.resolvedColor(for: NSAppearance(named: .darkAqua)!)
         return (light, dark)
     }
     
@@ -59,48 +59,6 @@ internal extension NSColor {
             }
         }
         return color
-    }
-    
-    /**
-     Generates the resolved color for the specified window,
-     
-     It uses the window's `effectiveAppearance` for resolving the color.
-     
-     - Parameters window: The window for the resolved color.
-     - Returns: A resolved color for the window.
-     */
-    func resolvedColor(for window: NSWindow) -> NSColor {
-        self.resolvedColor(for: window.effectiveAppearance)
-    }
-
-    /// Creates a new color object with a supported color space.
-    func withSupportedColorSpace() -> NSColor? {
-        if type == .componentBased || type == .catalog {
-         //   let dynamics = self.dynamicColors
-            for supportedColorSpace in Self.supportedColorSpaces {
-                if let supportedColor = usingColorSpace(supportedColorSpace) {
-                    return supportedColor
-                }
-                /*
-                if dynamics.light != dynamics.dark,
-                    let light = dynamics.light.usingColorSpace(supportedColorSpace),
-                    let dark = dynamics.dark.usingColorSpace(supportedColorSpace) {
-                        return NSColor(name: self.colorNameComponent, light: light, dark: dark)
-                } else if let supportedColor = usingColorSpace(supportedColorSpace) {
-                    return supportedColor
-                }
-                */
-            }
-        }
-        return nil
-    }
-    
-    /// A Boolean value that indicates whether the color has a color space. Accessing `colorSpace` directly crashes if a color doesn't have a color space. Therefore it's recommended to use this property prior.
-    var hasColorSpace: Bool {
-        if type == .pattern {
-            return false
-        }
-        return String(describing: self).contains("customDynamic") == false
     }
     
     /// Supported color spaces for displaying a color.

@@ -113,3 +113,18 @@ internal extension CATransform3D {
 }
 #endif
 
+internal extension ClosedRange where Bound: BinaryInteger {
+    /// The closed range as `NSRange`.
+    var nsRange: NSRange {
+        let length = self.upperBound-self.lowerBound-1
+        return NSRange(location: Int(self.lowerBound), length: Int(length))
+    }
+}
+
+internal extension Range where Bound: BinaryInteger {
+    /// The range as `NSRange`.
+    var nsRange: NSRange {
+        let length = self.upperBound-self.lowerBound
+        return NSRange(location: Int(self.lowerBound), length: Int(length))
+    }
+}

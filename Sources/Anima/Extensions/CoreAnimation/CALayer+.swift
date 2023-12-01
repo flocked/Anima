@@ -29,6 +29,7 @@ internal extension CALayer {
         superlayer.insertSublayer(self, at: 0)
     }
     
+    
     /// Returns the first sublayer of a specific type.
     func firstSublayer<V>(type _: V.Type) -> V? {
         self.sublayers?.first(where: { $0 is V }) as? V
@@ -123,15 +124,6 @@ internal extension CALayer {
         get { getAssociatedValue(key: "CALayer.boundsObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "CALayer.boundsObserver", object: self) }
     }
-    func removeSublayers(type: CALayer.Type) {
-        if let sublayers = sublayers {
-            for sublayer in sublayers {
-                if sublayer.isKind(of: type) {
-                    sublayer.removeFromSuperlayer()
-                }
-            }
-        }
-    }
     
     /// The associated view using the layer.
     var parentView: NSUIView? {
@@ -141,11 +133,5 @@ internal extension CALayer {
         return superlayer?.parentView
     }
 
-}
-#endif
-
-#if os(macOS)
-public extension CAAutoresizingMask {
-    static let all: CAAutoresizingMask = [.layerHeightSizable, .layerWidthSizable, .layerMinXMargin, .layerMinYMargin, .layerMaxXMargin, .layerMaxYMargin]
 }
 #endif

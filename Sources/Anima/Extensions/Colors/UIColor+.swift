@@ -42,32 +42,11 @@ internal extension UIColor {
     }
     
     /**
-     The red component as CGFloat between 0.0 to 1.0.
-     */
-    var redComponent: CGFloat {
-      return rgbaComponents().red
-    }
-
-    /**
-     The green component as CGFloat between 0.0 to 1.0.
-     */
-    var greenComponent: CGFloat {
-      return rgbaComponents().green
-    }
-
-    /**
-     The blue component as CGFloat between 0.0 to 1.0.
-     */
-    var blueComponent: CGFloat {
-      return rgbaComponents().blue
-    }
-
-    /**
-     The alpha component as CGFloat between 0.0 to 1.0.
-     */
-    var alphaComponent: CGFloat {
-      return rgbaComponents().alpha
-    }
+    The alpha component as CGFloat between 0.0 to 1.0.
+    */
+   var alphaComponent: CGFloat {
+     return rgbaComponents().alpha
+   }
 }
 
 internal extension UIColor {

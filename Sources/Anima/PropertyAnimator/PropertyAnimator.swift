@@ -283,26 +283,3 @@ internal extension PropertyAnimator {
         return self.animation(for: keyPath) as? DecayAnimation<Val>
     }
 }
-
-#if canImport(UIKit)
-internal extension DynamicPropertyAnimator<UIView> {
-    var preventsUserInteractions: Bool {
-        get { getAssociatedValue(key: "preventsUserInteractions", object: self, initialValue: false) }
-        set { set(associatedValue: newValue, key: "preventsUserInteractions", object: self) }
-    }
-    
-    /// Collects the animations that are configurated to prevent user interactions. If the set isn't empty the user interactions get disabled. When all animations finishes and the collection is empty, user interaction gets enabled again.
-    var preventingUserInteractionAnimations: Set<UUID> {
-        get { getAssociatedValue(key: "preventingAnimations", object: self, initialValue: []) }
-        set { set(associatedValue: newValue, key: "preventingAnimations", object: self)
-            if !preventingUserInteractionAnimations.isEmpty, object.isUserInteractionEnabled, !preventsUserInteractions {
-                object.isUserInteractionEnabled = false
-                preventsUserInteractions = true
-            } else if preventingUserInteractionAnimations.isEmpty, preventsUserInteractions {
-                object.isUserInteractionEnabled = true
-                preventsUserInteractions = false
-            }
-        }
-    }
-}
-#endif

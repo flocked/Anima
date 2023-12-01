@@ -96,10 +96,10 @@ extension PropertyAnimator where Object: NSUIView {
         get { object.optionalLayer?.animator.shadow ?? .none() }
         set { 
             #if os(macOS)
-            object.dynamicColors.shadow = newValue._resolvedColor
+            object.dynamicColors.shadow = newValue.color
             #endif
             var newValue = newValue
-            newValue.color = newValue._resolvedColor?.resolvedColor(for: object)
+            newValue.color = newValue.color?.resolvedColor(for: object)
             object.optionalLayer?.animator.shadow = newValue }
     }
     
@@ -108,10 +108,10 @@ extension PropertyAnimator where Object: NSUIView {
         get { object.optionalLayer?.animator.innerShadow ?? .none() }
         set {
             #if os(macOS)
-            object.dynamicColors.innerShadow = newValue._resolvedColor
+            object.dynamicColors.innerShadow = newValue.color
             #endif
             var newValue = newValue
-            newValue.color = newValue._resolvedColor?.resolvedColor(for: object)
+            newValue.color = newValue.color?.resolvedColor(for: object)
             object.optionalLayer?.animator.innerShadow = newValue
         }
     }
