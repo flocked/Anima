@@ -1,6 +1,6 @@
 # Anima
 
-Anima is an animation engine for iOS, iPadOS, and macOS. It allows animating properties with spring, easing and decay animation.
+Anima is an animation framefork for iOS, iPadOS, and macOS. It allows animating properties with ease using spring, easing and decay animations.
 
 It is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion). Without these libraries Anima wouldn't have been possible.
 
