@@ -91,9 +91,7 @@ internal extension NSBezierPath {
         return path
     }
 }
-#endif
 
-#if os(macOS) || os(iOS) || os(tvOS)
 /**
  The corners of a rectangle.
 

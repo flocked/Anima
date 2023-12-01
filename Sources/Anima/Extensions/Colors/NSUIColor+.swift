@@ -16,11 +16,11 @@ internal extension NSUIColor {
     final func rgbaComponents() -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
       var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
 
-      #if os(iOS) || os(tvOS) || os(watchOS)
+      #if os(iOS) || os(tvOS)
         getRed(&r, green: &g, blue: &b, alpha: &a)
 
         return (r, g, b, a)
-      #elseif os(OSX)
+      #elseif os(macOS)
         guard let rgbaColor = self.usingColorSpace(.deviceRGB) else {
           fatalError("Could not convert color to RGBA.")
         }
@@ -30,9 +30,7 @@ internal extension NSUIColor {
         return (r, g, b, a)
       #endif
     }
-    
-    
-    #if os(macOS) || os(iOS) || os(tvOS)
+        
     /**
      Generates the resolved color for the specified view,.
      
@@ -53,8 +51,6 @@ internal extension NSUIColor {
         return dyamic.light != dyamic.dark
     }
     
-
-    #endif
     
     /// A Boolean value that indicates whether the color is visible (`alphaComponent` isn't zero).
     var isVisible: Bool {

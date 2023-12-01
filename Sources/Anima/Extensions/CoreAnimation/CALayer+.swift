@@ -13,7 +13,6 @@ import AppKit
 import UIKit
 #endif
 
-#if os(macOS) || os(iOS) || os(tvOS)
 internal extension CALayer {
     /// Sends the layer to the front of it's superlayer.
     func sendToFront() {
@@ -134,4 +133,3 @@ internal extension CALayer {
     }
 
 }
-#endif

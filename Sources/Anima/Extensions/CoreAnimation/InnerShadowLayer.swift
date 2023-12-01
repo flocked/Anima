@@ -5,7 +5,6 @@
 //  Created by Florian Zand on 16.09.21.
 //
 
-#if os(macOS) || os(iOS) || os(tvOS)
 import Foundation
 #if os(macOS)
 import AppKit
@@ -112,4 +111,3 @@ public class InnerShadowLayer: CALayer {
         update()
     }
 }
-#endif
