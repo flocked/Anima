@@ -48,11 +48,23 @@ Anima.animate(withSpring: .bouncy) {
 }
 ```
 
+When changing values of properties that are currently spring animated, the animation’s velocity is preserved for providing fluid animations. That's why spring animations are the recommended animation for a responsive and interactive UI.
+
+You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
+
+```swift
+let velocity = panGestureRecognizer.velocity(in: view)
+
+Anima.animate(withSpring: .snappy, gestureVelocity: velocity) {
+    view.frame.origin = CGPoint(x: 200, y: 200)
+}
+```
+
 #### Easing Animation
 
 An easing based animation.
 
-You provide it `TimeFunction` which describes the easing of the animation (e.g. `easeIn`, `easeInOut` or `linear`).
+You provide it `TimeFunction` which describes the easing of the animation (e.g. `easeIn`, `easeInOut` or `linear`) and a duration.
 
 ```swift
 Anima.animate(withEasing: .easeIn, duration: 3.0) {
@@ -101,7 +113,6 @@ While the block-based API is often most convenient, you may want to animate an o
 let value = CGPoint(x: 0, y: 0)
 let target = CGPoint(x: 100, y: 100)
 
-// Spring animation
 let springAnimation = SpringAnimation(spring: .bouncy, value: value, target: target)
 springAnimation.valueChanged = { newValue in
     view.frame.origin = newValue
@@ -122,7 +133,6 @@ easingAnimation.start()
 #### Decay Animation
 
 ```swift
-// Decay Animation with target
 let decayAnimation = DecayAnimation(value: value, target: target)
 decayAnimation.valueChanged = { newValue in
     view.frame.origin = newValue
@@ -131,20 +141,6 @@ decayAnimation.start()
 ```
 
 ## Additions
-
-### Retargeting of spring animated values
- 
-When changing values of properties that are currently spring animated, the animation’s velocity is preserved for providing fluid animations. That's why spring animations are the recommended animation for a responsive and interactive UI.
-
-You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
-
-```swift
-let velocity = panGestureRecognizer.velocity(in: view)
-
-Anima.animate(withSpring: .snappy, gestureVelocity: velocity) {
-    view.frame.origin = CGPoint(x: 200, y: 200)
-}
-```
 
 ### CAKeyframeAnimationEmittable
 
