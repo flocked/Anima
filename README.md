@@ -95,6 +95,8 @@ Updating a property outside an animation block stops its animation and updates i
 
 While the block-based API is often most convenient, you may want to animate an object that doesn't provide animatable properties. Or, you may want the flexibility of getting the intermediate values of an animation and driving an animation yourself.
 
+#### Spring Animation 
+
 ```swift
 let value = CGPoint(x: 0, y: 0)
 let target = CGPoint(x: 100, y: 100)
@@ -105,15 +107,27 @@ springAnimation.valueChanged = { newValue in
     view.frame.origin = newValue
 }
 springAnimation.start()
+```
 
-// Easing Animation
+#### Easing Animation
+
+```swift
 let easingAnimation = EasingAnimation(timingFunction: .easeIn, duration: 2.0, value: value, target: target)
+easingAnimation.valueChanged = { newValue in
+    view.frame.origin = newValue
+}
+easingAnimation.start()
+```
 
+#### Decay Animation
+
+```swift
 // Decay Animation with target
 let decayAnimation = DecayAnimation(value: value, target: target)
-
-// Decay Animation with velocity
-let decayAnimation = DecayAnimation(value: value, velocity: velocity)
+decayAnimation.valueChanged = { newValue in
+    view.frame.origin = newValue
+}
+decayAnimation.start()
 ```
 
 ## Additions
