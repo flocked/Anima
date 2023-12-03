@@ -89,7 +89,7 @@ Anima.animate(withDecay: .value) {
 Or you provide a **velocity** value. The property will increase or decrease depending on the velocity value and will slow to a stop. This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
 
 ```swift
-Anima.animate(withDecay: .velocty) {
+Anima.animate(withDecay: .velocity) {
     // The origin's y value will increase 200 points. (e.g. if the origin`s y value is 250 it will move to 450)
     view.animator.frame.origin.y = 200
 }
