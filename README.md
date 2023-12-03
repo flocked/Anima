@@ -34,35 +34,6 @@ Many objects provide animatable properties:
 
 The properties can can be accessed via the object's `animator`. Use `Anima.animate(…)` to animate them.
 
-```swift
-// Spring animation
-Anima.animate(withSpring: .bouncy) {
-    view.animator.frame = newFrame
-    view.animation.backgroundColor = .systemBlue
-}
-
-// Easing animation
-Anima.animate(withEasing: .easeIn, duration: 3.0) {
-    view.animator.frame = newFrame
-    view.animation.backgroundColor = .systemBlue
-}
-
-// Decay animation
-Anima.animate(withDecay: .value) {
-    view.animator.frame = newFrame
-    view.animation.backgroundColor = .systemBlue
-}
-```
-
-Updating a property outside an animation block stops its animation and updates it immediately:
- ```swift
- view.animation.backgroundColor = .systemRed
- ```
-
-### Property-Based Animations
-
-While the block-based API is often most convenient, you may want to animate an object that doesn't provide animatable properties. Or, you may want the flexibility of getting the intermediate values of an animation and driving an animation yourself.
-
 #### Spring Animation
 
 A spring based animation for fluid animations.
@@ -70,14 +41,11 @@ A spring based animation for fluid animations.
 You provide a `Spring` which describes the spring configuration. `Spring` offers many predefined configurations like `bouncy`, `smooth`, `snappy` or `Spring(duration: CGFloat, bouncy: CGFloat)`).
 
 ```swift
-let value = CGPoint(x: 0, y: 0)
-let target = CGPoint(x: 100, y: 100)
-
-let springAnimation = SpringAnimation(spring: .bouncy, value: value, target: target)
-springAnimation.valueChanged = { newValue in
-    view.frame.origin = newValue
+// Spring animation
+Anima.animate(withSpring: .bouncy) {
+    view.animator.frame = newFrame
+    view.animation.backgroundColor = .systemBlue
 }
-springAnimation.start()
 ```
 
 #### Easing Animation
@@ -87,38 +55,65 @@ An easing based animation.
 You provide it `TimeFunction` which describes the easing of the animation (e.g. `easeIn`, `easeInOut` or `linear`).
 
 ```swift
-let easingAnimation = EasingAnimation(timingFunction: .easeIn, duration: 2.0, value: value, target: target)
-easingAnimation.valueChanged = { newValue in
-    view.frame.origin = newValue
+Anima.animate(withEasing: .easeIn, duration: 3.0) {
+    view.animator.frame = newFrame
+    view.animation.backgroundColor = .systemBlue
 }
-easingAnimation.start()
 ```
 
 #### Decay Animation
 
 Performs animations with a decaying acceleration.
 
-You either provide a **target** value and the animation will animate the value to the target with a decelerating acceleration.
+You either provide **target** values and the animation will animate the values to the targets with a decelerating acceleration.
 
 ```swift
-let decayAnimation = DecayAnimation(value: value, target: target)
-decayAnimation.valueChanged = { newValue in
-    view.frame.origin = newValue
+Anima.animate(withDecay: .value) {
+    view.animator.frame = newFrame
+    view.animation.backgroundColor = .systemBlue
 }
-decayAnimation.start()
 ```
 
-Or you provide a **velocity** value. The property will increase or decrease depending on the velocity value and will slow to a stop.  This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
+Or you provide a **velocity** value. The property will increase or decrease depending on the velocity value and will slow to a stop. This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
 
 ```swift
-// The origin's y value will increase 200 points.
-let velocity = CGPoint(x: 0, y: 200)
+Anima.animate(withDecay: .velocty) {
+    // The origin's y value will increase 200 points. (e.g. if the origin`s y value is 250 it will move to 450)
+    view.animator.frame.origin.y = 200
+}
+```
 
-let decayAnimation = DecayAnimation(value: value, velocity: velocity)
-decayAnimation.valueChanged = { newValue in
+#### Stopping of animations
+
+Updating a property outside an animation block stops its animation and updates it immediately:
+
+ ```swift
+ view.animator.backgroundColor = .systemRed
+ ```
+
+### Property-Based Animations
+
+While the block-based API is often most convenient, you may want to animate an object that doesn't provide animatable properties. Or, you may want the flexibility of getting the intermediate values of an animation and driving an animation yourself.
+
+```swift
+let value = CGPoint(x: 0, y: 0)
+let target = CGPoint(x: 100, y: 100)
+
+// Spring animation
+let springAnimation = SpringAnimation(spring: .bouncy, value: value, target: target)
+springAnimation.valueChanged = { newValue in
     view.frame.origin = newValue
 }
-decayAnimation.start()
+springAnimation.start()
+
+// Easing Animation
+let easingAnimation = EasingAnimation(timingFunction: .easeIn, duration: 2.0, value: value, target: target)
+
+// Decay Animation with target
+let decayAnimation = DecayAnimation(value: value, target: target)
+
+// Decay Animation with velocity
+let decayAnimation = DecayAnimation(value: value, velocity: velocity)
 ```
 
 ## Additions
