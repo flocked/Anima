@@ -2,8 +2,6 @@
 
 Anima is an animation framework for iOS, iPadOS, and macOS. It allows animating properties with ease using spring, easing and decay animations.
 
-It is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion). Without these libraries Anima wouldn't have been possible.
-
 ## Animatable properties
 
 Any type conforming to `AnimatableProperty` can be animated by `Anima`.
@@ -163,6 +161,10 @@ Rubberbanding is the act of making values appear to be on a rubberband (they str
 ```swift
  bounds.origin.x = rubberband(bounds.origin.x - translation.x, boundsSize: bounds.size.width, contentSize: contentSize.width)
 ```
+
+## Acknowledgement
+
+It is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion). Without these libraries Anima wouldn't have been possible.
 
 ## Installation
 
