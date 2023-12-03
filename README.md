@@ -133,11 +133,16 @@ easingAnimation.start()
 #### Decay Animation
 
 ```swift
+// Decay animation with target
 let decayAnimation = DecayAnimation(value: value, target: target)
 decayAnimation.valueChanged = { newValue in
     view.frame.origin = newValue
 }
 decayAnimation.start()
+
+// Decay animation with velocity
+let decayVelocityAnimation = DecayAnimation(value: value, velocity: velocity)
+
 ```
 
 ## Additions
