@@ -17,11 +17,17 @@ By default, lots of types already supported it:
 - `CGSize`
 - `CGRect`
 - `CGColor`/`NSColor`/`UIColor`
-- `CATransform3D`
+- `CATransform3D` / `CGAffineTransform`
 - Arrays with `AnimatableProperty` values
 - … and many more.
 
 ## Animations
+
+There are two ways you can can create animations: **block-based** and **property-based**.
+
+### Block-Based Animations
+
+Block-based animation lets you easily animate properties of objects that provide animatable properties.
 
 Many objects provide animatable properties:
  - macOS: `NSView`, `NSWindow`, `NSTextField`, `NSImageView` and many more.
@@ -54,22 +60,12 @@ Updating a property outside an animation block stops its animation and updates i
  ```swift
  view.animation.backgroundColor = .systemRed
  ```
- 
-#### Retargeting of spring animated values
- 
-When changing values of properties that are currently spring animated, the animation’s velocity is preserved for providing fluid animations. That's why spring animations are the recommended animation for a responsive and interactive UI.
 
-You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
+### Property-Based Animations
 
-```swift
-let velocity = panGestureRecognizer.velocity(in: view)
+While the block-based API is often most convenient, you may want to animate an object that doesn't provide animatable properties. Or, you may want the flexibility of getting the intermediate values of an animation and driving an animation yourself.
 
-Anima.animate(withSpring: .snappy, gestureVelocity: velocity) {
-    view.frame.origin = CGPoint(x: 200, y: 200)
-}
-```
-
-### Spring Animation
+#### Spring Animation
 
 A spring based animation for fluid animations.
 
@@ -86,7 +82,7 @@ springAnimation.valueChanged = { newValue in
 springAnimation.start()
 ```
 
-### Easing Animation
+#### Easing Animation
 
 An easing based animation.
 
@@ -100,7 +96,7 @@ easingAnimation.valueChanged = { newValue in
 easingAnimation.start()
 ```
 
-### Decay Animation
+#### Decay Animation
 
 Performs animations with a decaying acceleration.
 
@@ -128,6 +124,20 @@ decayAnimation.start()
 ```
 
 ## Additions
+
+### Retargeting of spring animated values
+ 
+When changing values of properties that are currently spring animated, the animation’s velocity is preserved for providing fluid animations. That's why spring animations are the recommended animation for a responsive and interactive UI.
+
+You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
+
+```swift
+let velocity = panGestureRecognizer.velocity(in: view)
+
+Anima.animate(withSpring: .snappy, gestureVelocity: velocity) {
+    view.frame.origin = CGPoint(x: 200, y: 200)
+}
+```
 
 ### CAKeyframeAnimationEmittable
 
