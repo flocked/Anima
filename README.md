@@ -1,6 +1,6 @@
 # Anima
 
-Anima is an animation framework for iOS, iPadOS, and macOS. It allows animating properties with ease using spring, easing and decay animations.
+Anima is an animation framework for iOS, tvOS, and macOS. It allows animating properties with ease using spring, easing and decay animations.
 
 ## Animatable properties
 
@@ -32,7 +32,8 @@ Many objects provide animatable properties:
  - iOS: `UIView`, `UILabel`, `UIImageView` and many more.
  - Shared: `NSLayoutConstraint` and `CALayer`
 
-The properties can can be accessed via the object's `animator`. Use `Anima.animate(…)` to animate them.
+The properties can can be accessed via the object's `animator`. Change their values inside an animation block using `Anima.animate(…)` to animate them.
+
 
 #### Spring Animation
 
