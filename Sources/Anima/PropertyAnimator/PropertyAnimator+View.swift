@@ -241,7 +241,8 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     }
 }
 
-extension ViewAnimator where View: NSUITextField {
+#if os(macOS)
+extension ViewAnimator where View: NSTextField {
     /// The text color of the text field.
     public var textColor: NSUIColor? {
         get { self[\.textColor] }
@@ -255,7 +256,7 @@ extension ViewAnimator where View: NSUITextField {
     }
 }
 
-extension ViewAnimator where View: NSUITextView {
+extension ViewAnimator where View: NSTextView {
     /// The font size of the text view.
     public var fontSize: CGFloat {
         get { self[\.fontSize] }
@@ -269,7 +270,6 @@ extension ViewAnimator where View: NSUITextView {
     }
 }
 
-#if os(macOS)
 extension ViewAnimator where View: NSStackView {
     /// The minimum spacing, in points, between adjacent views in the stack view.
     public var spacing: CGFloat {
@@ -423,6 +423,34 @@ internal extension NSBox {
 }
 
 #elseif canImport(UIKit)
+extension ViewAnimator where View: UITextField {
+    /// The text color of the text field.
+    public var textColor: NSUIColor? {
+        get { self[\.textColor] }
+        set { self[\.textColor] = newValue }
+    }
+    
+    /// The font size of the text field.
+    public var fontSize: CGFloat {
+        get { self[\.fontSize] }
+        set { self[\.fontSize] = newValue }
+    }
+}
+
+extension ViewAnimator where View: UITextView {
+    /// The font size of the text view.
+    public var fontSize: CGFloat {
+        get { self[\.fontSize] }
+        set { self[\.fontSize] = newValue }
+    }
+    
+    /// The text color of the text view.
+    public var textColor: NSUIColor? {
+        get { self[\.textColor] }
+        set { self[\.textColor] = newValue }
+    }
+}
+
 extension ViewAnimator where View: UIScrollView {
     /// The point at which the origin of the content view is offset from the origin of the scroll view.
     public var contentOffset: CGPoint {

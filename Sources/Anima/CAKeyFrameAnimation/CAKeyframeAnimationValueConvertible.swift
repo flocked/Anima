@@ -100,7 +100,8 @@ extension CGAffineTransform: CAKeyframeAnimationValueConvertible {
     }
 }
 
-extension NSUIEdgeInsets: CAKeyframeAnimationValueConvertible {
+#if os(macOS)
+extension NSEdgeInsets: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {
         #if os(macOS)
         NSValue(edgeInsets: self)
@@ -109,6 +110,17 @@ extension NSUIEdgeInsets: CAKeyframeAnimationValueConvertible {
         #endif
     }
 }
+#else
+extension UIEdgeInsets: CAKeyframeAnimationValueConvertible {
+    public func toKeyframeValue() -> AnyObject {
+        #if os(macOS)
+        NSValue(edgeInsets: self)
+        #else
+        NSValue(uiEdgeInsets: self)
+        #endif
+    }
+}
+#endif
 
 extension NSDirectionalEdgeInsets: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {

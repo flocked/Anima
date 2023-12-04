@@ -63,11 +63,16 @@ extension NSView {
 }
 
 internal extension NSView {
+    // Saves dynamics colors that provide both a light and dark color variants and updates them inside the view if the appearance changes from light to dark or vice versa.
     struct DynamicColors {
-        var shadow: NSColor? = nil
-        var innerShadow: NSColor? = nil
-        var border: NSColor? = nil
-        var background: NSColor? = nil
+        var shadow: NSColor? = nil {
+            didSet { if shadow?.isDynamic == false { shadow = nil } } }
+        var innerShadow: NSColor? = nil {
+            didSet { if innerShadow?.isDynamic == false { innerShadow = nil } } }
+        var border: NSColor? = nil {
+            didSet { if border?.isDynamic == false { border = nil } } }
+        var background: NSColor? = nil {
+            didSet { if background?.isDynamic == false { background = nil } } }
         
         var needsAppearanceObserver: Bool {
             background != nil || border != nil || shadow != nil || innerShadow != nil

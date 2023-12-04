@@ -14,8 +14,9 @@ import SwiftUI
 
 extension NSDirectionalRectEdge: Hashable {}
 
-extension NSUIEdgeInsets: Hashable {
-    public static func == (lhs: NSUIEdgeInsets, rhs: NSUIEdgeInsets) -> Bool {
+#if os(macOS)
+extension NSEdgeInsets: Hashable {
+    public static func == (lhs: NSEdgeInsets, rhs: NSEdgeInsets) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
 
@@ -25,21 +26,33 @@ extension NSUIEdgeInsets: Hashable {
         hasher.combine(left)
         hasher.combine(right)
     }
-}
-
-public extension NSUIEdgeInsets {
-#if os(macOS)
-/// An edge insets struct whose top, left, bottom, and right fields are all set to 0.
-static var zero = NSEdgeInsets(0)
-#endif
-}
-
-internal extension NSUIEdgeInsets {
+    
+    public static var zero = NSEdgeInsets(0)
+    
     /// Creates an edge insets structure with the specified value for top, bottom, left and right.
-    init(_ value: CGFloat) {
+    internal init(_ value: CGFloat) {
         self.init(top: value, left: value, bottom: value, right: value)
     }
 }
+#else
+extension UIEdgeInsets: Hashable {
+    public static func == (lhs: UIEdgeInsets, rhs: UIEdgeInsets) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(top)
+        hasher.combine(bottom)
+        hasher.combine(left)
+        hasher.combine(right)
+    }
+    
+    /// Creates an edge insets structure with the specified value for top, bottom, left and right.
+    internal init(_ value: CGFloat) {
+        self.init(top: value, left: value, bottom: value, right: value)
+    }
+}
+#endif   
 
 public extension NSDirectionalEdgeInsets {
     #if os(macOS)

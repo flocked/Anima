@@ -75,6 +75,7 @@ extension CAKeyframeAnimationEmittable {
         return keyframeAnimation
     }
     
+    #if os(macOS)
     /**
      Generates and returns a `CAKeyframeAnimation` based on the animation's current value targeting the animation's target value.
 
@@ -83,9 +84,22 @@ extension CAKeyframeAnimationEmittable {
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from the current animation's state to its resolved state.
      - Note: You will be required to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to be useful.
      */
-    public func keyframeAnimation(forScreen screen: NSUIScreen) -> CAKeyframeAnimation {
+    public func keyframeAnimation(forScreen screen: NSScreen) -> CAKeyframeAnimation {
         return keyframeAnimation(forFramerate: screen.preferredFramesPerSecond)
     }
+    #else
+    /**
+     Generates and returns a `CAKeyframeAnimation` based on the animation's current value targeting the animation's target value.
+
+     - Parameters:
+        - screen: The screen where the animation is displayed.
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from the current animation's state to its resolved state.
+     - Note: You will be required to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to be useful.
+     */
+    public func keyframeAnimation(forScreen screen: UIScreen) -> CAKeyframeAnimation {
+        return keyframeAnimation(forFramerate: screen.preferredFramesPerSecond)
+    }
+    #endif
 }
 
 extension DecayAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {

@@ -202,7 +202,8 @@ extension NSDirectionalEdgeInsets: AnimatableProperty {
     }
 }
 
-extension NSUIEdgeInsets: AnimatableProperty {
+#if os(macOS)
+extension NSEdgeInsets: AnimatableProperty {
     public var animatableData: AnimatableArray<Double> {
         [top, self.left, bottom, self.right]
     }
@@ -211,7 +212,17 @@ extension NSUIEdgeInsets: AnimatableProperty {
         self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
     }
 }
-
+#else
+extension UIEdgeInsets: AnimatableProperty {
+    public var animatableData: AnimatableArray<Double> {
+        [top, self.left, bottom, self.right]
+    }
+    
+    public init(_ animatableData: AnimatableArray<Double>) {
+        self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
+    }
+}
+#endif
 extension CGVector: AnimatableProperty {
     public var animatableData: AnimatableArray<Double> {
         [dx, dy]
