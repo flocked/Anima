@@ -131,65 +131,14 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     
     /// The shadow of the layer.
     public var shadow: ContentConfiguration.Shadow {
-        get { ContentConfiguration.Shadow(color: shadowColor != .clear ? shadowColor : nil, opacity: shadowOpacity, radius: shadowRadius, offset: shadowOffset.point ) }
-        set {
-            guard newValue != shadow else { return }
-            self.shadowColor = newValue.color
-            self.shadowOffset = newValue.offset.size
-            self.shadowRadius = newValue.radius
-            self.shadowOpacity = newValue.opacity
-        }
-    }
-    
-    internal var shadowOpacity: CGFloat {
-        get { CGFloat(self[\.shadowOpacity]) }
-        set { self[\.shadowOpacity] = Float(newValue) }
-    }
-    
-    internal var shadowColor: NSUIColor? {
-        get { self[\.shadowColor]?.nsUIColor }
-        set { self[\.shadowColor] = newValue?.cgColor }
-    }
-    
-    internal var shadowOffset: CGSize {
-        get { self[\.shadowOffset] }
-        set { self[\.shadowOffset] = newValue }
-    }
-    
-    internal var shadowRadius: CGFloat {
-        get { self[\.shadowRadius] }
-        set { self[\.shadowRadius] = newValue }
+        get { self[\.shadow] }
+        set { self[\.shadow] = newValue }
     }
     
     /// The inner shadow of the layer.
     public var innerShadow: ContentConfiguration.InnerShadow {
-        get { ContentConfiguration.InnerShadow(color: innerShadowColor, opacity: innerShadowOpacity, radius: innerShadowRadius, offset: innerShadowOffset ) }
-        set {
-            innerShadowColor = newValue.color
-            innerShadowRadius = newValue.radius
-            innerShadowOffset = newValue.offset
-            innerShadowOpacity = newValue.opacity
-        }
-    }
-    
-    internal var innerShadowOpacity: CGFloat {
-        get { self[\.innerShadowOpacity] }
-        set { self[\.innerShadowOpacity] = newValue }
-    }
-    
-    internal var innerShadowRadius: CGFloat {
-        get { self[\.innerShadowRadius] }
-        set { self[\.innerShadowRadius] = newValue }
-    }
-    
-    internal var innerShadowOffset: CGPoint {
-        get { self[\.innerShadowOffset] }
-        set { self[\.innerShadowOffset] = newValue }
-    }
-    
-    internal var innerShadowColor: NSUIColor? {
-        get { self[\.innerShadowColor] }
-        set { self[\.innerShadowColor] = newValue }
+        get { self[\.innerShadow] }
+        set { self[\.innerShadow] = newValue }
     }
     
     /// The property animators for the layer's sublayers.
@@ -468,33 +417,6 @@ internal extension CAGradientLayer {
         get { locations?.compactMap({$0.doubleValue}) ?? []  }
         set { locations = newValue as [NSNumber] }
     }
-}
-
-fileprivate extension CALayer {
-    var innerShadow: ContentConfiguration.InnerShadow {
-        get { self.innerShadowLayer?.configuration ?? .none() }
-        set { self.configurate(using: newValue) }
-    }
-        
-   @objc var innerShadowOpacity: CGFloat {
-        get { innerShadow.opacity }
-        set { innerShadow.opacity = newValue }
-    }
-    
-    @objc var innerShadowRadius: CGFloat {
-         get { innerShadow.radius }
-         set { innerShadow.radius = newValue }
-     }
-    
-    @objc var innerShadowColor: NSUIColor? {
-         get { innerShadow.color }
-         set { innerShadow.color = newValue }
-     }
-    
-    @objc var innerShadowOffset: CGPoint {
-         get { innerShadow.offset }
-         set { innerShadow.offset = newValue }
-     }
 }
 
 fileprivate extension CAShapeLayer {

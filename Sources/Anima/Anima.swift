@@ -34,12 +34,28 @@ import Foundation
  ```
  ### Stop Animations
  
- To update values of properties that are currently animated, change their values  outside of an `Anima` animation block. It will stop their animations and sets their values immediately to the new values.
+ Changing an `animator` property outside an animation block stops its animation and changes its value immediately.
 
  ```swift
  // outside of an animation block
  myView.animator.center = newCenterPoint
  myView.animator.backgroundColor = .black
+ ```
+ 
+ To stop all animations use ``stopAllAnimations(immediately:)``.
+ 
+ ```swift
+ Anima.stopAllAnimations()
+ ```
+ 
+ ### Update Animation Velocities
+ 
+ You can update the velocity of running decay and spring animations by using ``updateVelocity(changes:)``.
+ 
+ ```swift
+ Anima.updateVelocity {
+     view.animator.frame.origin.y += 1000
+ }
  ```
 
  - Note: All animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.
@@ -50,7 +66,7 @@ public class Anima {
      
      Example usage:
      ```swift
-     Anima.animate(withSpring: Spring(dampingRatio: 0.6, response: 1.2)) {
+     Anima.animate(withSpring: .bouncy) {
         myView.animator.center = view.center
         myView.animator.backgroundColor = .systemBlue
      }
@@ -188,12 +204,12 @@ public class Anima {
     }
     
     /**
-     Updates the animation velocities for animations that support velocity values (``SpringAnimation`` and ``DecayAnimation``).
+     Updates the animation velocities for decay and spring animations.
 
      Example usage:
      ```swift
      Anima.updateVelocity() {
-        myView.animator.frame.origin = newVelocity
+        myView.animator.frame.origin.y += 1000
      }
      ```
      

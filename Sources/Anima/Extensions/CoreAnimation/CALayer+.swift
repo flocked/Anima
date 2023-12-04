@@ -14,6 +14,24 @@ import UIKit
 #endif
 
 internal extension CALayer {
+    
+    /// The shadow of the layer.
+    var shadow: ContentConfiguration.Shadow {
+        get { .init(color: shadowColor?.nsUIColor, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point) }
+        set {
+            shadowColor = newValue.color?.cgColor
+            shadowOpacity = Float(newValue.opacity)
+            shadowRadius = newValue.radius
+            shadowOffset = newValue.offset.size
+        }
+    }
+    
+    /// The inner shadow of the layer.
+    var innerShadow: ContentConfiguration.InnerShadow {
+        get { self.innerShadowLayer?.configuration ?? .none() }
+        set { self.configurate(using: newValue) }
+    }
+    
     /// Sends the layer to the front of it's superlayer.
     func sendToFront() {
         guard let superlayer = superlayer else { return }

@@ -233,7 +233,6 @@ extension CGVector: AnimatableProperty {
     }
 }
 
-#if canImport(QuartzCore)
 extension CATransform3D: AnimatableProperty {
     public init(_ animatableData: AnimatableArray<Double>) {
         self.init(m11: animatableData[0], m12: animatableData[1], m13: animatableData[2], m14: animatableData[3], m21: animatableData[4], m22: animatableData[5], m23: animatableData[6], m24: animatableData[7], m31: animatableData[8], m32: animatableData[9], m33: animatableData[10], m34: animatableData[11], m41: animatableData[12], m42: animatableData[13], m43: animatableData[14], m44: animatableData[15])
@@ -257,7 +256,36 @@ extension CGQuaternion: AnimatableProperty {
         CGQuaternion.init(angle: 0, axis: .init(0, 0, 0))
     }
 }
-#endif
+
+extension ContentConfiguration.Shadow: AnimatableProperty, Animatable {
+    public static var zero: ContentConfiguration.Shadow {
+        .none()
+    }
+    
+    public init(_ animatableData: AnimatableArray<Double>) {
+        self.init(color: .init([animatableData[0], animatableData[1], animatableData[2], animatableData[3]]), opacity: animatableData[4], radius: animatableData[5], offset: .init(animatableData[6], animatableData[7]))
+    }
+    
+    public var animatableData: AnimatableArray<Double> {
+        get { (self.color ?? .zero).animatableData + [opacity, radius, offset.x, offset.y] }
+        set { self = .init(newValue) }
+    }
+}
+
+extension ContentConfiguration.InnerShadow: AnimatableProperty, Animatable {
+    public static var zero: ContentConfiguration.InnerShadow {
+        .none()
+    }
+    
+    public init(_ animatableData: AnimatableArray<Double>) {
+        self.init(color: .init([animatableData[0], animatableData[1], animatableData[2], animatableData[3]]), opacity: animatableData[4], radius: animatableData[5], offset: .init(animatableData[6], animatableData[7]))
+    }
+    
+    public var animatableData: AnimatableArray<Double> {
+        get { (self.color ?? .zero).animatableData + [opacity, radius, offset.x, offset.y] }
+        set { self = .init(newValue) }
+    }
+}
 
 // Ensures that two collections have the same amount of values for animating between them. If a collection is smaller than the other zero values are added.
 internal protocol AnimatableCollection: RangeReplaceableCollection, BidirectionalCollection {

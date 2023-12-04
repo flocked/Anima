@@ -170,10 +170,6 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
      */
     public func updateAnimation(deltaTime: TimeInterval) {
         state = .running
-        
-        if value == target {
-            fractionComplete = 1.0
-        }
                 
         let isAnimated = duration > .zero
         
@@ -200,7 +196,7 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
                     isReversed = !isReversed
                 }
                 fractionComplete = isReversed ? 1.0 : 0.0
-                _value = _fromValue.interpolated(towards: _target, amount: resolvedFractionComplete)
+                _value = isReversed ? _target : _value
             } else {
                 _value = isReversed ? _fromValue : _target
             }

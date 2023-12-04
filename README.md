@@ -97,24 +97,14 @@ Anima.animate(withDecay: .velocity) {
 }
 ```
 
-#### Updating the animation velocity
+#### Stop Animations
 
-You can update the velocity of running decay and spring animations.
-
-```swift
-Anima.updateVelocity {
-    view.animator.frame.origin.y += 1000
-}
-```
-
-#### Stopping of an animation
-
-Updating a property outside an animation block stops its animation and updates it immediately:
+Changing a property outside an animation block stops its animation and changes its value immediately:
 
  ```swift
  view.animator.backgroundColor = .systemRed
  ```
-
+ 
 ### Property-Based Animations
 
 While the block-based API is often most convenient, you may want to animate an object that doesn't provide animatable properties. Or, you may want the flexibility of getting the intermediate values of an animation and driving an animation yourself.
