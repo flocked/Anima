@@ -97,7 +97,17 @@ Anima.animate(withDecay: .velocity) {
 }
 ```
 
-#### Stopping of animations
+#### Updating the animation velocity
+
+You can update the velocity of running decay and spring animations.
+
+```swift
+Anima.updateVelocity {
+    view.animator.frame.origin.y += 1000
+}
+```
+
+#### Stopping of an animation
 
 Updating a property outside an animation block stops its animation and updates it immediately:
 
