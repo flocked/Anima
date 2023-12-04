@@ -174,18 +174,21 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
         groupID = settings.groupID
-        spring = settings.animationType.spring ?? spring
         repeats = settings.repeats
         autoStarts = settings.autoStarts
         autoreverse = settings.autoreverse
         integralizeValues = settings.integralizeValues
         
+        spring = settings.animationType.spring ?? spring
+        
         if let gestureVelocity = settings.animationType.gestureVelocity {
-            (self as? SpringAnimation<CGRect>)?.velocity.origin = gestureVelocity
-            (self as? SpringAnimation<CGRect>)?.fromVelocity.origin = gestureVelocity
-            
-            (self as? SpringAnimation<CGPoint>)?.velocity = gestureVelocity
-            (self as? SpringAnimation<CGPoint>)?.fromVelocity = gestureVelocity
+            if let animation = self as? SpringAnimation<CGRect> {
+                animation.velocity.origin = gestureVelocity
+                animation.fromVelocity.origin = gestureVelocity
+            } else if let animation = self as? SpringAnimation<CGPoint> {
+                animation.velocity = gestureVelocity
+                animation.fromVelocity = gestureVelocity
+            }
         }
     }
         

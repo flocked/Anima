@@ -44,7 +44,7 @@ import Foundation
 
  - Note: All animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.
  */
-public struct Anima {
+public class Anima {
     /**
      Performs spring animations based on the specified ``Spring``.
      

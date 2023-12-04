@@ -154,12 +154,13 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
         groupID = settings.groupID
-        timingFunction = settings.animationType.timingFunction ?? timingFunction
-        duration = settings.animationType.duration ?? duration
-        integralizeValues = settings.integralizeValues
         repeats = settings.repeats
         autoStarts = settings.autoStarts
         autoreverse = settings.autoreverse
+        integralizeValues = settings.integralizeValues
+        
+        timingFunction = settings.animationType.timingFunction ?? timingFunction
+        duration = settings.animationType.duration ?? duration
     }
             
     /**

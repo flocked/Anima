@@ -1,5 +1,7 @@
 # Animatable Properties
 
+Make properties animatable by conforming it to `AnimatableProperty`.
+
 ## Overview
 
 Any type conforming to ``AnimatableProperty`` can be animated by `Anima`.
@@ -17,7 +19,7 @@ By default, lots of types already supported it:
 - ``AnimatableArray``
 - … and many more.
 
-## Setup
+## How to conform
 
 To conform to ``AnimatableProperty`` you have to provide:
 - ``AnimatableProperty/animatableData``: A representation of the type conforming `VectorArithmetic`.

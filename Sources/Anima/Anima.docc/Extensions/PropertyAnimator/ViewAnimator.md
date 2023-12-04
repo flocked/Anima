@@ -33,40 +33,33 @@
 - ``insertSubview(_:belowSubview:)``
 - ``removeFromSuperview()``
 
-
 ### NSBox
 
 - ``contentViewMargins``
 - ``fillColor``
 - ``titleFontSize``
 
-### NSButton/UIButton
+### NSButton
 
 - ``contentTintColor-8zkdt``
 - ``tintColor``
 
-### NSColorWell/UIColorWell
+### NSColorWell
 
 - ``color``
-- ``selectedColor``
 
 ### NSControl
 
 - ``doubleValue-1rd7u``
 - ``floatValue``
 
-### NSImageView/UIImageView
+### NSImageView
 
 - ``contentTintColor-7tls5``
-- ``tintColor``
 
-### NSScrollView/UIScrollView
+### NSScrollView
 
-- ``contentOffset``
 - ``magnification``
-- ``contentInset``
-- ``contentSize``
-- ``zoomScale``
 - ``setMagnification(_:centeredAt:)``
 
 ### NSStackView/UIStackView
@@ -74,12 +67,12 @@
 - ``edgeInsets``
 - ``spacing``
 
-### NSTextField/UITextField
+### NSTextField
 
 - ``fontSize-3yvwy``
 - ``textColor-44e46``
 
-### NSTextView/UITextView
+### NSTextView
 
 - ``fontSize-2t9f3``
 - ``textColor-3yp1n``
@@ -90,7 +83,40 @@
 - ``minValue``
 - ``maxValue``
 
+### UIButton
+
+- ``tintColor-50ytj``
+
+### UIColorWell
+
+- ``selectedColor``
+
+### UIImageView
+
+- ``tintColor-58ga``
+
+### UILabel
+
+- ``fontSize-1ppx6``
+- ``textColor-1hwys``
+
 ### UIProgressView
 
 - ``progress``
 
+### UIScrollView
+
+- ``contentInset``
+- ``contentOffset``
+- ``contentSize``
+- ``zoomScale``
+
+### UITextField
+
+- ``fontSize-hq5n``
+- ``textColor-faze``
+
+### UITextView
+
+- ``fontSize-3dgk6``
+- ``textColor-9l755``

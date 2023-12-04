@@ -239,10 +239,10 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         groupID = settings.groupID
         repeats = settings.repeats
         autoStarts = settings.autoStarts
+        autoreverse = settings.autoreverse
         integralizeValues = settings.integralizeValues
-        if decelerationRate != settings.animationType.decelerationRate {
-            decelerationRate = settings.animationType.decelerationRate ?? decelerationRate
-        }
+        
+        decelerationRate = settings.animationType.decelerationRate ?? decelerationRate
     }
             
     /**

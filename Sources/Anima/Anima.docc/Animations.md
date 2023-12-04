@@ -1,5 +1,7 @@
 # Animations
 
+Anima provides decay, easing and spring animations.
+
 ## Overview
 
 There are three types of animations: Decay, Easing and Spring. They let you animate properties conforming to ``AnimatableProperty``.

@@ -1,5 +1,7 @@
 # Animating Properties
 
+Animate properties of objects like `NSView`, `UIView`, `CALayer` and `NSLayoutConstraint`. 
+
 ## Overview
 
 Anima lets you easily animate properties of objects conforming to ``AnimatablePropertyProvider``.

@@ -269,14 +269,28 @@ extension ViewAnimator where View: NSUITextView {
     }
 }
 
-extension ViewAnimator where View: NSUIScrollView {
+#if os(macOS)
+extension ViewAnimator where View: NSStackView {
+    /// The minimum spacing, in points, between adjacent views in the stack view.
+    public var spacing: CGFloat {
+        get {  self[\.spacing] }
+        set { self[\.spacing] = newValue }
+    }
+    
+    /// The geometric padding, in points, inside the stack view, surrounding its views.
+    public var edgeInsets: NSEdgeInsets {
+        get { self[\.edgeInsets] }
+        set { self[\.edgeInsets] = newValue }
+    }
+}
+
+extension ViewAnimator where View: NSScrollView {
     /// The point at which the origin of the content view is offset from the origin of the scroll view.
-    public var contentOffset: CGPoint {
+    public var documentOffset: CGPoint {
         get { self[\.contentOffset] }
         set { self[\.contentOffset] = newValue }
     }
     
-    #if os(macOS)
     /// The amount by which the content is currently scaled.
     public var magnification: CGFloat {
         get {  self[\.magnificationCentered] }
@@ -290,47 +304,8 @@ extension ViewAnimator where View: NSUIScrollView {
         object.animationCenterPoint = point
         self[\.magnificationCentered] = magnification
     }
-    #elseif canImport(UIKit)
-    /// The scale factor applied to the scroll view’s content.
-    public var zoomScale: CGFloat {
-        get { self[\.zoomScaleCentered] }
-        set {
-            object.animationCenterPoint = nil
-            self[\.zoomScaleCentered] = newValue }
-    }
-    
-    /// The size of the content view.
-    public var contentSize: CGSize {
-        get { self[\.contentSize] }
-        set { self[\.contentSize] = newValue }
-    }
-    
-    /// The custom distance that the content view is inset from the safe area or scroll view edges.
-    public var contentInset: UIEdgeInsets {
-        get { self[\.contentInset] }
-        set { self[\.contentInset] = newValue }
-    }
-    #endif
 }
 
-
-extension ViewAnimator where View: NSUIStackView {
-    /// The minimum spacing, in points, between adjacent views in the stack view.
-    public var spacing: CGFloat {
-        get {  self[\.spacing] }
-        set { self[\.spacing] = newValue }
-    }
-    
-    #if os(macOS)
-    /// The geometric padding, in points, inside the stack view, surrounding its views.
-    public var edgeInsets: NSEdgeInsets {
-        get { self[\.edgeInsets] }
-        set { self[\.edgeInsets] = newValue }
-    }
-    #endif
-}
-
-#if os(macOS)
 extension ViewAnimator where View: NSImageView {
     /// The tint color of the image.
     public var contentTintColor: NSColor? {
@@ -448,6 +423,42 @@ internal extension NSBox {
 }
 
 #elseif canImport(UIKit)
+extension ViewAnimator where View: UIScrollView {
+    /// The point at which the origin of the content view is offset from the origin of the scroll view.
+    public var contentOffset: CGPoint {
+        get { self[\.contentOffset] }
+        set { self[\.contentOffset] = newValue }
+    }
+    
+    /// The scale factor applied to the scroll view’s content.
+    public var zoomScale: CGFloat {
+        get { self[\.zoomScaleCentered] }
+        set {
+            object.animationCenterPoint = nil
+            self[\.zoomScaleCentered] = newValue }
+    }
+    
+    /// The size of the content view.
+    public var contentSize: CGSize {
+        get { self[\.contentSize] }
+        set { self[\.contentSize] = newValue }
+    }
+    
+    /// The custom distance that the content view is inset from the safe area or scroll view edges.
+    public var contentInset: UIEdgeInsets {
+        get { self[\.contentInset] }
+        set { self[\.contentInset] = newValue }
+    }
+}
+
+extension ViewAnimator where View: UIStackView {
+    /// The minimum spacing, in points, between adjacent views in the stack view.
+    public var spacing: CGFloat {
+        get {  self[\.spacing] }
+        set { self[\.spacing] = newValue }
+    }
+}
+
 extension ViewAnimator where View: UIView {
     /// The default spacing to use when laying out content in a view,
     public var directionalLayoutMargins: NSDirectionalEdgeInsets {
