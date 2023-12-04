@@ -7,8 +7,6 @@
 
 import CoreGraphics
 import Foundation
-import SwiftUI
-
 
 /**
  Performs animations on animatable properties of objects conforming to ``AnimatablePropertyProvider``.
@@ -17,7 +15,7 @@ import SwiftUI
  - macOS: `NSView`, `NSWindow`, `NSTextField`, `NSImageView`, `NSLayoutConstraint`, `CALayer` and many more.
  - iOS: `UIView`, `UILabel`, `UIImageView`, `NSLayoutConstraint`, `CALayer`  and many more.
  
- To animate values, you must set the values on the objects's ``AnimatablePropertyProvider/animator-54mpy``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`.
+ To animate values, you must set the values on the objects's ``AnimatablePropertyProvider/animator`` inside an Anima animation block, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`.
  
  ## Animations
  
@@ -34,7 +32,9 @@ import SwiftUI
     myView.animator.backgroundColor = .systemBlue
  }
  ```
- To update values of properties that are currently animated use ``nonAnimate(changes:)`` or update the values using ``AnimatablePropertyProvider/animator-54mpy`` outside of a `Anima` animation block. It will stop their animations and sets their values immediately to the specified new values.
+ ### Stop Animations
+ 
+ To update values of properties that are currently animated, change their values  outside of an `Anima` animation block. It will stop their animations and sets their values immediately to the new values.
 
  ```swift
  // outside of an animation block
@@ -44,7 +44,7 @@ import SwiftUI
 
  - Note: All animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.
  */
-public enum Anima {
+public struct Anima {
     /**
      Performs spring animations based on the specified ``Spring``.
      
@@ -56,14 +56,14 @@ public enum Anima {
      }
      ```
      
-     - Note: For animations to work correctly, you must set values on the objects's ``AnimatablePropertyProvider/animator-54mpy``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
-          
+     - Note: For animations to work correctly, you must set values on the objects's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
+
      - Parameters:
         - spring: The ``Spring`` used to determine the timing curve and duration of the animation.
         - gestureVelocity: If provided, this value will be used to set the spring ``SpringAnimation/velocity`` of whatever underlying animations run in the `animations` block and that animate `CGPoint` or `CGRect` values. This should be primarily used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
         - delay: An optional delay, in seconds, after which to start the animation.
         - options: The options to apply to the animations. For a list of options, see ``AnimationOptions``. The default value is `[]`.
-        - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator-54mpy``, not just the object itself.
+        - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself.
         - completion: An optional block to be executed when the specified animations have either finished or retargeted to a new value.
      */
     public static func animate(
@@ -75,7 +75,7 @@ public enum Anima {
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
         let settings = AnimationController.AnimationParameters(
-            groupUUID: UUID(),
+            groupID: UUID(),
             delay: delay,
             animationType: .spring(spring: spring, gestureVelocity: gestureVelocity),
             options: options,
@@ -96,14 +96,14 @@ public enum Anima {
      }
      ```
      
-     - Note: For animations to work correctly, you must set values on the objects's ``AnimatablePropertyProvider/animator-54mpy``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
+     - Note: For animations to work correctly, you must set values on the objects's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
 
      - Parameters:
         - timingFunction: The ``TimingFunction`` used to determine the timing curve.
         - duration: The duration of the animation.
         - delay: An optional delay, in seconds, after which to start the animation.
         - options: The options to apply to the animations. For a list of options, see ``AnimationOptions``. The default value is `[]`.
-        - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator-54mpy``, not just the object itself.
+        - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself.
         - completion: An optional block to be executed when the specified animations have either finished or retargeted to a new value.
      */
     public static func animate(
@@ -115,7 +115,7 @@ public enum Anima {
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
         let settings = AnimationController.AnimationParameters(
-            groupUUID: UUID(),
+            groupID: UUID(),
             delay: delay,
             animationType: .easing(timingFunction: timingFunction, duration: duration),
             options: options,
@@ -147,7 +147,7 @@ public enum Anima {
      })
      ```
      
-     - Note: For animations to work correctly, you must set values on the objects's ``AnimatablePropertyProvider/animator-54mpy``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
+     - Note: For animations to work correctly, you must set values on the objects's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
 
      - Parameters:
         - mode: The mode how the animation should animate properties:
@@ -156,19 +156,19 @@ public enum Anima {
         - decelerationRate: The rate at which the animation decelerates over time. The default value decelerates like scrollviews.
         - delay: An optional delay, in seconds, after which to start the animation.
         - options: The options to apply to the animations. For a list of options, see ``AnimationOptions``. The default value is `[]`.
-        - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator-54mpy``, not just the object itself.
+        - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself.
         - completion: An optional block to be executed when the specified animations have either finished or retargeted to a new value.
      */
     public static func animate(
         withDecay mode: DecayAnimationMode,
-        decelerationRate: Double = ScrollViewDecelerationRate,
+        decelerationRate: Double = DecayFunction.ScrollViewDecelerationRate,
         delay: TimeInterval = 0,
         options: AnimationOptions = [],
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
         let settings = AnimationController.AnimationParameters(
-            groupUUID: UUID(),
+            groupID: UUID(),
             delay: delay,
             animationType: .decay(mode: mode, decelerationRate: decelerationRate),
             options: options,
@@ -178,41 +178,12 @@ public enum Anima {
         AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
     }
     
-    /// DecayAnimationMode
-    
-    /**
-     Performs the specified changes non animated.
-     
-     Use it to immediately update values of properties. For properties that are currently animated, the animations stop. You can also update values non animated by using the ``AnimatablePropertyProvider/animator-54mpy`` outside of any ``Anima`` animation block.
-     
-     ```swift
-     Anima.nonAnimate() {
-        myView.animator.center = newCenterPoint
-     }
-     
-     // or outside an animation block
-     myView.animator.center = newCenterPoint
-     ```
-     
-     - Note: For a list of all objects that provide animatable properties check ``Anima``.
-     
-     - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
-     */
-    public static func nonAnimate(changes: () -> Void) {
-        let settings = AnimationController.AnimationParameters(
-            groupUUID: UUID(),
-            animationType: .nonAnimated
-        )
-        
-        AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
-    }
-    
     /**
      Stops all animations.
      
      - Parameter immediately: A Boolean value indicating whether the animations should stop immediately at their values. The default value is `true`.
      */
-    public static func stopAnimating(immediately: Bool = true) {
+    public static func stopAllAnimations(immediately: Bool = true) {
         AnimationController.shared.stopAllAnimations(immediately: immediately)
     }
     
@@ -232,8 +203,35 @@ public enum Anima {
      */
     public static func updateVelocity(changes: () -> Void) {
         let settings = AnimationController.AnimationParameters(
-            groupUUID: UUID(),
+            groupID: UUID(),
             animationType: .velocityUpdate
+        )
+        
+        AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
+    }
+    
+    /**
+     Performs the specified changes non animated.
+     
+     Use it to immediately update values of properties. For properties that are currently animated, the animations stop. You can also update values non animated by using the ``AnimatablePropertyProvider/animator-54mpy`` outside of any ``Wave`` animation block.
+     
+     ```swift
+     Wave.nonAnimate() {
+        myView.animator.center = newCenterPoint
+     }
+     
+     // or outside an animation block
+     myView.animator.center = newCenterPoint
+     ```
+     
+     - Note: For a list of all objects that provide animatable properties check ``Wave``.
+     
+     - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
+     */
+    internal static func nonAnimate(changes: () -> Void) {
+        let settings = AnimationController.AnimationParameters(
+            groupID: UUID(),
+            animationType: .nonAnimated
         )
         
         AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)

@@ -37,7 +37,7 @@ internal class AnimationController {
         precondition(Thread.isMainThread, "All Wave animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.")
 
         // Register the handler
-        groupAnimationCompletionBlocks[settings.groupUUID] = completion
+        groupAnimationCompletionBlocks[settings.groupID] = completion
 
         animationSettingsStack.push(settings: settings)
         animations()
@@ -58,7 +58,6 @@ internal class AnimationController {
         animations[animation.id] = nil
     }
     
-    /// ``AnimationController/runAnimation(_:)``
     func stopAllAnimations(immediately: Bool = true) {
         animations.values.forEach({$0.stop(at: .current, immediately: immediately)})
     }
@@ -80,7 +79,7 @@ internal class AnimationController {
         let sortedAnimations = animations.values.sorted(by: \.relativePriority, .descending)
 
         for animation in sortedAnimations {
-            if animation.state == .ended {
+            if animation.state != .running {
                 self.stopAnimation(animation)
             } else {
                 animation.updateAnimation(deltaTime: deltaTime)
@@ -123,14 +122,14 @@ internal class AnimationController {
 
 extension AnimationController {
     struct AnimationParameters {
-        let groupUUID: UUID
+        let groupID: UUID
         let delay: CGFloat
         let animationType: AnimationType
         let options: AnimationOptions
         let completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)?
         
-        init(groupUUID: UUID, delay: CGFloat = 0.0, animationType: AnimationType, options: AnimationOptions = [], completion: ( (_: Bool, _: Bool) -> Void)? = nil) {
-            self.groupUUID = groupUUID
+        init(groupID: UUID, delay: CGFloat = 0.0, animationType: AnimationType, options: AnimationOptions = [], completion: ( (_: Bool, _: Bool) -> Void)? = nil) {
+            self.groupID = groupID
             self.delay = delay
             self.animationType = animationType
             self.options = options
@@ -166,7 +165,7 @@ extension AnimationController {
         enum AnimationType {
             case spring(spring: Spring, gestureVelocity: CGPoint?)
             case easing(timingFunction: TimingFunction, duration: TimeInterval)
-            case decay(mode: DecayAnimationMode, decelerationRate: Double)
+            case decay(mode: Anima.DecayAnimationMode, decelerationRate: Double)
             case nonAnimated
             case velocityUpdate
             

@@ -13,59 +13,39 @@ import UIKit
 import SwiftUI
 
 public extension ContentConfiguration {
-    /**
-     A configuration that specifies the appearance of an inner shadow.
-     
-     On AppKit `NSView` and `CALayer` can be configurated by passing the configuration to `configurate(using configuration: ContentConfiguration.InnerShadow)`.
-     
-     On UIKit `UIView` and `CALayer` can be configurated by passing the configuration to `configurate(using configuration: ContentConfiguration.InnerShadow)`.
-     */
+    /// A configuration that specifies the appearance of an inner shadow.
     struct InnerShadow: Hashable {
         /// The color of the shadow.
-        public var color: NSUIColor? = .shadowColor
+        public var color: NSUIColor? = .black
+        
         /// The opacity of the shadow.
-        public var opacity: CGFloat = 0.5
+        public var opacity: CGFloat = 0.3
+        
         /// The blur radius of the shadow.
         public var radius: CGFloat = 2.0
+        
         /// The offset of the shadow.
         public var offset: CGPoint = .init(x: 1.0, y: -1.5)
 
         /// A Boolean value that indicates whether the shadow is invisible (when the color is `nil`, `clear` or the opacity `0`).
-        public var isInvisible: Bool {
+        internal var isInvisible: Bool {
             return (color?.alphaComponent == 0.0 || opacity == 0.0 || color == nil)
         }
 
-        #if os(macOS)
-        /// Initalizes an inner shadow configuration.
-        public init(color: NSUIColor? = .shadowColor,
-                    opacity: CGFloat = 0.3,
-                    radius: CGFloat = 2.0,
-                    offset: CGPoint = CGPoint(x: 1.0, y: -1.5))
-        {
-            self.color = color
-            self.opacity = opacity
-            self.radius = radius
-            self.offset = offset
-        }
-        #else
         /// Initalizes an inner shadow configuration.
         public init(color: NSUIColor? = .black,
-                    opacity: CGFloat = 0.3,
-                    radius: CGFloat = 2.0,
-                    offset: CGPoint = CGPoint(x: 1.0, y: -1.5))
+            opacity: CGFloat = 0.3,
+            radius: CGFloat = 2.0,
+            offset: CGPoint = CGPoint(x: 1.0, y: -1.5))
         {
             self.color = color
             self.opacity = opacity
             self.radius = radius
             self.offset = offset
         }
-        #endif
 
         /// A configuration without inner shadow.
         public static func none() -> Self { return Self(color: nil, opacity: 0.0) }
-        
-        /// A default configuration for a black inner shadow.
-        public static func `default`(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(opacity: opacity, radius: radius, offset: offset) }
         
         /// A configuration for a black inner shadow.
         public static func black(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .black, opacity: opacity, radius: radius, offset: offset) }
@@ -83,7 +63,7 @@ public extension ContentConfiguration {
 }
 
 
-public extension NSUIView {
+internal extension NSUIView {
     /**
      Configurates the inner shadow of the view.
 
@@ -101,7 +81,7 @@ public extension NSUIView {
         #endif
     }
     
-    internal var innerShadowLayer: InnerShadowLayer? {
+    var innerShadowLayer: InnerShadowLayer? {
         #if os(macOS)
          self.layer?.firstSublayer(type: InnerShadowLayer.self)
         #else
@@ -111,7 +91,7 @@ public extension NSUIView {
     }
 }
 
-public extension CALayer {
+internal extension CALayer {
     /**
      Configurates the inner shadow of the layer.
 
@@ -132,7 +112,7 @@ public extension CALayer {
         }
     }
     
-    internal var innerShadowLayer: InnerShadowLayer? {
+    var innerShadowLayer: InnerShadowLayer? {
         self.firstSublayer(type: InnerShadowLayer.self)
     }
 }

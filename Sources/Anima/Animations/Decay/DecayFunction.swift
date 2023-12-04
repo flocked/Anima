@@ -10,15 +10,9 @@
 import Foundation
 import SwiftUI
 
-/// The default deceleration rate for a scroll view.
-public let ScrollViewDecelerationRate = 0.998
-
-/// A fast deceleration rate for a scroll view.
-public let ScrollViewDecelerationRateFast = 0.99
-
 /**
  The decay function calculates values with a decaying acceleration.
-
+ 
  Example usage:
  ```swift
  let destination = DecayFunction.destination(value: 5.0, velocity: 100.0)
@@ -32,6 +26,12 @@ public let ScrollViewDecelerationRateFast = 0.99
  ```
  */
 public struct DecayFunction: Hashable {
+    /// The default deceleration rate for a scroll view.
+    public static let ScrollViewDecelerationRate = 0.998
+
+    /// A fast deceleration rate for a scroll view.
+    public static let ScrollViewDecelerationRateFast = 0.99
+    
     /// The rate at which the velocity decays over time.
     public var decelerationRate: Double {
         didSet {
@@ -40,7 +40,7 @@ public struct DecayFunction: Hashable {
     }
 
     /// A cached invocation of `1.0 / (log(decelerationRate) * 1000.0)`
-    private(set) public var one_ln_decelerationRate_1000: Double = 0.0
+    internal var one_ln_decelerationRate_1000: Double = 0.0
     
     /**
       Initializes a decay function.
@@ -58,7 +58,7 @@ public struct DecayFunction: Hashable {
      }
     
     /// Updates the current value and velocity of a decay animation.
-    public func update<V>(value: inout V, velocity: inout V, deltaTime: TimeInterval) where V : VectorArithmetic {
+    internal func update<V>(value: inout V, velocity: inout V, deltaTime: TimeInterval) where V : VectorArithmetic {
         let d_1000_dt = pow(decelerationRate, deltaTime * 1000.0)
         
         // Analytic decay equation with constants extracted out.
@@ -97,19 +97,15 @@ extension DecayFunction {
     
     /**
      Solves the destination for the specified value and starting velocity.
-
+     
      - Parameters:
         - value: The starting value.
         - velocity: The starting velocity of the decay.
         - decelerationRate: The decay constant.
-        - integralizeValue: A Boolean value that indicates whether the destionation value should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues. The default value is 'false'.
 
      - Returns: The destination when the decay reaches zero velocity.
      */
-    public static func destination<V>(value: V, velocity: V, decelerationRate: Double = ScrollViewDecelerationRate, integralizeValue: Bool = false) -> V where V : AnimatableProperty {
-        if integralizeValue {
-            return V(self.destination(value: value.animatableData, velocity: velocity.animatableData, decelerationRate: decelerationRate)).scaledIntegral
-        }
+    internal static func destination<V>(value: V, velocity: V, decelerationRate: Double = ScrollViewDecelerationRate) -> V where V : AnimatableProperty {
         return V(self.destination(value: value.animatableData, velocity: velocity.animatableData, decelerationRate: decelerationRate))
     }
     
@@ -138,7 +134,7 @@ extension DecayFunction {
 
      - Returns: The velocity required to reach `toValue`.
      */
-    public static func velocity<V>(fromValue: V, toValue: V, decelerationRate: Double = ScrollViewDecelerationRate) -> V where V : AnimatableProperty {
+    internal static func velocity<V>(fromValue: V, toValue: V, decelerationRate: Double = ScrollViewDecelerationRate) -> V where V : AnimatableProperty {
         V(self.velocity(fromValue: fromValue.animatableData, toValue: toValue.animatableData, decelerationRate: decelerationRate))
     }
     
@@ -192,7 +188,7 @@ extension DecayFunction {
 
      - Returns: The duration required to reach `toValue`.
      */
-    public static func duration<Value: AnimatableProperty>(value: Value, velocity: Value, decelerationRate: Double = ScrollViewDecelerationRate) -> TimeInterval {
+    internal static func duration<Value: AnimatableProperty>(value: Value, velocity: Value, decelerationRate: Double = ScrollViewDecelerationRate) -> TimeInterval {
         return duration(value: value.animatableData, velocity: velocity.animatableData, decelerationRate: decelerationRate)
     }
     
@@ -206,7 +202,7 @@ extension DecayFunction {
 
      - Returns: The duration required to reach `toValue`.
      */
-    public static func duration<Value: AnimatableProperty>(fromValue value: Value, toValue: Value, decelerationRate: Double = ScrollViewDecelerationRate) -> TimeInterval {
+    internal static func duration<Value: AnimatableProperty>(fromValue value: Value, toValue: Value, decelerationRate: Double = ScrollViewDecelerationRate) -> TimeInterval {
         return duration(fromValue: value.animatableData, toValue: toValue.animatableData, decelerationRate: decelerationRate)
     }
 }

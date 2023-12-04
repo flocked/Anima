@@ -88,6 +88,44 @@ extension CAKeyframeAnimationEmittable {
     }
 }
 
+extension DecayAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
+    /// Generates and populates the `values` and `keyTimes` for a given `DecayAnimation` animating from its ``value`` to its ``target`` by ticking it by `deltaTime` until it resolves.
+    public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
+        var value = _value
+        var velocity = _velocity
+        var runningTime: TimeInterval = 0.0
+        while velocity.magnitudeSquared >= 0.05 {
+            decayFunction.update(value: &value, velocity: &velocity, deltaTime: deltaTime)
+            values.append(Value(value).toKeyframeValue())
+            keyTimes.append(runningTime as NSNumber)
+            runningTime += deltaTime
+        }
+        return runningTime
+    }
+}
+
+extension EasingAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
+    /// Generates and populates the `values` and `keyTimes` for a given `EasingAnimation` animating from its ``value`` to its ``target`` by ticking it by `deltaTime` until it resolves.
+    public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
+        var fractionComplete: CGFloat = isReversed ? 1.0 : 0.0
+        let secondsElapsed = deltaTime/duration
+        var value = isReversed ? target : fromValue
+        var runningTime: TimeInterval = 0.0
+        while runningTime < duration {
+            fractionComplete = isReversed ? (fractionComplete - secondsElapsed) : (fractionComplete + secondsElapsed)
+            let resolvedFractionComplete = timingFunction.solve(at: fractionComplete, duration: duration)
+            value = Value(fromValue.animatableData.interpolated(towards: target.animatableData, amount: resolvedFractionComplete))
+            values.append(value.toKeyframeValue())
+            keyTimes.append(runningTime as NSNumber)
+            runningTime += deltaTime
+        }
+        
+        values.append(isReversed ? fromValue.toKeyframeValue() : target.toKeyframeValue())
+        keyTimes.append(duration as NSNumber)
+        return runningTime
+    }
+}
+
 extension SpringAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
     /// Generates and populates the `values` and `keyTimes` for a given `SpringAnimation` animating from its ``value`` to its ``target`` by ticking it by `deltaTime` until it resolves.
     public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {

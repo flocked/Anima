@@ -36,7 +36,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     public let id = UUID()
     
     /// A unique identifier that associates an animation with an grouped animation block.
-    public internal(set) var groupUUID: UUID?
+    public internal(set) var groupID: UUID?
     
     /// The relative priority of the animation.
     public var relativePriority: Int = 0
@@ -173,7 +173,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
 
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
-        groupUUID = settings.groupUUID
+        groupID = settings.groupID
         spring = settings.animationType.spring ?? spring
         repeats = settings.repeats
         autoStarts = settings.autoStarts
@@ -231,6 +231,80 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         }
     }
     
+    /**
+     Starts the animation from its current position with an optional delay.
+
+     - parameter delay: The amount of time (measured in seconds) to wait before starting the animation.
+     */
+    public func start(afterDelay delay: TimeInterval = 0.0) {
+        precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
+        guard state != .running else { return }
+        
+        let start = {
+            self.state = .running
+            AnimationController.shared.runAnimation(self)
+        }
+        
+        delayedStart?.cancel()
+        self.delay = delay
+
+        if delay == .zero {
+            start()
+        } else {
+            let task = DispatchWorkItem {
+                start()
+            }
+            delayedStart = task
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
+        }
+    }
+    
+    /// Pauses the animation at the current position.
+    public func pause() {
+        guard state == .running else { return }
+        AnimationController.shared.stopAnimation(self)
+        state = .inactive
+        delayedStart?.cancel()
+        delay = 0.0
+    }
+    
+    /**
+     Stops the animation at the specified position.
+     
+     - Parameters:
+        - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
+        - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
+     */
+    public func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
+        delayedStart?.cancel()
+        delay = 0.0
+        if immediately == false {
+            switch position {
+            case .start:
+                target = fromValue
+            case .current:
+                target = value
+            default: break
+            }
+        } else {
+            AnimationController.shared.stopAnimation(self)
+            state = .inactive
+            switch position {
+            case .start:
+                value = fromValue
+                valueChanged?(value)
+            case .end:
+                value = target
+                valueChanged?(value)
+            default: break
+            }
+            target = value
+            reset()
+            velocity = .zero
+            completion?(.finished(at: value))
+        }
+    }
+    
     func reset() {
         runningTime = 0.0
         delayedStart?.cancel()
@@ -242,7 +316,7 @@ extension SpringAnimation: CustomStringConvertible {
         """
         SpringAnimation<\(Value.self)>(
             uuid: \(id)
-            groupUUID: \(groupUUID?.description ?? "nil")
+            groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
             state: \(state)
 

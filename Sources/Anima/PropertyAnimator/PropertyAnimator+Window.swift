@@ -8,13 +8,16 @@
 #if os(macOS)
 import AppKit
 
-extension NSWindow: AnimatablePropertyProvider { }
+extension NSWindow: AnimatablePropertyProvider {
+    /// Provides animatable properties of the window.
+    public var animator: WindowAnimator {
+        get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: WindowAnimator(self)) }
+    }
+}
 
-/// The property animator for windows.
-public typealias WindowAnimator = PropertyAnimator<NSWindow>
+/// Provides animatable properties of a window.
+public class WindowAnimator: PropertyAnimator<NSWindow> {
 
-extension PropertyAnimator where Object: NSWindow {
-    
     /// The frame of the window.
     public var frame: CGRect {
         get { self[\.frame_] }
@@ -37,7 +40,7 @@ extension PropertyAnimator where Object: NSWindow {
     }
     
     /// The background color of the window.
-    public var backgroundColor: NSUIColor {
+    public var backgroundColor: NSColor {
         get { self[\.backgroundColor] }
         set { self[\.backgroundColor] = newValue }
     }

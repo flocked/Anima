@@ -7,12 +7,13 @@
 
 import Foundation
 
-/// An object that provides animatable properties that can be accessed via ``AnimatablePropertyProvider/animator``.
+/// An object that provides animatable properties that can be accessed via it's ``AnimatablePropertyProvider/animator``.
 public protocol AnimatablePropertyProvider: AnyObject {
+    /// The object that provides animatable properties.
     associatedtype Provider: AnimatablePropertyProvider = Self
     
     /**
-     Provides animatable properties. To animate a property, change it's value in a ``Wave`` animation block.
+     It provides all animatable properties of the object. To animate them change their value inside an ``Anima`` animation block.
                
      Example usage:
      ```swift
@@ -20,21 +21,30 @@ public protocol AnimatablePropertyProvider: AnyObject {
         myView.animator.center = CGPoint(x: 100, y: 100)
         myView.animator.alpha = 0.5
      }
+     ```
      
-     myView.animator.alpha = 0.0 // Stops animating the property and changes it imminently.
+     To stop animating values and to update their values imminently, change them outside of an animation block.
+          
+     ```swift
+     myView.animator.alpha = 0.0
      ```
      
      To get/set a property of the object that is not provided as `animator` property, use the properties keypath on `animator`. The property needs to confirm to ``AnimatableProperty``.
      
      ```swift
+     class MyObject: AnimatablePropertyProvider {
+        var myAnimatableProperty: CGFloat = 0.0
+     }
+     
      Wave.animate(withSpring: .smooth) {
-        myView.animator[\.myAnimatableProperty] = newValue
+        myObject.animator[\.myAnimatableProperty] = newValue
      }
      ```
      For easier access of the property, you can extend the object's PropertyAnimator.
      
+     
      ```swift
-     public extension PropertyAnimator<NSView> {
+     public extension PropertyAnimator<MyObject> {
         var myAnimatableProperty: CGFloat {
             get { self[\.myAnimatableProperty] }
             set { self[\.myAnimatableProperty] = newValue }
@@ -42,7 +52,7 @@ public protocol AnimatablePropertyProvider: AnyObject {
      }
      
      Wave.animate(withSpring: .smooth) {
-        myView.animator.myAnimatableProperty = newValue
+        myObject.animator.myAnimatableProperty = newValue
      }
      ```
      */

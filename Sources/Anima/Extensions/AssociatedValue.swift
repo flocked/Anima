@@ -67,7 +67,7 @@ private func setAndReturn<T>(initialValue: T, key: String, object: AnyObject) ->
     - key: The key of the associated value.
     - object: The object of the associated value.
  */
-public func set<T>(associatedValue: T?, key: String, object: AnyObject) {
+internal func set<T>(associatedValue: T?, key: String, object: AnyObject) {
     set(associatedValue: _AssociatedValue(associatedValue), key: key, object: object)
 }
 
@@ -79,7 +79,7 @@ public func set<T>(associatedValue: T?, key: String, object: AnyObject) {
     - key: The key of the associated value.
     - object: The object of the associated value.
  */
-public func set<T: AnyObject>(weakAssociatedValue: T?, key: String, object: AnyObject) {
+internal func set<T: AnyObject>(weakAssociatedValue: T?, key: String, object: AnyObject) {
     set(associatedValue: _AssociatedValue(weak: weakAssociatedValue), key: key, object: object)
 }
 
@@ -101,78 +101,5 @@ private class _AssociatedValue {
 
     init(weak: AnyObject?) {
         _weakValue = weak
-    }
-}
-
-/// A type that provides associated values.
-public protocol AssociatedValuesProvider: AnyObject { }
-public extension AssociatedValuesProvider {
-    /// The associated values of the object.
-    var associatedValue: AssociatedValue<Self> {
-        AssociatedValue(self)
-    }
-}
-extension NSObject: AssociatedValuesProvider { }
-
-/// An object for getting and setting associated values of an object.
-public class AssociatedValue<Object: AssociatedValuesProvider> {
-    internal weak var object: Object!
-    internal init(_ object: Object) {
-        self.object = object
-    }
-    
-    subscript<Value>(associated: String) -> Value? {
-        get { getAssociatedValue(key: associated, object: object) }
-        set { set(associatedValue: newValue, key: associated, object: object) }
-    }
-    
-    subscript<Value>(associated: String, initialValue initialValue: () -> Value) -> Value {
-        get { getAssociatedValue(key: associated, object: object, initialValue: initialValue) }
-        set { set(associatedValue: newValue, key: associated, object: object) }
-    }
-    
-    subscript<Value>(associated: String, initialValue initialValue: @autoclosure () -> Value) -> Value {
-        get { getAssociatedValue(key: associated, object: object, initialValue: initialValue) }
-        set { set(associatedValue: newValue, key: associated, object: object) }
-    }
-    
-    subscript<Value>(associated: String, initialValue initialValue: () -> Value?) -> Value? {
-        get { getAssociatedValue(key: associated, object: object, initialValue: initialValue) }
-        set { set(associatedValue: newValue, key: associated, object: object) }
-    }
-    
-    subscript<Value>(associated: String, initialValue initialValue: @autoclosure () -> Value?) -> Value? {
-        get { getAssociatedValue(key: associated, object: object, initialValue: initialValue) }
-        set { set(associatedValue: newValue, key: associated, object: object) }
-    }
-    
-    subscript<Value>(associated: KeyPath<Object, Value>) -> Value? {
-        get { getAssociatedValue(key: associated.stringValue, object: object) }
-        set { set(associatedValue: newValue, key: associated.stringValue, object: object) }
-    }
-    
-    subscript<Value>(associated: KeyPath<Object, Value>, initialValue initialValue: () -> Value) -> Value {
-        get { getAssociatedValue(key: associated.stringValue, object: object, initialValue: initialValue) }
-        set { set(associatedValue: newValue, key: associated.stringValue, object: object) }
-    }
-    
-    subscript<Value>(associated: KeyPath<Object, Value>, initialValue initialValue: @autoclosure () -> Value) -> Value {
-        get { getAssociatedValue(key: associated.stringValue, object: object, initialValue: initialValue) }
-        set { set(associatedValue: newValue, key: associated.stringValue, object: object) }
-    }
-    
-    subscript<Value>(associated: KeyPath<Object, Value?>) -> Value? {
-        get { getAssociatedValue(key: associated.stringValue, object: object) }
-        set { set(associatedValue: newValue, key: associated.stringValue, object: object) }
-    }
-    
-    subscript<Value>(associated: KeyPath<Object, Value?>, initialValue initialValue: () -> Value?) -> Value? {
-        get { getAssociatedValue(key: associated.stringValue, object: object, initialValue: initialValue) }
-        set { set(associatedValue: newValue, key: associated.stringValue, object: object) }
-    }
-    
-    subscript<Value>(associated: KeyPath<Object, Value?>, initialValue initialValue: @autoclosure () -> Value?) -> Value? {
-        get { getAssociatedValue(key: associated.stringValue, object: object, initialValue: initialValue) }
-        set { set(associatedValue: newValue, key: associated.stringValue, object: object) }
     }
 }

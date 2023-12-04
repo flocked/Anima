@@ -12,21 +12,35 @@ import Foundation
 /**
  An animation that animates a value with a decaying acceleration.
  
- Example usage:
+There are two ways ways to create a decay animation:
+
+ - **target**: You provide a target and the animation will animate the value to the target with a decaying acceleration.
+
  ```swift
- let decayAnimation = DecayAnimation(value: CGPoint(x: 0, y: 0), target: CGPoint(x: 50, y: 100))
+ let decayAnimation = DecayAnimation(value: value, target: target)
  decayAnimation.valueChanged = { newValue in
-    view.frame.origin = newValue
+     view.frame.origin = newValue
  }
  decayAnimation.start()
  ```
+
+ - **velocity**: You provide a velocity and the animation will increase or decrease the initial value depending on the velocity and will slow to a stop. This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
+
+ ```swift
+ let decayAnimation = DecayAnimation(value: value, velocity: velocity)
+ decayAnimation.valueChanged = { newValue in
+     view.frame.origin = newValue
+ }
+ decayAnimation.start()
+ ```
+
  */
 public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
     
     /// A unique identifier that associates an animation with an grouped animation block.
-    public internal(set) var groupUUID: UUID?
+    public internal(set) var groupID: UUID?
 
     /// The relative priority of the animation.
     public var relativePriority: Int = 0
@@ -73,6 +87,13 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
      public var value: Value {
         get { Value(_value) }
         set { _value = newValue.animatableData  }
+    }
+    
+    public var Test: Int = 3
+
+
+    public struct Test {
+        
     }
     
     var _value: Value.AnimatableData {
@@ -179,7 +200,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         - velocity: The velocity of the animation.
         - decelerationRate: The rate at which the velocity decays over time. The default value decelerates like scrollviews.
      */
-    public init(value: Value, velocity: Value, decelerationRate: Double = ScrollViewDecelerationRate) {
+    public init(value: Value, velocity: Value, decelerationRate: Double = DecayFunction.ScrollViewDecelerationRate) {
         decayFunction = DecayFunction(decelerationRate: decelerationRate)
         _value = value.animatableData
         _fromValue = _value
@@ -196,7 +217,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         - target: The target value of the animation.
         - decelerationRate: The rate at which the velocity decays over time. The default value decelerates like scrollviews.
      */
-    public init(value: Value, target: Value, decelerationRate: Double = ScrollViewDecelerationRate) {
+    public init(value: Value, target: Value, decelerationRate: Double = DecayFunction.ScrollViewDecelerationRate) {
         decayFunction = DecayFunction(decelerationRate: decelerationRate)
         _value = value.animatableData
         _fromValue = _value
@@ -215,7 +236,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
-        groupUUID = settings.groupUUID
+        groupID = settings.groupID
         repeats = settings.repeats
         autoStarts = settings.autoStarts
         integralizeValues = settings.integralizeValues
@@ -251,6 +272,80 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         }
     }
     
+    /**
+     Starts the animation from its current position with an optional delay.
+
+     - parameter delay: The amount of time (measured in seconds) to wait before starting the animation.
+     */
+    public func start(afterDelay delay: TimeInterval = 0.0) {
+        precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
+        guard state != .running else { return }
+        
+        let start = {
+            self.state = .running
+            AnimationController.shared.runAnimation(self)
+        }
+        
+        delayedStart?.cancel()
+        self.delay = delay
+
+        if delay == .zero {
+            start()
+        } else {
+            let task = DispatchWorkItem {
+                start()
+            }
+            delayedStart = task
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
+        }
+    }
+    
+    /// Pauses the animation at the current position.
+    public func pause() {
+        guard state == .running else { return }
+        AnimationController.shared.stopAnimation(self)
+        state = .inactive
+        delayedStart?.cancel()
+        delay = 0.0
+    }
+    
+    /**
+     Stops the animation at the specified position.
+     
+     - Parameters:
+        - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
+        - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
+     */
+    public func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
+        delayedStart?.cancel()
+        delay = 0.0
+        if immediately == false {
+            switch position {
+            case .start:
+                target = fromValue
+            case .current:
+                target = value
+            default: break
+            }
+        } else {
+            AnimationController.shared.stopAnimation(self)
+            state = .inactive
+            switch position {
+            case .start:
+                value = fromValue
+                valueChanged?(value)
+            case .end:
+                value = target
+                valueChanged?(value)
+            default: break
+            }
+            target = value
+            reset()
+            velocity = .zero
+            completion?(.finished(at: value))
+        }
+    }
+    
     func reset() {
         runningTime = 0.0
         delayedStart?.cancel()
@@ -262,7 +357,7 @@ extension DecayAnimation: CustomStringConvertible {
         """
         DecayAnimation<\(Value.self)>(
             uuid: \(id)
-            groupUUID: \(groupUUID?.description ?? "nil")
+            groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
             state: \(state)
 
@@ -284,10 +379,12 @@ extension DecayAnimation: CustomStringConvertible {
     }
 }
 
-/// The mode how ``Anima`` should animate properties with a decaying animation.
-public enum DecayAnimationMode {
-    /// The value of animated properties will increase or decrease (depending on the values applied) with a decelerating rate.  This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
-    case velocity
-    /// The animated properties will animate to the applied values  with a decelerating rate.
-    case value
+extension Anima {
+    /// The mode how ``Anima`` should animate properties with a decaying animation.
+    public enum DecayAnimationMode {
+        /// The value of animated properties will increase or decrease (depending on the values applied) with a decelerating rate.  This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
+        case velocity
+        /// The animated properties will animate to the applied values  with a decelerating rate.
+        case value
+    }
 }

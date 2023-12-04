@@ -75,8 +75,6 @@ internal class KeyValueObserver<Object>: NSObject where Object: NSObject {
         }
     }
     
-
-    
     /**
      Removes the observer for the specified keypath.
      

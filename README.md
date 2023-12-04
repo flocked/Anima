@@ -34,7 +34,6 @@ Many objects provide animatable properties:
 
 The properties can can be accessed via the object's `animator`. Change their values inside an animation block using `Anima.animate(…)` to animate them.
 
-
 #### Spring Animation
 
 A spring based animation for fluid animations.
@@ -45,7 +44,7 @@ You provide a `Spring` which describes the spring configuration. `Spring` offers
 // Spring animation
 Anima.animate(withSpring: .bouncy) {
     view.animator.frame = newFrame
-    view.animation.backgroundColor = .systemBlue
+    view.animator.backgroundColor = .systemBlue
 }
 ```
 
@@ -65,12 +64,12 @@ Anima.animate(withSpring: .snappy, gestureVelocity: velocity) {
 
 An easing based animation.
 
-You provide it `TimeFunction` which describes the easing of the animation (e.g. `easeIn`, `easeInOut` or `linear`) and a duration.
+You provide it `TimingFunction` which describes the easing of the animation (e.g. `easeIn`, `easeInOut` or `linear`) and a duration.
 
 ```swift
 Anima.animate(withEasing: .easeIn, duration: 3.0) {
     view.animator.frame = newFrame
-    view.animation.backgroundColor = .systemBlue
+    view.animator.backgroundColor = .systemBlue
 }
 ```
 
@@ -83,7 +82,7 @@ You either provide **target** values and the animation will animate the values t
 ```swift
 Anima.animate(withDecay: .value) {
     view.animator.frame = newFrame
-    view.animation.backgroundColor = .systemBlue
+    view.animator.backgroundColor = .systemBlue
 }
 ```
 
@@ -143,7 +142,6 @@ decayAnimation.start()
 
 // Decay animation with velocity
 let decayVelocityAnimation = DecayAnimation(value: value, velocity: velocity)
-
 ```
 
 ## Additions

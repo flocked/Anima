@@ -22,9 +22,9 @@ import Foundation
 public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
-    
+
     /// A unique identifier that associates an animation with an grouped animation block.
-    public internal(set) var groupUUID: UUID?
+    public internal(set) var groupID: UUID?
 
     /// The relative priority of the animation.
     public var relativePriority: Int = 0
@@ -111,7 +111,8 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     internal var _fromValue: Value.AnimatableData
     
-    internal var velocity: Value {
+    /// The current velocity of the animation.
+    public internal(set) var velocity: Value {
         get { Value(_velocity) }
         set { _velocity = newValue.animatableData }
     }
@@ -152,20 +153,13 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
-        groupUUID = settings.groupUUID
+        groupID = settings.groupID
         timingFunction = settings.animationType.timingFunction ?? timingFunction
         duration = settings.animationType.duration ?? duration
         integralizeValues = settings.integralizeValues
         repeats = settings.repeats
         autoStarts = settings.autoStarts
         autoreverse = settings.autoreverse
-    }
-    
-    /// Resets the animation.
-    func reset() {
-        delayedStart?.cancel()
-        fractionComplete = 0.0
-        _velocity = .zero
     }
             
     /**
@@ -218,6 +212,87 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
             stop(at: .current)
         }
     }
+    
+    /**
+     Starts the animation from its current position with an optional delay.
+
+     - parameter delay: The amount of time (measured in seconds) to wait before starting the animation.
+     */
+    public func start(afterDelay delay: TimeInterval = 0.0) {
+        precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
+        guard state != .running else { return }
+        
+        let start = {
+            self.state = .running
+            AnimationController.shared.runAnimation(self)
+        }
+        
+        delayedStart?.cancel()
+        self.delay = delay
+
+        if delay == .zero {
+            start()
+        } else {
+            let task = DispatchWorkItem {
+                start()
+            }
+            delayedStart = task
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
+        }
+    }
+    
+    /// Pauses the animation at the current position.
+    public func pause() {
+        guard state == .running else { return }
+        AnimationController.shared.stopAnimation(self)
+        state = .inactive
+        delayedStart?.cancel()
+        delay = 0.0
+    }
+    
+    /**
+     Stops the animation at the specified position.
+     
+     - Parameters:
+        - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
+        - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
+     */
+    public func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
+        delayedStart?.cancel()
+        delay = 0.0
+        if immediately == false {
+            switch position {
+            case .start:
+                target = fromValue
+            case .current:
+                target = value
+            default: break
+            }
+        } else {
+            AnimationController.shared.stopAnimation(self)
+            state = .inactive
+            switch position {
+            case .start:
+                value = fromValue
+                valueChanged?(value)
+            case .end:
+                value = target
+                valueChanged?(value)
+            default: break
+            }
+            target = value
+            reset()
+            velocity = .zero
+            completion?(.finished(at: value))
+        }
+    }
+    
+    /// Resets the animation.
+    func reset() {
+        delayedStart?.cancel()
+        fractionComplete = 0.0
+        _velocity = .zero
+    }
 }
 
 extension EasingAnimation: CustomStringConvertible {
@@ -225,7 +300,7 @@ extension EasingAnimation: CustomStringConvertible {
         """
         EasingAnimation<\(Value.self)>(
             uuid: \(id)
-            groupUUID: \(groupUUID?.description ?? "nil")
+            groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
             state: \(state)
         

@@ -14,10 +14,15 @@ import Decomposed
 
 extension CALayer: AnimatablePropertyProvider { }
 
-/// The property animator for layers.
-public typealias LayerAnimator = PropertyAnimator<CALayer>
+extension AnimatablePropertyProvider where Self: CALayer {
+    /// Provides animatable properties of the layer.
+    public var animator: LayerAnimator<Self> {
+        get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self)) }
+    }
+}
 
-extension PropertyAnimator where Object: CALayer {
+/// Provides animatable properties of a layer.
+public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     /// The bounds of the layer.
     public var bounds: CGRect {
         get { self[\.bounds] }
@@ -64,9 +69,9 @@ extension PropertyAnimator where Object: CALayer {
     }
     
     /// The background color of the layer.
-    public var backgroundColor: NSUIColor? {
-        get { self[\.backgroundColor]?.nsUIColor }
-        set { self[\.backgroundColor] = newValue?.cgColor }
+    public var backgroundColor: CGColor? {
+        get { self[\.backgroundColor] }
+        set { self[\.backgroundColor] = newValue }
     }
     
     /// The anchor point for the layer’s position along the z axis.
@@ -113,9 +118,9 @@ extension PropertyAnimator where Object: CALayer {
     }
     
     /// The border color of the layer.
-    public var borderColor: NSUIColor? {
-        get { self[\.borderColor]?.nsUIColor }
-        set { self[\.borderColor] = newValue?.cgColor }
+    public var borderColor: CGColor? {
+        get { self[\.borderColor] }
+        set { self[\.borderColor] = newValue }
     }
     
     /// The border width of the layer.
@@ -188,17 +193,17 @@ extension PropertyAnimator where Object: CALayer {
     }
     
     /// The property animators for the layer's sublayers.
-    public var sublayers: [PropertyAnimator<CALayer>] {
+    public var sublayers: [LayerAnimator<CALayer>] {
         object.sublayers?.compactMap({$0.animator}) ?? []
     }
     
     /// The property animator for the layer's superlayer.
-    public var superlayer: PropertyAnimator<CALayer>? {
+    public var superlayer: LayerAnimator<CALayer>? {
         object.superlayer?.animator
     }
     
     /// The property animator for the layer's mask.
-    public var mask: PropertyAnimator<CALayer>? {
+    public var mask: LayerAnimator<CALayer>? {
         object.mask?.animator
     }
     
@@ -276,11 +281,12 @@ extension PropertyAnimator where Object: CALayer {
     }
 }
 
-extension PropertyAnimator where Object: CAShapeLayer {
+extension LayerAnimator where Layer: CAShapeLayer {
+    
     /// The color used to fill the shape’s path.
-    public var fillColor: NSUIColor? {
-        get { self[\.fillColor]?.nsUIColor }
-        set { self[\.fillColor] = newValue?.cgColor }
+    public var fillColor: CGColor? {
+        get { self[\.fillColor] }
+        set { self[\.fillColor] = newValue }
     }
         
     /// The dash pattern applied to the shape’s path when stroked.
@@ -308,9 +314,9 @@ extension PropertyAnimator where Object: CAShapeLayer {
     }
         
     /// The color used to stroke the shape’s path.
-    public var strokeColor: NSUIColor? {
-        get { self[\.strokeColor]?.nsUIColor }
-        set { self[\.strokeColor] = newValue?.cgColor }
+    public var strokeColor: CGColor? {
+        get { self[\.strokeColor] }
+        set { self[\.strokeColor] = newValue }
     }
     
     /// The relative location at which to begin stroking the path.
@@ -326,7 +332,8 @@ extension PropertyAnimator where Object: CAShapeLayer {
     }
 }
 
-extension PropertyAnimator where Object: CAReplicatorLayer {
+extension LayerAnimator where Layer: CAReplicatorLayer {
+
     /// Specifies the delay, in seconds, between replicated copies.
     public var instanceDelay: CGFloat {
         get { self[\.instanceDelay] }
@@ -340,9 +347,9 @@ extension PropertyAnimator where Object: CAReplicatorLayer {
     }
     
     /// Defines the color used to multiply the source object.
-    public var instanceColor: NSUIColor? {
-        get { self[\.instanceColor]?.nsUIColor }
-        set { self[\.instanceColor] = newValue?.cgColor }
+    public var instanceColor: CGColor? {
+        get { self[\.instanceColor] }
+        set { self[\.instanceColor] = newValue }
     }
     
     /// Defines the offset added to the red component of the color for each replicated instance. Animatable.
@@ -370,7 +377,7 @@ extension PropertyAnimator where Object: CAReplicatorLayer {
     }
 }
 
-extension PropertyAnimator where Object: CATiledLayer {
+extension LayerAnimator where Layer: CATiledLayer {
     /// The maximum size of each tile used to create the layer's content.
     public var tileSize: CGSize {
         get { self[\.tileSize] }
@@ -378,11 +385,11 @@ extension PropertyAnimator where Object: CATiledLayer {
     }
 }
 
-extension PropertyAnimator where Object: CAGradientLayer {
+extension LayerAnimator where Layer: CAGradientLayer {
     /// The fill color of the layer.
-    public var colors: [NSUIColor] {
-        get { self[\._colors].compactMap({$0.nsUIColor}) }
-        set { self[\._colors] = newValue.compactMap({$0.cgColor}) }
+    public var colors: [CGColor] {
+        get { self[\._colors] }
+        set { self[\._colors] = newValue }
     }
     
     /// The locations of each gradient stop.
@@ -404,7 +411,7 @@ extension PropertyAnimator where Object: CAGradientLayer {
     }
 }
 
-extension PropertyAnimator where Object: CAEmitterLayer {
+extension LayerAnimator where Layer: CAEmitterLayer {
     /// The position of the center of the particle emitter.
     public var emitterPosition: CGPoint {
         get { self[\.emitterPosition] }

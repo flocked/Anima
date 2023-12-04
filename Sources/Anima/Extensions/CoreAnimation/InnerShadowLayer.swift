@@ -13,7 +13,7 @@ import UIKit
 #endif
 
 /// A layer with an inner shadow.
-public class InnerShadowLayer: CALayer {
+internal class InnerShadowLayer: CALayer {
     
     /// The configuration of the inner shadow.
     public var configuration: ContentConfiguration.InnerShadow {

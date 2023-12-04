@@ -7,10 +7,10 @@
 
 import Foundation
 
-//// Options for animations.
+/// Options for animations.
 public struct AnimationOptions: OptionSet, Sendable, Hashable {
     public let rawValue: UInt
-    
+
     /// When the animation finishes the value will be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
     public static let integralizeValues = AnimationOptions(rawValue: 1 << 0)
     
@@ -23,7 +23,7 @@ public struct AnimationOptions: OptionSet, Sendable, Hashable {
     /// The animation starts automatically when it's `target` value changes to a value that isn't equal to it's current `value`.
     public static let autoStarts = AnimationOptions(rawValue: 1 << 3)
     
-    public static let keepVelocity = AnimationOptions(rawValue: 1 << 4)
+    internal static let keepVelocity = AnimationOptions(rawValue: 1 << 4)
         
     #if os(iOS) || os(tvOS)
     /// Prevents the user to interact with views while they are being animated.

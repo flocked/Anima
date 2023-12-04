@@ -15,31 +15,25 @@ import Decomposed
 
 /**
  A type that describes an animatable value.
- 
- `Double`, `Float`, `CGFloat`, `CGPoint`, `CGSize`, `CGRect`, `CGColor`, `CATransform3D`, `CGAffineTransform`, `NSUIColor`, `NSUIEdgeInsets` `NSDirectionalEdgeInsets` and `CGQuaternion` conform to `AnimatableProperty`.
- 
- An array of `AnimatableProperty` also conforms to it.
- 
- ``AnimatableArray`` containing `VectorArithmetic` elements can be used as animatable data. ``AnimatableVector``is a animatable array with double values.
- 
- Example:
+  
+ Example usage:
  ```swift
- public struct SomeStruct {
-    let value1: Double
-    let value2: Double
+ struct MyStruct {
+    let value: Double
+    let point: CGPoint
  }
  
- extension SomeStruct: AnimatableProperty {
-    public var animatableData: AnimatableVector {
-        [value1, value2]
+ extension MyStruct: AnimatableProperty {
+    init(_ animatableData: AnimatableArray<Double>) {
+        value = animatableData[0]
+        point = CGPoint(x: animatableData[1], y: animatableData[2])
     }
  
-    public init(_ animatableData: AnimatableVector) {
-        self.value1 = animatableData[0]
-        self.value1 = animatableData[1]
+    var animatableData: AnimatableArray<Double> {
+        [value, point.x, point.y]
     }
  
-    public static var zero: Self = SomeStruct(value1: 0, value2: 0)
+    static let zero = MyStruct(value: 0, point: .zero)
  }
  ```
  */
@@ -67,9 +61,17 @@ public extension AnimatableProperty {
     }
 }
 
-extension AnimatableProperty where Self.AnimatableData: Comparable {
-    public static func < (lhs: Self, rhs: Self) -> Bool {
-        return lhs.animatableData < rhs.animatableData
+extension Optional: AnimatableProperty where Wrapped: AnimatableProperty {
+    public var animatableData: Wrapped.AnimatableData {
+        self.optional?.animatableData ?? Wrapped.zero.animatableData
+    }
+    
+    public init(_ animatableData: Wrapped.AnimatableData) {
+        self = Wrapped.init(animatableData)
+    }
+    
+    public static var zero: Optional<Wrapped> {
+        Wrapped.zero
     }
 }
 
@@ -106,13 +108,13 @@ extension CGFloat: AnimatableProperty {
 }
 
 extension AnimatableProperty where Self: NSNumber {
-    public init(_ animatableData: AnimatableVector) {
+    public init(_ animatableData: AnimatableArray<Double>) {
         self.init(value: animatableData[0])
     }
 }
 
 extension NSNumber: AnimatableProperty {
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         [doubleValue]
     }
     
@@ -140,7 +142,7 @@ extension CGRect: AnimatableProperty {
 }
 
 extension AnimatableProperty where Self: NSUIColor {
-    public init(_ animatableData: AnimatableVector) {
+    public init(_ animatableData: AnimatableArray<Double>) {
         #if os(macOS)
         self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
         #else
@@ -150,7 +152,7 @@ extension AnimatableProperty where Self: NSUIColor {
 }
 
 extension NSUIColor: AnimatableProperty {
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         let rgba = self.rgbaComponents()
         return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
     }
@@ -161,13 +163,13 @@ extension NSUIColor: AnimatableProperty {
 }
 
 extension AnimatableProperty where Self: CGColor {
-    public init(_ animatableData: AnimatableVector) {
+    public init(_ animatableData: AnimatableArray<Double>) {
         self = NSUIColor(animatableData).cgColor as! Self
     }
 }
 
 extension CGColor: AnimatableProperty {
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         self.nsUIColor?.animatableData ?? [0,0,0,0]
     }
     
@@ -177,11 +179,11 @@ extension CGColor: AnimatableProperty {
 }
 
 extension CGAffineTransform: AnimatableProperty {
-    @inlinable public init(_ animatableData: AnimatableVector) {
+    @inlinable public init(_ animatableData: AnimatableArray<Double>) {
         self.init(animatableData[0], animatableData[1], animatableData[2], animatableData[3], animatableData[4], animatableData[5])
     }
     
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         return [a, b, c, d, tx, ty, 0, 0]
     }
     
@@ -191,52 +193,52 @@ extension CGAffineTransform: AnimatableProperty {
 }
 
 extension NSDirectionalEdgeInsets: AnimatableProperty {
-    public init(_ animatableData: AnimatableVector) {
+    public init(_ animatableData: AnimatableArray<Double>) {
         self.init(top: animatableData[0], leading: animatableData[1], bottom: animatableData[2], trailing: animatableData[3])
     }
     
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         [top, bottom, leading, trailing]
     }
 }
 
 extension NSUIEdgeInsets: AnimatableProperty {
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         [top, self.left, bottom, self.right]
     }
     
-    public init(_ animatableData: AnimatableVector) {
+    public init(_ animatableData: AnimatableArray<Double>) {
         self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
     }
 }
 
 extension CGVector: AnimatableProperty {
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         [dx, dy]
     }
     
-    public init(_ animatableData: AnimatableVector) {
+    public init(_ animatableData: AnimatableArray<Double>) {
         self.init(dx: animatableData[0], dy: animatableData[1])
     }
 }
 
 #if canImport(QuartzCore)
 extension CATransform3D: AnimatableProperty {
-    public init(_ animatableData: AnimatableVector) {
+    public init(_ animatableData: AnimatableArray<Double>) {
         self.init(m11: animatableData[0], m12: animatableData[1], m13: animatableData[2], m14: animatableData[3], m21: animatableData[4], m22: animatableData[5], m23: animatableData[6], m24: animatableData[7], m31: animatableData[8], m32: animatableData[9], m33: animatableData[10], m34: animatableData[11], m41: animatableData[12], m42: animatableData[13], m43: animatableData[14], m44: animatableData[15])
     }
     
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         return [m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44]
     }
 }
 
 extension CGQuaternion: AnimatableProperty {
-    public init(_ animatableData: AnimatableVector) {
+    public init(_ animatableData: AnimatableArray<Double>) {
         self.init(angle: animatableData[0], axis: .init(animatableData[1], animatableData[2], animatableData[3]))
     }
     
-    public var animatableData: AnimatableVector {
+    public var animatableData: AnimatableArray<Double> {
         [self.angle, self.axis.x, self.axis.y, self.axis.z]
     }
     
@@ -290,6 +292,4 @@ extension AnimatableArray: AnimatableCollection {
     }
 }
 
-extension Array: Animatable where Element: Animatable {
-    
-}
+extension Array: Animatable where Element: Animatable { }

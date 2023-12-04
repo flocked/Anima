@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 /**
  The timing function maps an input time normalized to the range `[0,1]` to an output time also in the range `[0,1]`. It's used to define the pacing of an animation as a timing curve.
  
@@ -16,7 +17,7 @@ import Foundation
  let solvedTime = timingFunction.solve(at: time)
  // 0.13
  ```
- 
+
  > Tip:  ``Easing`` provides addtional timing functions.
  */
 public enum TimingFunction {
@@ -70,20 +71,6 @@ public enum TimingFunction {
         case .function(let function):
             return function(time)
         }
-    }
-}
-
-import SwiftUI
-public extension TimingFunction {
-    func update<V>(value: inout V, fromValue: V, target: V, fractionComplete: inout Double, duration: TimeInterval, deltaTime: TimeInterval) where V : VectorArithmetic {
-        fractionComplete = (fractionComplete + (deltaTime / duration)).clamped(max: 1.0)
-        let resolvedFractionComplete = solve(at: fractionComplete, duration: duration)
-        value = fromValue.interpolated(towards: target, amount: resolvedFractionComplete)
-    }
-    func update<V>(value: inout V, fromValue: V, target: V, fractionComplete: inout Double, duration: TimeInterval, deltaTime: TimeInterval) where V : AnimatableProperty {
-        var _value = value.animatableData
-        update(value: &_value, fromValue: fromValue.animatableData, target: target.animatableData, fractionComplete: &fractionComplete, duration: duration, deltaTime: deltaTime)
-        value = V(_value)
     }
 }
 

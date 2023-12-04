@@ -9,10 +9,30 @@ import Foundation
 import SwiftUI
 import Accelerate
 
-/// An array with double values that can serve as the animatable data of an animatable type (see ``AnimatableProperty``).
-public typealias AnimatableVector = AnimatableArray<Double>
-
-/// An array that can serve as the animatable data of an animatable type (see ``AnimatableProperty``).
+/**
+ An array that can serve as the animatable data of an animatable type (see ``AnimatableProperty``).
+ 
+ Example usage:
+ ```swift
+ struct MyStruct {
+    let value: Double
+    let point: CGPoint
+ }
+ 
+ extension MyStruct: AnimatableProperty {
+    init(_ animatableData: AnimatableArray<Double>) {
+        value = animatableData[0]
+        point = CGPoint(x: animatableData[1], y: animatableData[2])
+    }
+ 
+    var animatableData: AnimatableArray<Double> {
+        [value, point.x, point.y]
+    }
+ 
+    static let zero = MyStruct(value: 0, point: .zero)
+ }
+ ```
+ */
 public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
     internal var elements: [Element] = []
 
@@ -47,6 +67,14 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
 
     public var count: Int {
         return elements.count
+    }
+    
+    public var first: Element? {
+        return elements.first
+    }
+    
+    public var last: Element? {
+        return elements.last
     }
 
     public var underestimatedCount: Int {

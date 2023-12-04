@@ -21,6 +21,7 @@ import UIKit
  - Note: This is required for using `CAKeyframeAnimationEmittable`.
  */
 public protocol CAKeyframeAnimationValueConvertible {
+    /// Converts the value  for use with `CAKeyframeAnimation`.
     func toKeyframeValue() -> AnyObject
 }
 
