@@ -10,7 +10,7 @@ You provide the inital value and target of the animation.
 
 To start an animation use      ``AnimationProviding/start(afterDelay:)``, to pause      ``AnimationProviding/pause()`` and to stop ``AnimationProviding/stop(at:immediately:)``.
 
-``PropertyAnimationProviding/valueChanged`` gets called whenever the current value of the animation changes.
+``SpringAnimation/valueChanged`` gets called whenever the current value of the animation changes.
 
 ```swift
 let animation = SpringAnimation(spring: .bouncy, value: view.frame.size, target: CGSize(width: 500, height: 500))
@@ -20,7 +20,7 @@ animation.valueChanged = { newSize in
 animation.start(afterDelay: 0.0)
 ```
 
-``PropertyAnimationProviding/completion`` gets called when the animation either finishes, or "re-targets" to a new target value.
+``SpringAnimation/completion`` gets called when the animation either finishes, or "re-targets" to a new target value.
 
 ```swift
 animation.completion = { event in 

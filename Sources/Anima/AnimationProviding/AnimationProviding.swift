@@ -56,27 +56,6 @@ public protocol AnimationProviding {
     func stop(at position: AnimationPosition, immediately: Bool)
 }
 
-///  A type that provides a property animation.
-public protocol PropertyAnimationProviding<Value>: AnimationProviding {
-    /// The type that gets animated.
-    associatedtype Value: AnimatableProperty
-    
-    /// The current value of the animation.
-    var value: Value { get }
-    
-    /// The target value of the animation.
-    var target: Value { get }
-    
-    /// The current velocity of the animation.
-    var velocity: Value { get }
-    
-    /// The completion block to call when the animation either finishes, or "re-targets" to a new target value.
-    var completion: ((_ event: AnimationEvent<Value>) -> Void)? { get }
-    
-    /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
-    var valueChanged: ((_ currentValue: Value) -> Void)? { get }
-}
-
 /// An internal extension to `AnimationProviding` used for configurating animations.
 internal protocol ConfigurableAnimationProviding<Value>: AnimationProviding {
     associatedtype Value: AnimatableProperty

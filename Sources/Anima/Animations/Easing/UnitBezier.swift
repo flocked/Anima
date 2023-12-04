@@ -8,56 +8,58 @@
 import Foundation
 import Accelerate
 
-/// A bezier curve that can be used to calculate timing functions.
-public struct UnitBezier: Hashable, Sendable {
-    
-    /// The first point of the bezier.
-    public var first: CGPoint {
-        didSet {
-            self.first = CGPoint(first.x.clamped(max: 1.0), first.y.clamped(max: 1.0))
+public extension TimingFunction {
+    /// A bezier curve that can be used to calculate timing functions.
+    struct UnitBezier: Hashable, Sendable {
+        
+        /// The first point of the bezier.
+        public var first: CGPoint {
+            didSet {
+                self.first = CGPoint(first.x.clamped(max: 1.0), first.y.clamped(max: 1.0))
+            }
         }
-    }
-    
-    /// The second point of the bezier.
-    public var second: CGPoint {
-        didSet {
+        
+        /// The second point of the bezier.
+        public var second: CGPoint {
+            didSet {
+                self.second = CGPoint(second.x.clamped(max: 1.0), second.y.clamped(max: 1.0))
+            }
+        }
+        
+        /// Creates a new `UnitBezier` instance with the specified points.
+        public init(first: CGPoint, second: CGPoint) {
+            self.first = CGPoint(first.x.clamped(max: 1.0), first.y.clamped(max: 1.0))
             self.second = CGPoint(second.x.clamped(max: 1.0), second.y.clamped(max: 1.0))
         }
-    }
-    
-    /// Creates a new `UnitBezier` instance with the specified points.
-    public init(first: CGPoint, second: CGPoint) {
-        self.first = CGPoint(first.x.clamped(max: 1.0), first.y.clamped(max: 1.0))
-        self.second = CGPoint(second.x.clamped(max: 1.0), second.y.clamped(max: 1.0))
-    }
-    
-    /// Creates a new `UnitBezier` instance with the specified points.
-    public init(x1: Double, y1: Double, x2: Double, y2: Double) {
-        self.init(first: CGPoint(x1, y1), second: CGPoint(x2, y2))
-    }
-
-    /**
-     Calculates the resulting `y` for given `x`.
-     
-     - Parameters:
-        - x: The value to solve for.
-        - epsilon: The required precision of the result (where `x * epsilon` is the maximum time segment to be evaluated).
-     - Returns: The solved `y` value.
-     */
-    public func solve(x: Double, epsilon: Double) -> Double {
-        return UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: epsilon)
-    }
-
-    /**
-     Calculates the resulting `y` for given `x`.
-     
-     - Parameters:
-        - x: The value to solve for.
-        - duration: The duration of the solving value. It is used to calculate the required precision of the result.
-     - Returns: The solved `y` value.
-     */
-    public func solve(x: Double, duration: Double) -> Double {
-        return UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: 1.0 / (duration * 1000.0))
+        
+        /// Creates a new `UnitBezier` instance with the specified points.
+        public init(x1: Double, y1: Double, x2: Double, y2: Double) {
+            self.init(first: CGPoint(x1, y1), second: CGPoint(x2, y2))
+        }
+        
+        /**
+         Calculates the resulting `y` for given `x`.
+         
+         - Parameters:
+         - x: The value to solve for.
+         - epsilon: The required precision of the result (where `x * epsilon` is the maximum time segment to be evaluated).
+         - Returns: The solved `y` value.
+         */
+        public func solve(x: Double, epsilon: Double) -> Double {
+            return UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: epsilon)
+        }
+        
+        /**
+         Calculates the resulting `y` for given `x`.
+         
+         - Parameters:
+         - x: The value to solve for.
+         - duration: The duration of the solving value. It is used to calculate the required precision of the result.
+         - Returns: The solved `y` value.
+         */
+        public func solve(x: Double, duration: Double) -> Double {
+            return UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: 1.0 / (duration * 1000.0))
+        }
     }
 }
 

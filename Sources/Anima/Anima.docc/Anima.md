@@ -42,7 +42,6 @@ Anima.animate(withSpring: .bouncy) {
 
 - <doc:Animations>
 - ``AnimationProviding``
-- ``PropertyAnimationProviding``
 - ``AnimationEvent``
 - ``AnimationPosition``
 - ``AnimationState``
@@ -56,7 +55,6 @@ Anima.animate(withSpring: .bouncy) {
 
 - ``EasingAnimation``
 - ``TimingFunction``
-- ``UnitBezier``
 
 ### Spring Animation
 
