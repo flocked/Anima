@@ -23,8 +23,9 @@ public struct AnimationOptions: OptionSet, Sendable, Hashable {
     /// The animation starts automatically when it's `target` value changes to a value that isn't equal to it's current `value`.
     public static let autoStarts = AnimationOptions(rawValue: 1 << 3)
     
-    internal static let keepVelocity = AnimationOptions(rawValue: 1 << 4)
-        
+    /// Usually the velocity of a property that is currently spring animated, is perserved when spring animated to another value. This option ignores the current velocity and restarts it at `zero`.
+    public static let restartVelocity = AnimationOptions(rawValue: 1 << 4)
+    
     #if os(iOS) || os(tvOS)
     /// Prevents the user to interact with views while they are being animated.
     public static let preventUserInteraction = AnimationOptions(rawValue: 1 << 5)

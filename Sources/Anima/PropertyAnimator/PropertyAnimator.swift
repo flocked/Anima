@@ -16,14 +16,24 @@ import UIKit
 /**
  Provides animatable properties of an object conforming to ``AnimatablePropertyProvider``.
  
- For easier access of a animatable property, you can extend the object's PropertyAnimator.
+ To access the animatable properties, you use their keypath on the ``AnimatablePropertyProvider/animator``.
  
  ```swift
  class Car: AnimatablePropertyProvider {
     var speed: CGFloat = 0.0
     var location: CGPoint = .zero
  }
-  
+ 
+ let car = Car()
+ 
+ Anima.animate(withSpring: .smooth) {
+    car.animator[\.speed] = 100.0
+ }
+ ```
+ 
+ For easier access, you can extend the animator.
+ 
+ ```swift
  public extension PropertyAnimator<Car> {
     var speed: CGFloat {
         get { self[\.value] }
@@ -35,9 +45,7 @@ import UIKit
         set { self[\.point] = newValue }
     }
  }
- 
- let car = Car()
- 
+  
  Anima.animate(withSpring: .smooth) {
     car.animator.speed = 120.0
     car.animator.point = CGPoint(x: 100.0, y: 100.0)
@@ -127,6 +135,12 @@ internal extension PropertyAnimator {
         switch settings.animationType {
         case .spring(_,_):
             let animation = springAnimation(for: keyPath) ?? SpringAnimation(spring: .smooth, value: value, target: target)
+            if let oldAnimation = self.animation(for: keyPath), oldAnimation.id != animation.id {
+                animation.getVelocity(from: oldAnimation)
+            }
+            if settings.restartVelocity, !settings.animationType.isDecayAnimation {
+                animation._velocity = .zero
+            }
             configurateAnimation(animation, target: target, keyPath: keyPath, settings: settings, completion: completion)
         case .easing(_,_):
             let animation = easingAnimation(for: keyPath) ?? EasingAnimation(timingFunction: .linear, duration: 1.0, value: value, target: target)
@@ -143,7 +157,6 @@ internal extension PropertyAnimator {
     
     /// Configurates an animation and starts it.
     func configurateAnimation<Value>(_ animation: some ConfigurableAnimationProviding<Value>, target: Value, keyPath: WritableKeyPath<Provider, Value>, settings: AnimationController.AnimationParameters, completion: (()->())? = nil) {
-        
         var animation = animation
         animation.reset()
         
@@ -184,30 +197,59 @@ internal extension PropertyAnimator {
         }
         
         if let oldAnimation = animations[animationKey], oldAnimation.id != animation.id {
-            if settings.options.contains(.keepVelocity), let velocity = self.animation(for: keyPath)?._velocity as? Value.AnimatableData, velocity != .zero {
-                animation.setAnimatableVelocity(velocity)
-            }
             oldAnimation.stop(at: .current, immediately: true)
         }
         animations[animationKey] = animation
         animation.start(afterDelay: settings.delay)
     }
     
+    func updateColor(_ value: inout CGColor, target: inout CGColor) {
+        if value.alpha == 0.0 {
+            value = target.copy(alpha: 0.0) ?? .clear
+        }
+        if target.alpha == 0.0 {
+            target = value.copy(alpha: 0.0) ?? .clear
+        }
+    }
+    
+    func updateColor(_ value: inout NSUIColor, target: inout NSUIColor) {
+        if value.alphaComponent == 0.0 {
+            value = target.withAlphaComponent(0.0)
+        }
+        if target.alphaComponent == 0.0 {
+            target = value.withAlphaComponent(0.0)
+        }
+    }
+    
     /// Updates the current  and target of an animatable property for better interpolation/animations.
     func updateValue<V: AnimatableProperty>(_ value: inout V, target: inout V) {
-        if V.self == CGColor.self {
+        switch V.self {
+        case is CGColor.Type:
             let color = value as! CGColor
             let targetColor = target as! CGColor
-            if color.alpha == 0.0 {
-                value = (targetColor.copy(alpha: 0.0) ?? .clear) as! V
+            value = color.animatable(to: targetColor) as! V
+            target = targetColor.animatable(to: color) as! V
+        case is Optional<CGColor>.Type:
+            let color = (value as! Optional<CGColor>) ?? .zero
+            let targetColor = (target as! Optional<CGColor>) ?? .zero
+            value = color.animatable(to: targetColor) as! V
+            target = targetColor.animatable(to: color) as! V
+        case is NSUIColor.Type:
+            let color = value as! NSUIColor
+            let targetColor = target as! NSUIColor
+            value = color.animatable(to: targetColor) as! V
+            target = targetColor.animatable(to: color) as! V
+        case is Optional<NSUIColor>.Type:
+            let color = (value as! Optional<NSUIColor>) ?? .zero
+            let targetColor = (target as! Optional<NSUIColor>) ?? .zero
+            value = color.animatable(to: targetColor) as! V
+            target = targetColor.animatable(to: color) as! V
+        default:
+            if var collection = value as? any AnimatableCollection, var targetCollection = target as? any AnimatableCollection, collection.count != targetCollection.count {
+                collection.makeAnimatable(to: &targetCollection)
+                value = collection as! V
+                target = targetCollection as! V
             }
-            if targetColor.alpha == 0.0 {
-                target = (color.copy(alpha: 0.0) ?? .clear) as! V
-            }
-        } else if var collection = value as? any AnimatableCollection, var targetCollection = target as? any AnimatableCollection, collection.count != targetCollection.count {
-            collection.makeAnimatable(to: &targetCollection)
-            value = collection as! V
-            target = targetCollection as! V
         }
     }
 }

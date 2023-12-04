@@ -23,7 +23,7 @@ Anima.animate(withSpring: .bouncy) {
 - ``AnimatableProperty``
 - ``AnimatableArray``
 
-### Animatable Provider
+### Animatable Property Provider
 
 - ``AnimatablePropertyProvider``
 - ``PropertyAnimator``

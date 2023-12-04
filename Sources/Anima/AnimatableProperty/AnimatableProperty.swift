@@ -287,6 +287,18 @@ extension ContentConfiguration.InnerShadow: AnimatableProperty, Animatable {
     }
 }
 
+internal extension CGColor {
+    func animatable(to other: CGColor) -> CGColor {
+        self.alpha == 0 ? other.copy(alpha: 0.0) ?? self : self
+    }
+}
+
+internal extension NSUIColor {
+    func animatable(to other: NSUIColor) -> NSUIColor {
+        self.alphaComponent == 0 ? other.withAlphaComponent(0.0) : self
+    }
+}
+
 // Ensures that two collections have the same amount of values for animating between them. If a collection is smaller than the other zero values are added.
 internal protocol AnimatableCollection: RangeReplaceableCollection, BidirectionalCollection {
     var count: Int { get }

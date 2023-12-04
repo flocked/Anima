@@ -14,12 +14,12 @@ By default, lots of types already supported it:
 - `CGPoint`
 - `CGSize`
 - `CGRect`
-- `CGColor`/`NSColor`/`UIColor`
+- `CGColor` / `NSColor` / `UIColor`
 - `CATransform3D` / `CGAffineTransform`
 - ``AnimatableArray``
 - … and many more.
 
-## How to conform
+## How to conform to AnimatableProperty
 
 To conform to ``AnimatableProperty`` you have to provide:
 - ``AnimatableProperty/animatableData``: A representation of the type conforming `VectorArithmetic`.
@@ -29,21 +29,30 @@ To conform to ``AnimatableProperty`` you have to provide:
 Example:
 
 ```swift
-public struct SomeStruct {
-   let value1: Double
-   let value2: Double
+struct MyStruct {
+   let value: Double
+   let point: CGPoint
 }
 
-extension SomeStruct: AnimatableProperty {
-   public var animatableData: AnimatableArray<Double> {
-       [value1, value2]
+extension MyStruct: AnimatableProperty {
+   init(_ animatableData: AnimatableArray<Double>) {
+       value = animatableData[0]
+       point = CGPoint(x: animatableData[1], y: animatableData[2])
    }
 
-   public init(_ animatableData: AnimatableArray<Double>) {
-       self.value1 = animatableData[0]
-       self.value1 = animatableData[1]
+   var animatableData: AnimatableArray<Double> {
+       [value, point.x, point.y]
    }
 
-   public static var zero: Self = SomeStruct(value1: 0, value2: 0)
+   static let zero = MyStruct(value: 0, point: .zero)
+}
+```
+
+You can optionally also provide ``AnimatableProperty/scaledIntegral``, a scaled integral of the value. It is used to integralize the value to the screen's pixel boundaries on animations where ``AnimationOptions/integralizeValues`` is active. This helps prevent drawing frames between pixels, causing aliasing issues.
+
+```swift
+var scaledIntegral: MyStruct {
+    let scaledIntegralPoint = CGPoint(x: point.x.scaledIntegral, y: y.scaledIntegral)
+    return MyStruct(value: value.scaledIntegral, point: scaledIntegralPoint)
 }
 ```
