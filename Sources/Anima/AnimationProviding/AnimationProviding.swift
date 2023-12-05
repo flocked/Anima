@@ -85,10 +85,4 @@ extension ConfigurableAnimationProviding {
         var animation = self
         animation.velocity = velocity
     }
-    
-    func getVelocity(from animation: some ConfigurableAnimationProviding) {
-        guard let velocity = animation._velocity as? Value.AnimatableData else { return }
-        var animation = self
-        animation._velocity = velocity
-    }
 }

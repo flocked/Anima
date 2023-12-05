@@ -344,7 +344,7 @@ public struct Spring: Sendable, Hashable {
 
 @available(macOS 14.0, iOS 17, tvOS 17, *)
 public extension Spring {
-    /// The SwiftUI representation of the spring.
+    /// A SwiftUI representation of the spring.
     internal var swiftUI: SwiftUI.Spring {
         SwiftUI.Spring.init(mass: mass, stiffness: stiffness, damping: damping, allowOverDamping: true)
     }

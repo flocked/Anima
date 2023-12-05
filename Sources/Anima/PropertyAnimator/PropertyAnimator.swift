@@ -59,7 +59,7 @@ public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
         self.object = object
     }
     /// A dictionary containing the current animated property keys and associated animations.
-    public var animations: [String: AnimationProviding] = [:]
+    public internal(set) var animations: [String: AnimationProviding] = [:]
     
     /**
      The current value of the property at the specified keypath. Assigning a new value inside a ``Anima`` animation block animates to the new value.
@@ -135,11 +135,8 @@ internal extension PropertyAnimator {
         switch settings.animationType {
         case .spring(_,_):
             let animation = springAnimation(for: keyPath) ?? SpringAnimation(spring: .smooth, value: value, target: target)
-            if let oldAnimation = self.animation(for: keyPath), oldAnimation.id != animation.id {
-                animation.getVelocity(from: oldAnimation)
-            }
-            if settings.restartVelocity, !settings.animationType.isDecayAnimation {
-                animation._velocity = .zero
+            if let oldAnimation = self.animation(for: keyPath), oldAnimation.id != animation.id, let velocity = oldAnimation._velocity as? Value.AnimatableData {
+                animation._velocity = velocity
             }
             configurateAnimation(animation, target: target, keyPath: keyPath, settings: settings, completion: completion)
         case .easing(_,_):
@@ -203,58 +200,14 @@ internal extension PropertyAnimator {
         animation.start(afterDelay: settings.delay)
     }
     
-    func updateColor(_ value: inout CGColor, target: inout CGColor) {
-        if value.alpha == 0.0 {
-            value = target.copy(alpha: 0.0) ?? .clear
-        }
-        if target.alpha == 0.0 {
-            target = value.copy(alpha: 0.0) ?? .clear
-        }
-    }
-    
-    func updateColor(_ value: inout NSUIColor, target: inout NSUIColor) {
-        if value.alphaComponent == 0.0 {
-            value = target.withAlphaComponent(0.0)
-        }
-        if target.alphaComponent == 0.0 {
-            target = value.withAlphaComponent(0.0)
-        }
-    }
-    
     /// Updates the current  and target of an animatable property for better interpolation/animations.
     func updateValue<V: AnimatableProperty>(_ value: inout V, target: inout V) {
-        switch V.self {
-        case is CGColor.Type:
-            let color = value as! CGColor
-            let targetColor = target as! CGColor
+        if let color = value as? any AnimatableColor, let targetColor = target.animatableData as? any AnimatableColor {
             value = color.animatable(to: targetColor) as! V
             target = targetColor.animatable(to: color) as! V
-        case is Optional<CGColor>.Type:
-            let color = (value as! Optional<CGColor>) ?? .zero
-            let targetColor = (target as! Optional<CGColor>) ?? .zero
-            value = color.animatable(to: targetColor) as! V
-            target = targetColor.animatable(to: color) as! V
-        case is NSUIColor.Type:
-            let color = value as! NSUIColor
-            let targetColor = target as! NSUIColor
-            value = color.animatable(to: targetColor) as! V
-            target = targetColor.animatable(to: color) as! V
-        case is Optional<NSUIColor>.Type:
-            let color = (value as! Optional<NSUIColor>) ?? .zero
-            let targetColor = (target as! Optional<NSUIColor>) ?? .zero
-            value = color.animatable(to: targetColor) as! V
-            target = targetColor.animatable(to: color) as! V
-        case is any AnimatableCollection:
-            let collection = value as! any AnimatableCollection
-            let targetCollection = target as! any AnimatableCollection
-            value = collection.animatable(to: targetCollection) as! V
-            target = targetCollection.animatable(to: collection) as! V
-        default:
-            if var collection = value as? any AnimatableCollection, var targetCollection = target as? any AnimatableCollection, collection.count != targetCollection.count {
-                collection.makeAnimatable(to: &targetCollection)
-                value = collection as! V
-                target = targetCollection as! V
-            }
+        } else if let collection = value.animatableData as? any AnimatableCollection, let targetCollection = target.animatableData as? any AnimatableCollection, collection.count != targetCollection.count {
+            value =  V(collection.animatable(to: targetCollection) as! V.AnimatableData)
+            target =  V(targetCollection.animatable(to: collection) as! V.AnimatableData)
         }
     }
 }
@@ -266,17 +219,17 @@ internal extension PropertyAnimator {
     }
     
     /// The current decay animation for the property at the keypath or key, or `nil` if there isn't a decay animation for the keypath.
-    func decayAnimation<Val>(for keyPath: PartialKeyPath<Provider>) -> DecayAnimation<Val>? {
-        return self.animation(for: keyPath) as? DecayAnimation<Val>
+    func decayAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> DecayAnimation<Value>? {
+        return self.animation(for: keyPath) as? DecayAnimation<Value>
     }
     
     /// The current easing animation for the property at the keypath or key, or `nil` if there isn't an easing animation for the keypath.
-    func easingAnimation<Val>(for keyPath: PartialKeyPath<Provider>) -> EasingAnimation<Val>? {
-        return self.animation(for: keyPath) as? EasingAnimation<Val>
+    func easingAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> EasingAnimation<Value>? {
+        return self.animation(for: keyPath) as? EasingAnimation<Value>
     }
     
     /// The current spring animation for the property at the keypath or key, or `nil` if there isn't a spring animation for the keypath.
-    func springAnimation<Val>(for keyPath: PartialKeyPath<Provider>) -> SpringAnimation<Val>? {
-        return self.animation(for: keyPath) as? SpringAnimation<Val>
+    func springAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> SpringAnimation<Value>? {
+        return self.animation(for: keyPath) as? SpringAnimation<Value>
     }
 }

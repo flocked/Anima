@@ -19,16 +19,13 @@ public struct AnimationOptions: OptionSet, Sendable, Hashable {
     
     /// The animation runs backwards and forwards (must be combined with the ``repeats`` option).
     public static let autoreverse = AnimationOptions(rawValue: 1 << 2)
-    
-    /// The animation starts automatically when it's `target` value changes to a value that isn't equal to it's current `value`.
-    public static let autoStarts = AnimationOptions(rawValue: 1 << 3)
-    
-    /// Usually the velocity of a property that is currently spring animated, is perserved when spring animated to another value. This option ignores the current velocity and restarts it at `zero`.
-    public static let restartVelocity = AnimationOptions(rawValue: 1 << 4)
+
+    /// Usually the velocity of a spring animated property is perseved when you animate it to another value. This option will reset the velocity for any new spring animation.
+    public static let resetSpringVelocity = AnimationOptions(rawValue: 1 << 3)
     
     #if os(iOS) || os(tvOS)
     /// Prevents the user to interact with views while they are being animated.
-    public static let preventUserInteraction = AnimationOptions(rawValue: 1 << 5)
+    public static let preventUserInteraction = AnimationOptions(rawValue: 1 << 4)
     #endif
     
     /// Creates a structure that represents animation options.
@@ -45,7 +42,7 @@ extension AnimationOptions: CustomStringConvertible {
             integralizeValues: \(contains(.integralizeValues))
             repeats: \(contains(.repeats))
             autoreverse: \(contains(.autoreverse))
-            autoStarts: \(contains(.autoStarts))
+            resetSpringVelocity: \(contains(.resetSpringVelocity))
             preventUserInteraction: \(contains(.preventUserInteraction))
         )
         """
@@ -55,7 +52,7 @@ extension AnimationOptions: CustomStringConvertible {
             integralizeValues: \(contains(.integralizeValues))
             repeats: \(contains(.repeats))
             autoreverse: \(contains(.autoreverse))
-            autoStarts: \(contains(.autoStarts))
+            resetSpringVelocity: \(contains(.resetSpringVelocity))
         )
         """
         #endif

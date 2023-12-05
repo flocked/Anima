@@ -155,7 +155,6 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     func configure(withSettings settings: AnimationController.AnimationParameters) {
         groupID = settings.groupID
         repeats = settings.repeats
-        autoStarts = settings.autoStarts
         autoreverse = settings.autoreverse
         integralizeValues = settings.integralizeValues
         

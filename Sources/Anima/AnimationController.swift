@@ -144,10 +144,6 @@ extension AnimationController {
             options.contains(.integralizeValues)
         }
         
-        var autoStarts: Bool {
-            options.contains(.autoStarts)
-        }
-        
         var autoreverse: Bool {
             options.contains(.autoreverse)
         }
@@ -156,8 +152,8 @@ extension AnimationController {
             !animationType.isNonAnimated
         }
         
-        var restartVelocity: Bool {
-            options.contains(.restartVelocity)
+        var resetSpringVelocity: Bool {
+            options.contains(.resetSpringVelocity)
         }
                 
         #if os(iOS) || os(tvOS)
@@ -190,13 +186,6 @@ extension AnimationController {
             var isAnyVelocity: Bool {
                 switch self {
                 case .velocityUpdate, .decay(_, _): return true
-                default: return false
-                }
-            }
-            
-            var isDecayAnimation: Bool {
-                switch self {
-                case .decay: return true
                 default: return false
                 }
             }

@@ -1,6 +1,6 @@
 # Animatable Properties
 
-Make properties animatable by conforming it to `AnimatableProperty`.
+Make properties animatable by conforming to `AnimatableProperty`.
 
 ## Overview
 
@@ -16,7 +16,6 @@ By default, lots of types already supported it:
 - `CGRect`
 - `CGColor` / `NSColor` / `UIColor`
 - `CATransform3D` / `CGAffineTransform`
-- ``AnimatableArray``
 - … and many more.
 
 ## How to conform to AnimatableProperty
@@ -25,6 +24,11 @@ To conform to ``AnimatableProperty`` you have to provide:
 - ``AnimatableProperty/animatableData``: A representation of the type conforming `VectorArithmetic`.
 - ``AnimatableProperty/init(_:)``: Initialization of the type with the `animatableData`.
 - ``AnimatableProperty/zero`` The zero value of the type.
+
+
+`animatableData` is used by `Anima` to calculate the interpolation of the values while animating.
+
+The easist way to provide animatableData,  is to use ``AnimatabeArray``.
 
 Example:
 
