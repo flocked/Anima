@@ -35,6 +35,12 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         set { self[\.frame] = newValue }
     }
     
+    /// The origin of the layer.
+    public var origin: CGPoint {
+        get { frame.origin }
+        set { frame.origin = newValue }
+    }
+    
     /// The size of the layer. Changing the value keeps the layer centered. To change the size without centering use the layer's frame size.
     public var size: CGSize {
         get { frame.size }
@@ -42,12 +48,6 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
             guard size != newValue else { return }
             frame.sizeCentered = newValue
         }
-    }
-    
-    /// The origin of the layer.
-    public var origin: CGPoint {
-        get { frame.origin }
-        set { frame.origin = newValue }
     }
     
     /// The center of the layer.

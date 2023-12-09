@@ -34,7 +34,7 @@ extension NSUIColor {
     /**
      Generates the resolved color for the specified view,.
      
-     - Parameters view: The view for the resolved color.
+     - Parameter view: The view for the resolved color.
      - Returns: A resolved color for the view.
      */
     func resolvedColor(for view: NSUIView) -> NSUIColor {
@@ -50,11 +50,6 @@ extension NSUIColor {
         let dyamic = self.dynamicColors
         return dyamic.light != dyamic.dark
     }
-    
-    /// A Boolean value that indicates whether the color is visible (`alphaComponent` isn't zero).
-    var isVisible: Bool {
-        self.alphaComponent != 0.0
-    }
 }
 
 #if os(macOS)
@@ -69,7 +64,7 @@ extension NSColor {
     /**
      Generates the resolved color for the specified appearance.
      
-     - Parameters appearance: The appearance of the resolved color.
+     - Parameter appearance: The appearance of the resolved color.
      - Returns: A `NSColor` for the appearance.
      */
     func resolvedColor(for appearance: NSAppearance? = nil) -> NSColor {

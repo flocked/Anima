@@ -64,7 +64,7 @@ public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     /**
      The current value of the property at the specified keypath. Assigning a new value inside a ``Anima`` animation block animates to the new value.
      
-     - Parameters keyPath: The keypath to the animatable property.
+     - Parameter keyPath: The keypath to the animatable property.
      */
     public subscript<Value: AnimatableProperty>(keyPath: WritableKeyPath<Provider, Value>) -> Value {
         get { value(for: keyPath) }
@@ -74,7 +74,7 @@ public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     /**
      The current animation velocity of the property at the specified keypath, or `zero` if there isn't an animation for the property or the animation doesn't support velocity values.
 
-     - Parameters velocity: The keypath to the animatable property for the velocity.
+     - Parameter velocity: The keypath to the animatable property for the velocity.
      */
     public subscript<Value: AnimatableProperty>(velocity velocity: WritableKeyPath<Provider, Value>) -> Value {
         get { animation(for: velocity)?.velocity as? Value ?? .zero  }
@@ -84,7 +84,7 @@ public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     /**
      The current animation for the property at the specified keypath.
      
-     - Parameters keyPath: The keypath to an animatable property.
+     - Parameter keyPath: The keypath to an animatable property.
      */
     public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<PropertyAnimator, Value>) -> AnimationProviding? {
         var key = keyPath.stringValue
@@ -99,7 +99,7 @@ public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     /**
      The current animation velocity for the property at the specified keypath, or `nil` if there isn't an animation for the keypath or the animation doesn't support velocity values.
      
-     - Parameters keyPath: The keypath to an animatable property.
+     - Parameter keyPath: The keypath to an animatable property.
      */
     public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<PropertyAnimator, Value>) -> Value? {
         return (animation(for: keyPath) as? any ConfigurableAnimationProviding)?.velocity as? Value

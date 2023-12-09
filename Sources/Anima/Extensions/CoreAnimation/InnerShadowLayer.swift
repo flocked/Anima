@@ -16,12 +16,16 @@ import UIKit
 class InnerShadowLayer: CALayer {
     /// The configuration of the inner shadow.
     public var configuration: ShadowConfiguration {
-        get { ShadowConfiguration(color: self.shadowColor?.nsUIColor, opacity: CGFloat(self.shadowOpacity), radius: self.shadowRadius, offset: CGPoint(x: self.shadowOffset.width, y: self.shadowOffset.height))  }
+        get { ShadowConfiguration(color: shadowColor?.nsUIColor, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point)  }
         set {
-            self.shadowColor = newValue.color?.cgColor
-            self.shadowOpacity = Float(newValue.opacity)
-            self.shadowOffset = CGSize(width: newValue.offset.x, height: newValue.offset.y)
-            self.shadowRadius = newValue.radius
+            shadowColor = newValue.color?.cgColor
+            shadowOpacity = Float(newValue.opacity)
+            let needsUpdate = shadowOffset != newValue.offset.size || shadowRadius != newValue.radius
+            shadowOffset = newValue.offset.size
+            shadowRadius = newValue.radius
+            if needsUpdate {
+                updateShadowPath()
+            }
         }
     }
     
@@ -29,7 +33,7 @@ class InnerShadowLayer: CALayer {
     /**
      Initalizes an inner shadow layer with the specified configuration.
      
-     - Parameters configuration: The configuration of the inner shadow.
+     - Parameter configuration: The configuration of the inner shadow.
      - Returns: The inner shadow layer.
      */
     public init(configuration: ShadowConfiguration) {
@@ -40,73 +44,61 @@ class InnerShadowLayer: CALayer {
     
     override public init() {
         super.init()
-        self.sharedInit()
+        sharedInit()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.sharedInit()
+        sharedInit()
     }
     
     public override init(layer: Any) {
         super.init(layer: layer)
-        self.sharedInit()
+        sharedInit()
     }
     
     func sharedInit() {
-        self.shadowOpacity = 0
-        self.shadowColor = nil
-        self.shadowOffset = .zero
-        self.shadowRadius = 0.0
-    }
-    
-    public override var shadowRadius: CGFloat {
-        didSet { if !isUpdating, oldValue != shadowRadius { self.update() } }
-    }
-    
-    public override var shadowOffset: CGSize {
-        didSet { if !isUpdating, oldValue != shadowOffset { self.update() } }
-    }
-
-    var isUpdating: Bool = false
-    override public var frame: CGRect {
-        didSet { if !isUpdating, oldValue != frame {
-            update() } }
+        shadowOpacity = 0
+        shadowColor = nil
+        masksToBounds = true
+        backgroundColor = .clear
+        shadowOffset = .zero
+        shadowRadius = 0.0
     }
     
     override public var bounds: CGRect {
-        didSet { if !isUpdating, oldValue != bounds {
-            update() } }
+        didSet {
+            guard oldValue != bounds else { return }
+            updateShadowPath()
+        }
     }
     
     public override var cornerRadius: CGFloat {
-        didSet { if !isUpdating, oldValue != cornerRadius {
-            update() } }
+        didSet {
+            guard oldValue != cornerRadius else { return }
+            updateShadowPath()
+        }
     }
 
-    func update() {
-            var path = NSUIBezierPath(rect: bounds.insetBy(dx: -20, dy: -20))
+    func updateShadowPath() {
+        let path: NSUIBezierPath
+        let innerPart: NSUIBezierPath
+        if cornerRadius != 0.0 {
+            path = NSUIBezierPath(roundedRect: bounds.insetBy(dx: -20, dy: -20), cornerRadius: cornerRadius)
             #if os(macOS)
-            var innerPart = NSUIBezierPath(rect: bounds).reversed
+            innerPart = NSUIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).reversed
             #else
-            var innerPart = NSUIBezierPath(rect: bounds).reversing()
+            innerPart = NSUIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).reversing()
             #endif
-            if cornerRadius != 0.0 {
-                path = NSUIBezierPath(roundedRect: bounds.insetBy(dx: -20, dy: -20), cornerRadius: cornerRadius)
-                #if os(macOS)
-                innerPart = NSUIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).reversed
-                #else
-                innerPart = NSUIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).reversing()
-                #endif
-            }
-            path.append(innerPart)
-            shadowPath = path.cgPath
-            masksToBounds = true
-            backgroundColor = .clear
-    }
-
-    override public func display() {
-        super.display()
-        update()
+        } else {
+            path = NSUIBezierPath(rect: bounds.insetBy(dx: -20, dy: -20))
+            #if os(macOS)
+            innerPart = NSUIBezierPath(rect: bounds).reversed
+            #else
+            innerPart = NSUIBezierPath(rect: bounds).reversing()
+            #endif
+        }
+        path.append(innerPart)
+        shadowPath = path.cgPath
     }
 }

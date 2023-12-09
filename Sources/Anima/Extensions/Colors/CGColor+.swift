@@ -33,23 +33,17 @@ extension CGColor {
             return (ciColor.red, ciColor.green, ciColor.blue, ciColor.alpha)
         }
     }
-    
-    /// A Boolean value that indicates whether the color is visible (alpha value isn't zero).
-    var isVisible: Bool {
-        rgbaComponents()?.alpha != 0.0
-    }
-    
+
     var nsUIColor: NSUIColor? {
         return NSUIColor(cgColor: self)
     }
-    
 }
 
 #if canImport(UIKit)
 extension CGColor {
     /// The clear color in the Generic gray color space.
     static var clear: CGColor {
-        return UIColor.clear.cgColor
+        CGColor(gray: 0, alpha: 0)
     }
 }
 #endif

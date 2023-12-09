@@ -19,8 +19,8 @@ extension Sequence {
     /**
     An array of the elements sorted by the given keypath.
      
-     - Parameters keyPath: The keypath to compare the elements.
-     - Parameters order: The order of the sorting.
+     - Parameter keyPath: The keypath to compare the elements.
+     - Parameter order: The order of the sorting.
      */
     func sorted<Value>(by keyPath: KeyPath<Element, Value>, _ order : SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
         if order == .ascending {
@@ -33,8 +33,8 @@ extension Sequence {
     /**
     An array of the elements sorted by the given keypath.
      
-     - Parameters compare: The keypath to compare the elements.
-     - Parameters order: The order of the sorting.
+     - Parameter compare: The keypath to compare the elements.
+     - Parameter order: The order of the sorting.
      */
     func sorted<Value>(by keyPath: KeyPath<Element, Value?>, _ order : SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
         if order == .ascending {

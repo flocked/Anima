@@ -35,6 +35,12 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         set { self[\.frame] = newValue }
     }
     
+    /// The origin of the view.
+    public var origin: CGPoint {
+        get { frame.origin }
+        set { frame.origin = newValue }
+    }
+    
     /// The size of the view. Changing the value keeps the view centered. To change the size without centering use the view's frame size.
     public var size: CGSize {
         get { frame.size }
@@ -42,12 +48,6 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
             guard size != newValue else { return }
             frame.sizeCentered = newValue
         }
-    }
-    
-    /// The origin of the view.
-    public var origin: CGPoint {
-        get { frame.origin }
-        set { frame.origin = newValue }
     }
     
     /// The center of the view.

@@ -24,6 +24,12 @@ public class WindowAnimator: PropertyAnimator<NSWindow> {
         set { self[\.frame_] = newValue }
     }
     
+    /// The origin of the window.
+    public var origin: CGPoint {
+        get { frame.origin }
+        set { frame.origin = newValue }
+    }
+    
     /// The size of the window. Changing the value keeps the window centered. To change the size without centering use the window's frame size.
     public var size: CGSize {
         get { frame.size }
