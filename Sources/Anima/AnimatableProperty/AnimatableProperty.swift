@@ -344,6 +344,34 @@ extension Optional: AnimatableColor where Wrapped: AnimatableColor {
     }
 }
 
+// MARK: - AnimatableShaodw
+
+// Updates shadows for better interpolation/animations.
+internal protocol AnimatableShaodw {
+    var color: NSUIColor? { get }
+    func animatable(to other: any AnimatableShaodw) -> Self
+}
+
+extension ContentConfiguration.Shadow: AnimatableShaodw {
+    internal func animatable(to other: AnimatableShaodw) -> Self {
+        var shadow = self
+        if self.color == nil || self.color?.alpha == 0.0, let otherColor = other.color {
+            shadow.color = otherColor.withAlphaComponent(0.0)
+        }
+        return shadow
+    }
+}
+
+extension ContentConfiguration.InnerShadow: AnimatableShaodw {
+    internal func animatable(to other: AnimatableShaodw) -> Self {
+        var shadow = self
+        if self.color == nil || self.color?.alpha == 0.0, let otherColor = other.color {
+            shadow.color = otherColor.withAlphaComponent(0.0)
+        }
+        return shadow
+    }
+}
+
 // MARK: - AnimatableCollection
 
 // Ensures two collections have the same count for animating between them. If a collection is smaller zero values are added.
