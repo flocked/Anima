@@ -267,8 +267,8 @@ extension CGQuaternion: AnimatableProperty, Animatable {
     }
 }
 
-extension ContentConfiguration.Shadow: AnimatableProperty, Animatable {
-    public static var zero: ContentConfiguration.Shadow {
+extension ShadowConfiguration: AnimatableProperty, Animatable {
+    public static var zero: ShadowConfiguration {
         .none()
     }
     
@@ -282,20 +282,6 @@ extension ContentConfiguration.Shadow: AnimatableProperty, Animatable {
     }
 }
 
-extension ContentConfiguration.InnerShadow: AnimatableProperty, Animatable {
-    public static var zero: ContentConfiguration.InnerShadow {
-        .none()
-    }
-    
-    public init(_ animatableData: AnimatableArray<Double>) {
-        self.init(color: .init([animatableData[0], animatableData[1], animatableData[2], animatableData[3]]), opacity: animatableData[4], radius: animatableData[5], offset: .init(animatableData[6], animatableData[7]))
-    }
-    
-    public var animatableData: AnimatableArray<Double> {
-        get { (self.color ?? .zero).animatableData + [opacity, radius, offset.x, offset.y] }
-        set { self = .init(newValue) }
-    }
-}
 
 extension Array: AnimatableProperty where Element: AnimatableProperty {
     public init(_ animatableData: AnimatableArray<Element.AnimatableData>) {
@@ -344,26 +330,17 @@ extension Optional: AnimatableColor where Wrapped: AnimatableColor {
     }
 }
 
-// MARK: - AnimatableShaodw
+
+// MARK: - AnimatableShadow
 
 // Updates shadows for better interpolation/animations.
-internal protocol AnimatableShaodw {
+internal protocol AnimatableShadow {
     var color: NSUIColor? { get }
-    func animatable(to other: any AnimatableShaodw) -> Self
+    func animatable(to other: any AnimatableShadow) -> Self
 }
 
-extension ContentConfiguration.Shadow: AnimatableShaodw {
-    internal func animatable(to other: AnimatableShaodw) -> Self {
-        var shadow = self
-        if self.color == nil || self.color?.alpha == 0.0, let otherColor = other.color {
-            shadow.color = otherColor.withAlphaComponent(0.0)
-        }
-        return shadow
-    }
-}
-
-extension ContentConfiguration.InnerShadow: AnimatableShaodw {
-    internal func animatable(to other: AnimatableShaodw) -> Self {
+extension ShadowConfiguration: AnimatableShadow {
+    internal func animatable(to other: AnimatableShadow) -> Self {
         var shadow = self
         if self.color == nil || self.color?.alpha == 0.0, let otherColor = other.color {
             shadow.color = otherColor.withAlphaComponent(0.0)

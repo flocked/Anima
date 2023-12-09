@@ -16,7 +16,7 @@ import UIKit
 internal extension CALayer {
     
     /// The shadow of the layer.
-    var shadow: ContentConfiguration.Shadow {
+    var shadow: ShadowConfiguration {
         get { .init(color: shadowColor?.nsUIColor, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point) }
         set {
             shadowColor = newValue.color?.cgColor
@@ -27,9 +27,9 @@ internal extension CALayer {
     }
     
     /// The inner shadow of the layer.
-    var innerShadow: ContentConfiguration.InnerShadow {
+    var innerShadow: ShadowConfiguration {
         get { self.innerShadowLayer?.configuration ?? .none() }
-        set { self.configurate(using: newValue) }
+        set { self.configurateInnerShadow(using: newValue) }
     }
     
     /// Sends the layer to the front of it's superlayer.

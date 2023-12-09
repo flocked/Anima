@@ -130,13 +130,13 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     }
     
     /// The shadow of the layer.
-    public var shadow: ContentConfiguration.Shadow {
+    public var shadow: ShadowConfiguration {
         get { self[\.shadow] }
         set { self[\.shadow] = newValue }
     }
     
     /// The inner shadow of the layer.
-    public var innerShadow: ContentConfiguration.InnerShadow {
+    public var innerShadow: ShadowConfiguration {
         get { self[\.innerShadow] }
         set { self[\.innerShadow] = newValue }
     }
