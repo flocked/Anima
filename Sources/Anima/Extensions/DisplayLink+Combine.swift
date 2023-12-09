@@ -1,8 +1,8 @@
 //
 //  DisplayLink+Combine.swift
 //  
-//
-//  Created by Florian Zand on 31.05.22.
+//  Copyright (c) 2019, Tim Donnelly
+//  https://github.com/timdonnelly/DisplayLink
 //
 
 import Combine
