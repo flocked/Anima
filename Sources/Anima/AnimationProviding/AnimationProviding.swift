@@ -69,7 +69,7 @@ extension AnimationProviding {
     }
 }
 
-/// An extension to `AnimationProviding` used for configurating animations.
+/// An internal extension to `AnimationProviding` used for configurating animations.
 protocol ConfigurableAnimationProviding<Value>: AnimationProviding {
     associatedtype Value: AnimatableProperty
     var state: AnimatingState { get set }

@@ -14,7 +14,6 @@ import UIKit
 #endif
 
 extension CALayer {
-    
     /// The shadow of the layer.
     var shadow: ShadowConfiguration {
         get { .init(color: shadowColor?.nsUIColor, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point) }

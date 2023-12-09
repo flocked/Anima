@@ -14,7 +14,6 @@ import UIKit
 
 /// A layer with an inner shadow.
 class InnerShadowLayer: CALayer {
-    
     /// The configuration of the inner shadow.
     public var configuration: ShadowConfiguration {
         get { ShadowConfiguration(color: self.shadowColor?.nsUIColor, opacity: CGFloat(self.shadowOpacity), radius: self.shadowRadius, offset: CGPoint(x: self.shadowOffset.width, y: self.shadowOffset.height))  }
