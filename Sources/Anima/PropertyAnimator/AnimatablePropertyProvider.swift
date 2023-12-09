@@ -17,7 +17,7 @@ public protocol AnimatablePropertyProvider: AnyObject {
                
      Example usage:
      ```swift
-     Wave.animate(withSpring: .smooth) {
+     Anima.animate(withSpring: .smooth) {
         myView.animator.center = CGPoint(x: 100, y: 100)
         myView.animator.alpha = 0.5
      }
@@ -36,7 +36,7 @@ public protocol AnimatablePropertyProvider: AnyObject {
         var myAnimatableProperty: CGFloat = 0.0
      }
      
-     Wave.animate(withSpring: .smooth) {
+     Anima.animate(withSpring: .smooth) {
         myObject.animator[\.myAnimatableProperty] = newValue
      }
      ```
@@ -51,7 +51,7 @@ public protocol AnimatablePropertyProvider: AnyObject {
         }
      }
      
-     Wave.animate(withSpring: .smooth) {
+     Anima.animate(withSpring: .smooth) {
         myObject.animator.myAnimatableProperty = newValue
      }
      ```

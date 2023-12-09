@@ -219,10 +219,10 @@ public class Anima {
     /**
      Performs the specified changes non animated.
      
-     Use it to immediately update values of properties. For properties that are currently animated, the animations stop. You can also update values non animated by using the ``AnimatablePropertyProvider/animator-54mpy`` outside of any ``Wave`` animation block.
+     Use it to immediately update values of properties. For properties that are currently animated, the animations stop. You can also update values non animated by using the ``AnimatablePropertyProvider/animator-54mpy`` outside of any ``Anima`` animation block.
      
      ```swift
-     Wave.nonAnimate() {
+     Anima.nonAnimate() {
         myView.animator.center = newCenterPoint
      }
      
@@ -230,7 +230,7 @@ public class Anima {
      myView.animator.center = newCenterPoint
      ```
      
-     - Note: For a list of all objects that provide animatable properties check ``Wave``.
+     - Note: For a list of all objects that provide animatable properties check ``Anima``.
      
      - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
      */

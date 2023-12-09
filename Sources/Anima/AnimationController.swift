@@ -13,7 +13,7 @@ import AppKit
 import UIKit
 #endif
 
-/// Manages all ``Wave`` animations.
+/// Manages all ``Anima`` animations.
 internal class AnimationController {
     public static let shared = AnimationController()
 
@@ -34,7 +34,7 @@ internal class AnimationController {
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
-        precondition(Thread.isMainThread, "All Wave animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.")
+        precondition(Thread.isMainThread, "All Anima animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.")
 
         // Register the handler
         groupAnimationCompletionBlocks[settings.groupID] = completion
