@@ -11,7 +11,7 @@ import Accelerate
 
 /**
  An array that can serve as the animatable data of an animatable type (see ``AnimatableProperty``).
- 
+  
  Example usage:
  ```swift
  struct MyStruct {
@@ -32,6 +32,7 @@ import Accelerate
     static let zero = MyStruct(value: 0, point: .zero)
  }
  ```
+ > Tip:  It's recommended to use `Double` as elements for much faster calculating in animations.
  */
 public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
     internal var elements: [Element] = []

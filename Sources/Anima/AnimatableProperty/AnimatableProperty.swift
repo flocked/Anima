@@ -13,6 +13,8 @@ import UIKit
 import SwiftUI
 import Decomposed
 
+// MARK: - AnimatableProperty
+
 /**
  A type that describes an animatable value.
   
@@ -178,13 +180,14 @@ extension CGColor: AnimatableProperty {
     }
 }
 
-extension CGAffineTransform: AnimatableProperty {
+extension CGAffineTransform: AnimatableProperty, Animatable {
     @inlinable public init(_ animatableData: AnimatableArray<Double>) {
         self.init(animatableData[0], animatableData[1], animatableData[2], animatableData[3], animatableData[4], animatableData[5])
     }
     
     public var animatableData: AnimatableArray<Double> {
-        return [a, b, c, d, tx, ty, 0, 0]
+        get { [a, b, c, d, tx, ty, 0, 0] }
+        set { self = .init(newValue) }
     }
     
     public static var zero: CGAffineTransform {
@@ -192,20 +195,22 @@ extension CGAffineTransform: AnimatableProperty {
     }
 }
 
-extension NSDirectionalEdgeInsets: AnimatableProperty {
+extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
     public init(_ animatableData: AnimatableArray<Double>) {
         self.init(top: animatableData[0], leading: animatableData[1], bottom: animatableData[2], trailing: animatableData[3])
     }
     
     public var animatableData: AnimatableArray<Double> {
-        [top, bottom, leading, trailing]
+        get {[top, bottom, leading, trailing] }
+        set { self = .init(newValue) }
     }
 }
 
 #if os(macOS)
-extension NSEdgeInsets: AnimatableProperty {
+extension NSEdgeInsets: AnimatableProperty, Animatable {
     public var animatableData: AnimatableArray<Double> {
-        [top, self.left, bottom, self.right]
+        get { [top, self.left, bottom, self.right] }
+        set { self = .init(newValue) }
     }
     
     public init(_ animatableData: AnimatableArray<Double>) {
@@ -213,9 +218,10 @@ extension NSEdgeInsets: AnimatableProperty {
     }
 }
 #else
-extension UIEdgeInsets: AnimatableProperty {
+extension UIEdgeInsets: AnimatableProperty, Animatable {
     public var animatableData: AnimatableArray<Double> {
-        [top, self.left, bottom, self.right]
+        get { [top, self.left, bottom, self.right] }
+        set { self = .init(newValue) }
     }
     
     public init(_ animatableData: AnimatableArray<Double>) {
@@ -223,9 +229,11 @@ extension UIEdgeInsets: AnimatableProperty {
     }
 }
 #endif
-extension CGVector: AnimatableProperty {
+
+extension CGVector: AnimatableProperty, Animatable {
     public var animatableData: AnimatableArray<Double> {
-        [dx, dy]
+        get { [dx, dy] }
+        set { self = .init(newValue) }
     }
     
     public init(_ animatableData: AnimatableArray<Double>) {
@@ -233,23 +241,25 @@ extension CGVector: AnimatableProperty {
     }
 }
 
-extension CATransform3D: AnimatableProperty {
+extension CATransform3D: AnimatableProperty, Animatable {
     public init(_ animatableData: AnimatableArray<Double>) {
         self.init(m11: animatableData[0], m12: animatableData[1], m13: animatableData[2], m14: animatableData[3], m21: animatableData[4], m22: animatableData[5], m23: animatableData[6], m24: animatableData[7], m31: animatableData[8], m32: animatableData[9], m33: animatableData[10], m34: animatableData[11], m41: animatableData[12], m42: animatableData[13], m43: animatableData[14], m44: animatableData[15])
     }
     
     public var animatableData: AnimatableArray<Double> {
-        return [m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44]
+        get { [m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44] }
+        set { self = .init(newValue) }
     }
 }
 
-extension CGQuaternion: AnimatableProperty {
+extension CGQuaternion: AnimatableProperty, Animatable {
     public init(_ animatableData: AnimatableArray<Double>) {
         self.init(angle: animatableData[0], axis: .init(animatableData[1], animatableData[2], animatableData[3]))
     }
     
     public var animatableData: AnimatableArray<Double> {
-        [self.angle, self.axis.x, self.axis.y, self.axis.z]
+        get { [self.angle, self.axis.x, self.axis.y, self.axis.z] }
+        set { self = .init(newValue) }
     }
     
     public static var zero: CGQuaternion {
@@ -287,13 +297,23 @@ extension ContentConfiguration.InnerShadow: AnimatableProperty, Animatable {
     }
 }
 
-// Ensures that two collections have the same amount of values for animating between them. If a collection is smaller than the other zero values are added.
-internal protocol AnimatableCollection: RangeReplaceableCollection, BidirectionalCollection {
-    var count: Int { get }
-    // Ensures both collections have the same amount of values for animating between them.
-    func animatable(to collection: any AnimatableCollection) -> Self
+extension Array: AnimatableProperty where Element: AnimatableProperty {
+    public init(_ animatableData: AnimatableArray<Element.AnimatableData>) {
+        self.init(animatableData.elements.compactMap({Element($0)}))
+    }
+    
+    public var animatableData: AnimatableArray<Element.AnimatableData> {
+        get { AnimatableArray<Element.AnimatableData>(self.compactMap({$0.animatableData})) }
+    }
+    
+    public static var zero: Array<Element> {
+        Self.init()
+    }
 }
 
+// MARK: - AnimatableColor
+
+// Updates colors for better interpolation/animations.
 internal protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableArray<Double> {
     var alpha: CGFloat { get }
     func animatable(to other: any AnimatableColor) -> Self
@@ -324,37 +344,12 @@ extension Optional: AnimatableColor where Wrapped: AnimatableColor {
     }
 }
 
-/*
-internal extension CGColor {
-    func animatable(to other: CGColor) -> CGColor {
-        self.alpha == 0 ? other.copy(alpha: 0.0) ?? self : self
-    }
-}
+// MARK: - AnimatableCollection
 
-internal extension NSUIColor {
-    func animatable(to other: NSUIColor) -> NSUIColor {
-        self.alphaComponent == 0 ? other.withAlphaComponent(0.0) : self
-    }
-}
- */
-
-extension Array: AnimatableProperty, AnimatableCollection where Element: AnimatableProperty {
-    public init(_ animatableData: AnimatableArray<Element.AnimatableData>) {
-        self.init(animatableData.elements.compactMap({Element($0)}))
-    }
-    
-    public var animatableData: AnimatableArray<Element.AnimatableData> {
-        get { AnimatableArray<Element.AnimatableData>(self.compactMap({$0.animatableData})) }
-    }
-    
-    public static var zero: Array<Element> {
-        Self.init()
-    }
-
-    internal func animatable(to collection: any AnimatableCollection) -> Self {
-        let diff = collection.count - self.count
-        return diff > 0 ? (self + Array(repeating: .zero, count: diff)) : self
-    }
+// Ensures two collections have the same count for animating between them. If a collection is smaller zero values are added.
+internal protocol AnimatableCollection: RangeReplaceableCollection, BidirectionalCollection {
+    var count: Int { get }
+    func animatable(to collection: any AnimatableCollection) -> Self
 }
 
 extension AnimatableArray: AnimatableCollection {
@@ -364,4 +359,9 @@ extension AnimatableArray: AnimatableCollection {
     }
 }
 
-extension Array: Animatable where Element: Animatable { }
+extension Array: AnimatableCollection where Self: AnimatableProperty {
+    internal func animatable(to collection: any AnimatableCollection) -> Self {
+        let diff = collection.count - self.count
+        return diff > 0 ? (self + Array(repeating: .zero, count: diff)) : self
+    }
+}
