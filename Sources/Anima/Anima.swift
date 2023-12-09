@@ -7,6 +7,11 @@
 
 import CoreGraphics
 import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 
 /**
  Performs animations on animatable properties of objects conforming to ``AnimatablePropertyProvider``.
@@ -191,6 +196,13 @@ public class Anima {
      */
     public static func stopAllAnimations(immediately: Bool = true) {
         AnimationController.shared.stopAllAnimations(immediately: immediately)
+    }
+    
+    /// The preferred framerate of the animations. The default value is `nil` which uses the default frame rate of the display.
+    @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
+    public var preferredFrameRateRange: CAFrameRateRange? {
+        get { AnimationController.shared.preferredFrameRateRange }
+        set { AnimationController.shared.preferredFrameRateRange = newValue }
     }
     
     /**

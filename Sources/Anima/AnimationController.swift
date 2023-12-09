@@ -92,12 +92,35 @@ internal class AnimationController {
             stopDisplayLink()
         }
     }
+    
+    /// The preferred rame rate of the animations.
+    @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
+    internal var preferredFrameRateRange: CAFrameRateRange? {
+        get { _preferredFrameRateRange as? CAFrameRateRange }
+        set { _preferredFrameRateRange = newValue }
+    }
+        
+    private var _preferredFrameRateRange: Any? = nil {
+        didSet {
+            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *), preferredFrameRateRange != nil, displayLink != nil {
+                stopDisplayLink()
+                startDisplayLink()
+            }
+        }
+    }
 
     private func startDisplayLink() {
         if displayLink == nil {
-            displayLink = DisplayLink.shared.sink { [weak self] frame in
-                guard let self = self else { return }
-                self.updateAnimations(frame)
+            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *),  let preferredFrameRateRange = preferredFrameRateRange  {
+                displayLink = DisplayLink(preferredFrameRateRange: preferredFrameRateRange).sink { [weak self] frame in
+                    guard let self = self else { return }
+                    self.updateAnimations(frame)
+            }
+            } else {
+                displayLink = DisplayLink.shared.sink { [weak self] frame in
+                    guard let self = self else { return }
+                    self.updateAnimations(frame)
+                }
             }
         }
     }
