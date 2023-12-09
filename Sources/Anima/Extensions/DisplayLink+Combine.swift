@@ -99,7 +99,7 @@ internal extension DisplayLink {
     
     /// Creates a display link for the main screen, optionally with the specified preferred frame rate range. Returns `nil` if there isn't a main screen.
     convenience init(preferredFrameRateRange: CAFrameRateRange? = nil) {
-        if let platformDisplayLink = PlatformDisplayLinkMac(preferredFrameRateRange: preferredFrameRateRange) {
+        if let preferredFrameRateRange = preferredFrameRateRange, let platformDisplayLink = PlatformDisplayLinkMac(preferredFrameRateRange: preferredFrameRateRange) {
             self.init(platformDisplayLink: platformDisplayLink)
         } else {
             self.init(platformDisplayLink: PlatformDisplayLink())
