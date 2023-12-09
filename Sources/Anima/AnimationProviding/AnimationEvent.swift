@@ -9,11 +9,11 @@ import Foundation
 
 /// Constants indicating that an ``AnimationProviding`` either retargated or finished.
 public enum AnimationEvent<Value> {
-    /// Indicates the animation has fully completed.
+    /// Indicates the animation has fully completed at the value.
     case finished(at: Value)
 
     /**
-     Indicates that the animation's `target` value was changed in-flight (i.e. while the animation was running).
+     Indicates that the animation's `target` value was changed in-flight while the animation was running.
 
      - Parameters:
         - from: The previous `target` value of the animation.

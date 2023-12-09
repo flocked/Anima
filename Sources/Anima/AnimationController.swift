@@ -45,7 +45,7 @@ internal class AnimationController {
     }
 
     public func runAnimation(_ animation: AnimationProviding) {
-        if animations.isEmpty {
+        if displayLinkIsRunning == false {
             startDisplayLink()
         }
 
@@ -59,11 +59,11 @@ internal class AnimationController {
     }
     
     func stopAllAnimations(immediately: Bool = true) {
-        animations.values.forEach({$0.stop(at: .current, immediately: immediately)})
+        animations.values.forEach({$0.stop()})
     }
 
     private func updateAnimations(_ frame: DisplayLink.Frame) {
-        guard displayLink != nil else {
+        guard displayLinkIsRunning else {
             fatalError("Can't update animations without a display link")
         }
 
@@ -102,7 +102,7 @@ internal class AnimationController {
         
     private var _preferredFrameRateRange: Any? = nil {
         didSet {
-            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *), preferredFrameRateRange != nil, displayLink != nil {
+            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *), preferredFrameRateRange != nil, displayLinkIsRunning {
                 stopDisplayLink()
                 startDisplayLink()
             }
@@ -110,17 +110,16 @@ internal class AnimationController {
     }
 
     private func startDisplayLink() {
-        if displayLink == nil {
-            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *),  let preferredFrameRateRange = preferredFrameRateRange  {
-                displayLink = DisplayLink(preferredFrameRateRange: preferredFrameRateRange).sink { [weak self] frame in
-                    guard let self = self else { return }
-                    self.updateAnimations(frame)
-            }
-            } else {
-                displayLink = DisplayLink.shared.sink { [weak self] frame in
-                    guard let self = self else { return }
-                    self.updateAnimations(frame)
-                }
+        guard displayLinkIsRunning == false else { return }
+        if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *),  let preferredFrameRateRange = preferredFrameRateRange {
+            displayLink = DisplayLink(preferredFrameRateRange: preferredFrameRateRange).sink { [weak self] frame in
+                guard let self = self else { return }
+                self.updateAnimations(frame)
+        }
+        } else {
+            displayLink = DisplayLink.shared.sink { [weak self] frame in
+                guard let self = self else { return }
+                self.updateAnimations(frame)
             }
         }
     }
@@ -128,6 +127,10 @@ internal class AnimationController {
     private func stopDisplayLink() {
         displayLink?.cancel()
         displayLink = nil
+    }
+    
+    private var displayLinkIsRunning: Bool {
+        displayLink != nil
     }
     
     internal func executeHandler(uuid: UUID?, finished: Bool, retargeted: Bool) {

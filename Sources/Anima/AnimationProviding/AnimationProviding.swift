@@ -25,6 +25,7 @@ public protocol AnimationProviding {
      The delay (in seconds) after which the animations begin.
      
      The default value of this property is `0`. When the value is greater than `0`, the start of any animations is delayed by the specified amount of time.
+     
      To set a value for this property, use the ``start(afterDelay:)`` method when starting your animations.
      */
     var delay: TimeInterval { get }
@@ -54,6 +55,18 @@ public protocol AnimationProviding {
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
      */
     func stop(at position: AnimationPosition, immediately: Bool)
+}
+
+extension AnimationProviding {
+    /// Starts the animation from its current position.
+    public func start() {
+        self.start(afterDelay: 0.0)
+    }
+    
+    /// Starts the animation immediately at its current position.
+    public func stop() {
+        stop(at: .current, immediately: true)
+    }
 }
 
 /// An internal extension to `AnimationProviding` used for configurating animations.

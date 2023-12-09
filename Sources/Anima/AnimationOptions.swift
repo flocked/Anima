@@ -21,7 +21,11 @@ extension Anima {
         /// The animation runs backwards and forwards (must be combined with the ``repeats`` option).
         public static let autoreverse = AnimationOptions(rawValue: 1 << 2)
         
-        /// Usually the velocity of a spring animated property is perseved when you animate it to another value. This option will reset the velocity for any new spring animation.
+        /**
+         The velocity of spring animated properties will be reset.
+         
+         Usually the velocity of a spring animated property is perseved when you animate it to another value. This option will reset the velocity for any new spring animation.
+         */
         public static let resetSpringVelocity = AnimationOptions(rawValue: 1 << 3)
         
 #if os(iOS) || os(tvOS)
