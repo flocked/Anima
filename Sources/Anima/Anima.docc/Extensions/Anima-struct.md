@@ -5,15 +5,14 @@
 ### Animations
 
 - ``animate(withDecay:decelerationRate:delay:options:animations:completion:)``
-- ``DecayAnimationMode``
 - ``animate(withEasing:duration:delay:options:animations:completion:)``
 - ``animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
 
 ### Animation Options
 
-- ``AnimationOptions``
+- ``Anima/AnimationOptions``
+- ``DecayAnimationMode``
 
 ### Updating animations
 
-- ``updateVelocity(changes:)``
 - ``stopAllAnimations(immediately:)``

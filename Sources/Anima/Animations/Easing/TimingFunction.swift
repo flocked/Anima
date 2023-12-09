@@ -4,6 +4,9 @@
 //
 //  Created by Florian Zand on 20.10.23.
 //
+//  Adopted from:
+//  Advance, https://github.com/timdonnelly/Advance
+//
 
 import Foundation
 

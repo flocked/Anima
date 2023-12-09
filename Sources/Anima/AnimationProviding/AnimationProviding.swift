@@ -19,7 +19,7 @@ public protocol AnimationProviding {
     var relativePriority: Int { get set }
     
     /// The current state of the animation.
-    var state: AnimationState { get }
+    var state: AnimatingState { get }
     
     /**
      The delay (in seconds) after which the animations begin.
@@ -59,7 +59,7 @@ public protocol AnimationProviding {
 /// An internal extension to `AnimationProviding` used for configurating animations.
 internal protocol ConfigurableAnimationProviding<Value>: AnimationProviding {
     associatedtype Value: AnimatableProperty
-    var state: AnimationState { get set }
+    var state: AnimatingState { get set }
     var delay: TimeInterval { get set }
     var value: Value { get set }
     var target: Value { get set }

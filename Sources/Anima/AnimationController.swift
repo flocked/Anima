@@ -125,10 +125,10 @@ extension AnimationController {
         let groupID: UUID
         let delay: CGFloat
         let animationType: AnimationType
-        let options: AnimationOptions
+        let options: Anima.AnimationOptions
         let completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)?
         
-        init(groupID: UUID, delay: CGFloat = 0.0, animationType: AnimationType, options: AnimationOptions = [], completion: ( (_: Bool, _: Bool) -> Void)? = nil) {
+        init(groupID: UUID, delay: CGFloat = 0.0, animationType: AnimationType, options: Anima.AnimationOptions = [], completion: ( (_: Bool, _: Bool) -> Void)? = nil) {
             self.groupID = groupID
             self.delay = delay
             self.animationType = animationType

@@ -294,12 +294,12 @@ internal protocol AnimatableCollection: RangeReplaceableCollection, Bidirectiona
     func animatable(to collection: any AnimatableCollection) -> Self
 }
 
-public protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableArray<Double> {
+internal protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableArray<Double> {
     var alpha: CGFloat { get }
     func animatable(to other: any AnimatableColor) -> Self
 }
 
-public extension AnimatableColor {
+internal extension AnimatableColor {
     func animatable(to other: any AnimatableColor) -> Self {
         if self.alpha == 0.0 {
             var animatableData = other.animatableData
@@ -313,13 +313,13 @@ public extension AnimatableColor {
 extension CGColor: AnimatableColor { }
 
 extension NSUIColor: AnimatableColor {
-    public var alpha: CGFloat {
+    internal var alpha: CGFloat {
         return alphaComponent
     }
 }
 
 extension Optional: AnimatableColor where Wrapped: AnimatableColor {
-    public var alpha: CGFloat {
+    internal var alpha: CGFloat {
         self.optional?.alpha ?? 0.0
     }
 }

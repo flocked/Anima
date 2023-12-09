@@ -21,17 +21,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 CAKeyframeAnimation/EquatableEnough/SIMDRepresentable
-- Copyright (c) 2020, Adam Bell
+- Adam Bell
 - https://github.com/b3ll/Motion
 
 Decomposed
-- Copyright (c) 2020, Adam Bell
+- Adam Bell
 - https://github.com/b3ll/Decomposed
 
 DisplayLink
-- Copyright (c) 2019, Tim Donnelly
+- Tim Donnelly
 - https://github.com/timdonnelly/DisplayLink
 
-Wave
-- Copyright (c) 2022 Janum Trivedi
+AnimationController, Spring, SpringAnimation
+- Janum Trivedi
 - https://github.com/jtrivedi/Wave/
+
+TimingFunction
+- Timothy Donnelly
+- https://github.com/timdonnelly/Advance
+
+AnimationController, Spring, SpringAnimation
+https://github.com/jtrivedi/Wave/

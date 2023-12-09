@@ -2,7 +2,7 @@
 //  DecayFunction.swift
 //  
 //  Adopted from:
-//  Motion. Created by Adam Bell on 8/20/20.
+//  Motion. https://github.com/b3ll/Motion/
 //
 //  Created by Florian Zand on 09.11.23.
 //

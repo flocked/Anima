@@ -48,16 +48,6 @@ import Foundation
  Anima.stopAllAnimations()
  ```
  
- ### Update Animation Velocities
- 
- You can update the velocity of running decay and spring animations by using ``updateVelocity(changes:)``.
- 
- ```swift
- Anima.updateVelocity {
-     view.animator.frame.origin.y += 1000
- }
- ```
-
  - Note: All animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.
  */
 public class Anima {
@@ -217,7 +207,7 @@ public class Anima {
      
      - Note: For a list of all objects that provide animatable properties check ``Anima``.
      */
-    public static func updateVelocity(changes: () -> Void) {
+    internal static func updateVelocity(changes: () -> Void) {
         let settings = AnimationController.AnimationParameters(
             groupID: UUID(),
             animationType: .velocityUpdate

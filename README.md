@@ -177,6 +177,15 @@ Rubberbanding is the act of making values appear to be on a rubberband (they str
 
 It is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion). Without these libraries Anima wouldn't have been possible.
 
+### CAKeyframeAnimationEmittable, DecayAnimation, EasingAnimation
+https://github.com/b3ll/Motion
+
+### Decomposed
+https://github.com/b3ll/Decomposed
+
+### TimingFunction
+https://github.com/timdonnelly/Advance
+
 ## Installation
 
 Add Anima to your app's Package.swift file, or selecting File -> Add Packages in Xcode:

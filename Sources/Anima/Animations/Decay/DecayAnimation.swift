@@ -2,7 +2,7 @@
 //  DecayAnimation.swift
 //
 //  Adopted from:
-//  Motion. Adam Bell on 8/20/20.
+//  Motion. https://github.com/b3ll/Motion/
 //
 //  Created by Florian Zand on 03.11.23.
 //
@@ -46,7 +46,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
     public var relativePriority: Int = 0
     
     /// The current state of the animation (`inactive`, `running`, or `ended`).
-    public internal(set) var state: AnimationState = .inactive
+    public internal(set) var state: AnimatingState = .inactive
     
     /// The delay (in seconds) after which the animations begin.
     public internal(set) var delay: TimeInterval = 0.0

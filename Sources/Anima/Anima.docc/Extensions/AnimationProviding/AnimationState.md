@@ -1,4 +1,4 @@
-# ``AnimationState``
+# ``AnimatingState``
 
 ## Topics
 

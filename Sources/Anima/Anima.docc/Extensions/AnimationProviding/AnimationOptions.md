@@ -1,4 +1,4 @@
-# ``AnimationOptions``
+# ``Anima/AnimationOptions``
 
 ## Topics
 
@@ -7,7 +7,6 @@
 - ``integralizeValues``
 - ``repeats``
 - ``autoreverse``
-- ``autoStarts``
 - ``preventUserInteraction``
 
 ### Initializers

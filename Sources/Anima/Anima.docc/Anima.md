@@ -36,7 +36,7 @@ Anima.animate(withSpring: .bouncy) {
 
 - <doc:Animating-Properties>
 - ``Anima``
-- ``AnimationOptions``
+- ``Anima/AnimationOptions``
 
 ### Anmations
 
@@ -44,7 +44,7 @@ Anima.animate(withSpring: .bouncy) {
 - ``AnimationProviding``
 - ``AnimationEvent``
 - ``AnimationPosition``
-- ``AnimationState``
+- ``AnimatingState``
 
 ### Decay Animation
 

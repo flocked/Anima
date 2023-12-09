@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// An object that provides animatable properties that can be accessed via it's ``AnimatablePropertyProvider/animator``.
+/// An object that provides animatable properties that can be accessed via it's ``animator``.
 public protocol AnimatablePropertyProvider: AnyObject {
     /// The object that provides animatable properties.
     associatedtype Provider: AnimatablePropertyProvider = Self
@@ -29,7 +29,7 @@ public protocol AnimatablePropertyProvider: AnyObject {
      myView.animator.alpha = 0.0
      ```
      
-     To get/set a property of the object that is not provided as `animator` property, use the properties keypath on `animator`. The property needs to confirm to ``AnimatableProperty``.
+     To get/set a property of the object that is not provided as property of ``animator``, use the properties keypath on `animator`. The property needs to confirm to ``AnimatableProperty``.
      
      ```swift
      class MyObject: AnimatablePropertyProvider {
