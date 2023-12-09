@@ -35,7 +35,7 @@ import Accelerate
  > Tip:  It's recommended to use `Double` as elements for much faster calculating in animations.
  */
 public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
-    internal var elements: [Element] = []
+    var elements: [Element] = []
 
     public init() {}
 

@@ -15,26 +15,26 @@ import AppKit
 
 extension NSValue {
     /// Creates a new value object containing the specified directional edge insets structure.
-    internal convenience init(directionalEdgeInsets: NSDirectionalEdgeInsets) {
+    convenience init(directionalEdgeInsets: NSDirectionalEdgeInsets) {
         var insets = directionalEdgeInsets
         self.init(bytes: &insets, objCType: _getObjCTypeEncoding(NSDirectionalEdgeInsets.self))
     }
     
     /// Returns the directional edge insets structure representation of the value.
-    internal var directionalEdgeInsetsValue: NSDirectionalEdgeInsets {
+    var directionalEdgeInsetsValue: NSDirectionalEdgeInsets {
         var insets = NSDirectionalEdgeInsets()
         self.getValue(&insets)
         return insets
     }
     
     /// Creates a new value object containing the specified CoreGraphics affine transform structure.
-    internal convenience init(cgAffineTransform: CGAffineTransform) {
+    convenience init(cgAffineTransform: CGAffineTransform) {
         var transform = cgAffineTransform
         self.init(bytes: &transform, objCType: _getObjCTypeEncoding(CGAffineTransform.self))
     }
     
     /// Returns the CoreGraphics affine transform representation of the value.
-    internal var cgAffineTransformValue: CGAffineTransform {
+    var cgAffineTransformValue: CGAffineTransform {
         var transform = CGAffineTransform.identity
         self.getValue(&transform)
         return transform
@@ -42,7 +42,7 @@ extension NSValue {
 }
 #endif
 
-internal extension CGPoint {
+extension CGPoint {
     var nsValue: NSValue {
         #if canImport(UIKit) || os(watchOS)
         return NSValue(cgPoint: self)
@@ -52,7 +52,7 @@ internal extension CGPoint {
     }
 }
 
-internal extension CGRect {
+extension CGRect {
     var nsValue: NSValue {
         #if canImport(UIKit) || os(watchOS)
         return NSValue(cgRect: self)
@@ -62,7 +62,7 @@ internal extension CGRect {
     }
 }
 
-internal extension CGSize {
+extension CGSize {
     var nsValue: NSValue {
         #if canImport(UIKit) || os(watchOS)
         return NSValue(cgSize: self)
@@ -72,7 +72,7 @@ internal extension CGSize {
     }
 }
 
-internal extension NSRange {
+extension NSRange {
     var nsValue: NSValue {
         return NSValue(range: self)
     }
@@ -84,21 +84,21 @@ public extension ClosedRange where Bound: BinaryInteger {
     }
 }
 
-internal extension Range where Bound: BinaryInteger {
+extension Range where Bound: BinaryInteger {
     var nsValue: NSValue {
         return NSValue(range: self.nsRange)
     }
 }
 
 #if os(macOS)
-internal extension NSEdgeInsets {
+extension NSEdgeInsets {
     var nsValue: NSValue {
         return NSValue(edgeInsets: self)
     }
 }
 #elseif canImport(UIKit) || os(watchOS)
 import UIKit
-internal extension UIEdgeInsets {
+extension UIEdgeInsets {
     var nsValue: NSValue {
         return NSValue(uiEdgeInsets: self)
     }
@@ -106,14 +106,14 @@ internal extension UIEdgeInsets {
 #endif
 
 #if canImport(QuartzCore)
-internal extension CATransform3D {
+extension CATransform3D {
     var nsValue: NSValue {
         return NSValue(caTransform3D: self)
     }
 }
 #endif
 
-internal extension ClosedRange where Bound: BinaryInteger {
+extension ClosedRange where Bound: BinaryInteger {
     /// The closed range as `NSRange`.
     var nsRange: NSRange {
         let length = self.upperBound-self.lowerBound-1
@@ -121,7 +121,7 @@ internal extension ClosedRange where Bound: BinaryInteger {
     }
 }
 
-internal extension Range where Bound: BinaryInteger {
+extension Range where Bound: BinaryInteger {
     /// The range as `NSRange`.
     var nsRange: NSRange {
         let length = self.upperBound-self.lowerBound

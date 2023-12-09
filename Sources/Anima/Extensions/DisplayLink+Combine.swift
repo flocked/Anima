@@ -14,7 +14,7 @@ private protocol DisplayLinkProvider: AnyObject {
 }
 
 // A publisher that emits new values when the system is about to update the display.
-internal final class DisplayLink: Publisher {
+final class DisplayLink: Publisher {
     public typealias Output = Frame
     public typealias Failure = Never
 
@@ -61,7 +61,7 @@ internal final class DisplayLink: Publisher {
     }
 }
 
-internal extension DisplayLink {
+extension DisplayLink {
     // Represents a frame that is about to be drawn
     struct Frame {
         // The system timestamp for the frame to be drawn
@@ -72,7 +72,7 @@ internal extension DisplayLink {
     }
 }
 
-internal extension DisplayLink {
+extension DisplayLink {
     @available(iOS 13.0, tvOS 13.0, macOS 10.15, *)
     convenience init() {
         self.init(platformDisplayLink: PlatformDisplayLink())
@@ -81,7 +81,7 @@ internal extension DisplayLink {
 
 #if os(macOS)
 @available(macOS 14.0, *)
-internal extension DisplayLink {
+extension DisplayLink {
     /// Creates a display link for the specified view. It will automatically track the display the view is on, and will be automatically suspended if it isn’t on a display.
     convenience init(view: NSView) {
         self.init(platformDisplayLink: PlatformDisplayLinkMac(view: view))
@@ -108,11 +108,11 @@ internal extension DisplayLink {
 }
 #endif
 
-internal extension DisplayLink {
+extension DisplayLink {
     static let shared = DisplayLink()
 }
 
-internal extension DisplayLink {
+extension DisplayLink {
     final class Subscription: Combine.Subscription {
         var onCancel: () -> Void
 
@@ -134,7 +134,7 @@ internal extension DisplayLink {
 import QuartzCore
 import UIKit
 
-internal extension DisplayLink {
+extension DisplayLink {
     /// Creates a display link, optionally with the specified preferred frame rate range.
     @available(iOS 15.0, tvOS 15.0, *)
     convenience init(preferredFrameRateRange: CAFrameRateRange? = nil) {
@@ -339,7 +339,7 @@ fileprivate extension DisplayLink {
            }
         }
         
-        internal func sharedInit(screen: NSScreen?) {
+        func sharedInit(screen: NSScreen?) {
             if let screen = screen {
                 let maximumFramesPerSecond = Float(screen.maximumFramesPerSecond)
                 let highFPSEnabled = maximumFramesPerSecond > 60

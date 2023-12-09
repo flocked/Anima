@@ -8,14 +8,14 @@
 import Foundation
 
 /// The order of sorting for a sequence
-internal enum SequenceSortOrder: Int, Hashable {
+enum SequenceSortOrder: Int, Hashable {
     /// An ascending sorting order.
     case ascending
     /// A descending sorting order.
     case descending
 }
 
-internal extension Sequence {    
+extension Sequence {    
     /**
     An array of the elements sorted by the given keypath.
      

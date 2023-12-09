@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 /// A type that can be compared for approximate value equality.
-internal protocol ApproximateEquatable {
+protocol ApproximateEquatable {
     associatedtype Epsilon: FloatingPointInitializable
     /**
      A Boolean value that indicates whether `self` and the specified `other` value are approximately equal.
@@ -66,7 +66,7 @@ extension Set: ApproximateEquatable where Element: FloatingPointInitializable {
 }
 
 extension AnimatablePair: ApproximateEquatable  where First: ApproximateEquatable, Second: ApproximateEquatable {
-    internal func isApproximatelyEqual(to other: AnimatablePair<First, Second>, epsilon: Double) -> Bool {
+    func isApproximatelyEqual(to other: AnimatablePair<First, Second>, epsilon: Double) -> Bool {
         self.first.isApproximatelyEqual(to: other.first, epsilon: First.Epsilon(epsilon)) &&  self.second.isApproximatelyEqual(to: other.second, epsilon: Second.Epsilon(epsilon))
     }
 }
@@ -80,7 +80,7 @@ extension Numeric where Magnitude: FloatingPoint {
         - relativeTolerance: The tolerance to use in the comparison. Defaults to `.ulpOfOne.squareRoot()`.
         - norm: The norm to use for the comparison. Defaults to `\.magnitude`.
      */
-    internal func isApproximatelyEqual(to other: Self, relativeTolerance: Magnitude = Magnitude.ulpOfOne.squareRoot(), norm: (Self) -> Magnitude = \.magnitude) -> Bool {
+    func isApproximatelyEqual(to other: Self, relativeTolerance: Magnitude = Magnitude.ulpOfOne.squareRoot(), norm: (Self) -> Magnitude = \.magnitude) -> Bool {
         return isApproximatelyEqual(to: other, absoluteTolerance: relativeTolerance * Magnitude.leastNormalMagnitude, relativeTolerance: relativeTolerance, norm: norm)
     }
     
@@ -94,7 +94,7 @@ extension Numeric where Magnitude: FloatingPoint {
         - norm: The norm to use for the comparison. Defaults to `\.magnitude`.
      */
     @inlinable @inline(__always)
-    internal func isApproximatelyEqual(
+    func isApproximatelyEqual(
         to other: Self,
         absoluteTolerance: Magnitude,
         relativeTolerance: Magnitude = 0
@@ -119,7 +119,7 @@ extension AdditiveArithmetic {
      - norm: The norm to use for the comparison. Defaults is `\.magnitude`.
      */
     @inlinable
-    internal func isApproximatelyEqual<Magnitude>(
+    func isApproximatelyEqual<Magnitude>(
         to other: Self,
         absoluteTolerance: Magnitude,
         relativeTolerance: Magnitude = 0,

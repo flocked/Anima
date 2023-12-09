@@ -11,7 +11,7 @@ import AppKit
 import UIKit
 #endif
 
-internal extension NSUITextView {
+extension NSUITextView {
     #if os(macOS)
     /**
      The font size of the text.

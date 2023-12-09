@@ -10,7 +10,7 @@
 import AppKit
 import Foundation
 
-internal extension NSScrollView {
+extension NSScrollView {
     /**
      The point at which the origin of the content view is offset from the origin of the scroll view.
 

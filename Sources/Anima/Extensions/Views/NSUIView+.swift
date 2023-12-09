@@ -11,7 +11,7 @@ import AppKit
 import UIKit
 #endif
 
-internal extension NSUIView {
+extension NSUIView {
     var optionalLayer: CALayer? {
         get { self.layer }
     }

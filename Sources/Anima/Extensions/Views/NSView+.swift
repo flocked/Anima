@@ -11,7 +11,7 @@ import Decomposed
 
 extension NSView {
     /// The view whose alpha channel is used to mask a view’s content.
-    @objc internal dynamic var mask: NSView? {
+    @objc dynamic var mask: NSView? {
         get { layer?.mask?.parentView  }
         set {
             wantsLayer = true
@@ -22,7 +22,7 @@ extension NSView {
     }
     
     /// The anchor point of the view’s bounds rectangle.
-    @objc internal dynamic var anchorPoint: CGPoint {
+    @objc dynamic var anchorPoint: CGPoint {
         get { layer?.anchorPoint ?? .zero }
         set {
             wantsLayer = true
@@ -31,7 +31,7 @@ extension NSView {
     }
     
     /// Sets the anchor point of the view’s bounds rectangle while retaining the position.
-    internal func setAnchorPoint(_ anchorPoint: CGPoint) {
+    func setAnchorPoint(_ anchorPoint: CGPoint) {
         guard let layer = layer else { return }
         var newPoint = CGPoint(bounds.size.width * anchorPoint.x, bounds.size.height * anchorPoint.y)
         var oldPoint = CGPoint(bounds.size.width * layer.anchorPoint.x, bounds.size.height * layer.anchorPoint.y)
@@ -51,7 +51,7 @@ extension NSView {
         layer.anchorPoint = anchorPoint
     }
     
-    internal var alpha: CGFloat {
+    var alpha: CGFloat {
         get { guard let cgValue = layer?.opacity else { return 1.0 }
             return CGFloat(cgValue)
         }
@@ -62,7 +62,7 @@ extension NSView {
     }
 }
 
-internal extension NSView {
+extension NSView {
     // Saves dynamics colors that provide both a light and dark color variants and updates them inside the view if the appearance changes from light to dark or vice versa.
     struct DynamicColors {
         var shadow: NSColor? = nil {

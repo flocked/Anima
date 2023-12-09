@@ -30,7 +30,7 @@ extension NSEdgeInsets: Hashable {
     public static var zero = NSEdgeInsets(0)
     
     /// Creates an edge insets structure with the specified value for top, bottom, left and right.
-    internal init(_ value: CGFloat) {
+    init(_ value: CGFloat) {
         self.init(top: value, left: value, bottom: value, right: value)
     }
 }
@@ -48,7 +48,7 @@ extension UIEdgeInsets: Hashable {
     }
     
     /// Creates an edge insets structure with the specified value for top, bottom, left and right.
-    internal init(_ value: CGFloat) {
+    init(_ value: CGFloat) {
         self.init(top: value, left: value, bottom: value, right: value)
     }
 }
@@ -61,7 +61,7 @@ public extension NSDirectionalEdgeInsets {
     #endif
 }
 
-internal extension NSDirectionalEdgeInsets {
+extension NSDirectionalEdgeInsets {
     /// Creates an edge insets structure with the specified value for top, bottom, leading and trailing.
     init(_ value: CGFloat) {
         self.init(top: value, leading: value, bottom: value, trailing: value)
@@ -102,7 +102,7 @@ extension NSDirectionalEdgeInsets: Hashable {
     }
 }
 
-internal extension CGRect {
+extension CGRect {
     func inset(by edgeInsets: NSDirectionalEdgeInsets) -> CGRect {
         var result = self
         result.origin.x += edgeInsets.leading

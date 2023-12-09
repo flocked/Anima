@@ -13,7 +13,7 @@ import UIKit
 
 #if os(macOS)
 
-internal extension NSBezierPath {
+extension NSBezierPath {
     /**
      Creates and returns a new Bézier path object with a rectangular path rounded at the specified corners.
      
@@ -97,7 +97,7 @@ internal extension NSBezierPath {
 
  The specified constants reflect the corners of a rectangle that has not been modified by an affine transform and is drawn in the default coordinate system (where the origin is in the upper-left corner and positive values extend down and to the right).
  */
-internal struct NSRectCorner: OptionSet, Sendable {
+struct NSRectCorner: OptionSet, Sendable {
     public let rawValue: UInt
     /// The top-left corner of the rectangle.
     public static let topLeft = NSRectCorner(rawValue: 1 << 0)

@@ -8,7 +8,7 @@
 import Foundation
 
 /// A protocol represeting an optional value.
-internal protocol OptionalProtocol: ExpressibleByNilLiteral {
+protocol OptionalProtocol: ExpressibleByNilLiteral {
     associatedtype Wrapped
     /// The optional value.
     var optional: Wrapped? { get }

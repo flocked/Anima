@@ -412,7 +412,7 @@ extension LayerAnimator where Layer: CAEmitterLayer {
     }
 }
 
-internal extension CAGradientLayer {
+extension CAGradientLayer {
     var _locations: [CGFloat] {
         get { locations?.compactMap({$0.doubleValue}) ?? []  }
         set { locations = newValue as [NSNumber] }

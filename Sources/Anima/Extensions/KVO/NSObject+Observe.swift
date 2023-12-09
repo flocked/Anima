@@ -9,7 +9,7 @@
 
 import Foundation
 
-internal extension NSObjectProtocol where Self: NSObject {
+extension NSObjectProtocol where Self: NSObject {
     /**
      Observes changes for a property identified by the given key path.
      

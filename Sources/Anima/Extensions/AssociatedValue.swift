@@ -24,7 +24,7 @@ private extension String {
     - object: The object of the associated value.
  - Returns: The associated value for the object and key, or nil if the value couldn't be found for the key..
  */
-internal func getAssociatedValue<T>(key: String, object: AnyObject) -> T? {
+func getAssociatedValue<T>(key: String, object: AnyObject) -> T? {
     return (objc_getAssociatedObject(object, key.address) as? _AssociatedValue)?.value as? T
 }
 
@@ -37,7 +37,7 @@ internal func getAssociatedValue<T>(key: String, object: AnyObject) -> T? {
     - initialValue: The inital value of the associated value.
  - Returns: The associated value for the object and key.
  */
-internal func getAssociatedValue<T>(key: String, object: AnyObject, initialValue: @autoclosure () -> T) -> T {
+func getAssociatedValue<T>(key: String, object: AnyObject, initialValue: @autoclosure () -> T) -> T {
     return getAssociatedValue(key: key, object: object) ?? setAndReturn(initialValue: initialValue(), key: key, object: object)
 }
 
@@ -50,7 +50,7 @@ internal func getAssociatedValue<T>(key: String, object: AnyObject, initialValue
     - initialValue: The inital value of the associated value.
  - Returns: The associated value for the object and key.
  */
-internal func getAssociatedValue<T>(key: String, object: AnyObject, initialValue: () -> T) -> T {
+func getAssociatedValue<T>(key: String, object: AnyObject, initialValue: () -> T) -> T {
     return getAssociatedValue(key: key, object: object) ?? setAndReturn(initialValue: initialValue(), key: key, object: object)
 }
 
@@ -67,7 +67,7 @@ private func setAndReturn<T>(initialValue: T, key: String, object: AnyObject) ->
     - key: The key of the associated value.
     - object: The object of the associated value.
  */
-internal func set<T>(associatedValue: T?, key: String, object: AnyObject) {
+func set<T>(associatedValue: T?, key: String, object: AnyObject) {
     set(associatedValue: _AssociatedValue(associatedValue), key: key, object: object)
 }
 
@@ -79,7 +79,7 @@ internal func set<T>(associatedValue: T?, key: String, object: AnyObject) {
     - key: The key of the associated value.
     - object: The object of the associated value.
  */
-internal func set<T: AnyObject>(weakAssociatedValue: T?, key: String, object: AnyObject) {
+func set<T: AnyObject>(weakAssociatedValue: T?, key: String, object: AnyObject) {
     set(associatedValue: _AssociatedValue(weak: weakAssociatedValue), key: key, object: object)
 }
 

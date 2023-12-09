@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal extension Comparable {
+extension Comparable {
     /**
      Clamps the value to the specified closed range.
      
@@ -19,7 +19,7 @@ internal extension Comparable {
     }
 }
 
-internal extension Comparable where Self: ExpressibleByIntegerLiteral {
+extension Comparable where Self: ExpressibleByIntegerLiteral {
     /**
      Clamps the value to a minimum value.
 

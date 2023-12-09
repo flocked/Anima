@@ -8,7 +8,7 @@
 #if os(iOS) || os(tvOS)
 import UIKit
 
-internal extension UILabel {
+extension UILabel {
     /// The font size of the label.
     @objc var fontSize: CGFloat {
         get { font.pointSize }

@@ -12,8 +12,8 @@ import Foundation
  
  When the instances are deallocated, the KVO is automatically unregistered.
  */
-internal class KeyValueObserver<Object>: NSObject where Object: NSObject {
-    internal var observers: [String:  (_ oldValue: Any, _ newValue: Any)->()] = [:]
+class KeyValueObserver<Object>: NSObject where Object: NSObject {
+    var observers: [String:  (_ oldValue: Any, _ newValue: Any)->()] = [:]
     /// The object to register for KVO notifications.
     public fileprivate(set) weak var observedObject: Object?
     
@@ -155,7 +155,7 @@ internal class KeyValueObserver<Object>: NSObject where Object: NSObject {
     }
 }
 
-internal extension KeyValueObserver {
+extension KeyValueObserver {
     subscript<Value: Equatable>(keyPath: KeyPath<Object, Value>) -> ((_ oldValue: Value, _ newValue: Value)->())? {
         get {
             guard let name = keyPath._kvcKeyPathString else { return nil }

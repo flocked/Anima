@@ -145,7 +145,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         }
     }
     
-    internal var _target: Value.AnimatableData = .zero {
+    var _target: Value.AnimatableData = .zero {
         didSet {
             if state == .running {
                 completion?(.retargeted(from: Value(oldValue), to: Value(_target)))

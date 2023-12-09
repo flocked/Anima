@@ -219,7 +219,7 @@ public class Anima {
      
      - Note: For a list of all objects that provide animatable properties check ``Anima``.
      */
-    internal static func updateVelocity(changes: () -> Void) {
+    static func updateVelocity(changes: () -> Void) {
         let settings = AnimationController.AnimationParameters(
             groupID: UUID(),
             animationType: .velocityUpdate
@@ -246,7 +246,7 @@ public class Anima {
      
      - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
      */
-    internal static func nonAnimate(changes: () -> Void) {
+    static func nonAnimate(changes: () -> Void) {
         let settings = AnimationController.AnimationParameters(
             groupID: UUID(),
             animationType: .nonAnimated

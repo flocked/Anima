@@ -138,7 +138,7 @@ public struct Spring: Sendable, Hashable {
     
     /// Creates a spring from a SwiftUI spring.
     @available(macOS 14.0, iOS 17, tvOS 17, *)
-    internal init(_ spring: SwiftUI.Spring) {
+    init(_ spring: SwiftUI.Spring) {
         dampingRatio = spring.dampingRatio
         response = spring.response
         stiffness = spring.stiffness
@@ -212,7 +212,7 @@ public struct Spring: Sendable, Hashable {
         value = V(valueData)
     }
     
-    internal func update<V>(value: inout V, velocity: inout V, target: V, deltaTime: TimeInterval) where V : VectorArithmetic {
+    func update<V>(value: inout V, velocity: inout V, target: V, deltaTime: TimeInterval) where V : VectorArithmetic {
         let displacement = value - target
         let springForce = displacement * -self.stiffness
         let dampingForce = velocity.scaled(by: self.damping)
@@ -345,7 +345,7 @@ public struct Spring: Sendable, Hashable {
 @available(macOS 14.0, iOS 17, tvOS 17, *)
 public extension Spring {
     /// A SwiftUI representation of the spring.
-    internal var swiftUI: SwiftUI.Spring {
+    var swiftUI: SwiftUI.Spring {
         SwiftUI.Spring.init(mass: mass, stiffness: stiffness, damping: damping, allowOverDamping: true)
     }
     
@@ -397,7 +397,7 @@ extension Spring: CustomStringConvertible {
     }
 }
 
-internal struct AnimatableProxy<Value: AnimatableProperty>: Animatable {
+struct AnimatableProxy<Value: AnimatableProperty>: Animatable {
     var animatableData: Value.AnimatableData
     
     init(_ value: Value) {

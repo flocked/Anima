@@ -8,7 +8,7 @@
 import CoreVideo
 import Foundation
 
-internal extension CVTimeStamp {
+extension CVTimeStamp {
     /// The time interval represented by the time stamp.
     var timeInterval: TimeInterval {
         return TimeInterval(videoTime) / TimeInterval(videoTimeScale)

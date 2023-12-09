@@ -11,7 +11,7 @@ import AppKit
 import UIKit
 #endif
 
-internal extension NSUIColor {
+extension NSUIColor {
     /// Returns the RGBA (red, green, blue, alpha) components.
     final func rgbaComponents() -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
       var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
@@ -58,7 +58,7 @@ internal extension NSUIColor {
 }
 
 #if os(macOS)
-internal extension NSColor {
+extension NSColor {
     /// Returns the dynamic light and dark colors.
     var dynamicColors: (light: NSColor, dark: NSColor) {
         let light = self.resolvedColor(for: NSAppearance(named: .aqua)!)
@@ -115,7 +115,7 @@ internal extension NSColor {
     static let supportedColorSpaces: [NSColorSpace] = [.sRGB, .deviceRGB, .extendedSRGB, .genericRGB, .adobeRGB1998, .displayP3]
 }
 #elseif canImport(UIKit)
-internal extension UIColor {
+extension UIColor {
     /// Returns the dynamic light and dark colors.
     var dynamicColors: (light: UIColor, dark: UIColor) {
         let light = self.resolvedColor(with: .init(userInterfaceStyle: .light))

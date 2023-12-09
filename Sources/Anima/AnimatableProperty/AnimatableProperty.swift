@@ -300,12 +300,12 @@ extension Array: AnimatableProperty where Element: AnimatableProperty {
 // MARK: - AnimatableColor
 
 // Updates colors for better interpolation/animations.
-internal protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableArray<Double> {
+protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableArray<Double> {
     var alpha: CGFloat { get }
     func animatable(to other: any AnimatableColor) -> Self
 }
 
-internal extension AnimatableColor {
+extension AnimatableColor {
     func animatable(to other: any AnimatableColor) -> Self {
         if self.alpha == 0.0 {
             var animatableData = other.animatableData
@@ -319,13 +319,13 @@ internal extension AnimatableColor {
 extension CGColor: AnimatableColor { }
 
 extension NSUIColor: AnimatableColor {
-    internal var alpha: CGFloat {
+    var alpha: CGFloat {
         return alphaComponent
     }
 }
 
 extension Optional: AnimatableColor where Wrapped: AnimatableColor {
-    internal var alpha: CGFloat {
+    var alpha: CGFloat {
         self.optional?.alpha ?? 0.0
     }
 }
@@ -334,13 +334,13 @@ extension Optional: AnimatableColor where Wrapped: AnimatableColor {
 // MARK: - AnimatableShadow
 
 // Updates shadows for better interpolation/animations.
-internal protocol AnimatableShadow {
+protocol AnimatableShadow {
     var color: NSUIColor? { get }
     func animatable(to other: any AnimatableShadow) -> Self
 }
 
 extension ShadowConfiguration: AnimatableShadow {
-    internal func animatable(to other: AnimatableShadow) -> Self {
+    func animatable(to other: AnimatableShadow) -> Self {
         var shadow = self
         if self.color == nil || self.color?.alpha == 0.0, let otherColor = other.color {
             shadow.color = otherColor.withAlphaComponent(0.0)
@@ -352,20 +352,20 @@ extension ShadowConfiguration: AnimatableShadow {
 // MARK: - AnimatableCollection
 
 // Ensures two collections have the same count for animating between them. If a collection is smaller zero values are added.
-internal protocol AnimatableCollection: RangeReplaceableCollection, BidirectionalCollection {
+protocol AnimatableCollection: RangeReplaceableCollection, BidirectionalCollection {
     var count: Int { get }
     func animatable(to collection: any AnimatableCollection) -> Self
 }
 
 extension AnimatableArray: AnimatableCollection {
-    internal func animatable(to collection: any AnimatableCollection) -> Self {
+    func animatable(to collection: any AnimatableCollection) -> Self {
         let diff = collection.count - self.count
         return diff > 0 ? (self + Array(repeating: .zero, count: diff)) : self
     }
 }
 
 extension Array: AnimatableCollection where Self: AnimatableProperty {
-    internal func animatable(to collection: any AnimatableCollection) -> Self {
+    func animatable(to collection: any AnimatableCollection) -> Self {
         let diff = collection.count - self.count
         return diff > 0 ? (self + Array(repeating: .zero, count: diff)) : self
     }

@@ -8,7 +8,7 @@
 import Foundation
 import QuartzCore
 
-internal extension TimeInterval {
+extension TimeInterval {
     /// The current time interval in seconds.
     static var now: TimeInterval {
         return CACurrentMediaTime()

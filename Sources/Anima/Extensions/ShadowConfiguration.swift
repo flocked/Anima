@@ -27,7 +27,7 @@ public struct ShadowConfiguration: Hashable {
     public var offset: CGPoint = .init(x: 1.0, y: -1.5)
     
     /// A Boolean value that indicates whether the shadow is invisible (when the color is `nil`, `clear` or the opacity `0`).
-    internal var isInvisible: Bool {
+    var isInvisible: Bool {
         return (color?.alphaComponent == 0.0 || opacity == 0.0 || color == nil)
     }
     
@@ -60,7 +60,7 @@ public struct ShadowConfiguration: Hashable {
     }
 }
 
-internal extension NSUIView {
+extension NSUIView {
     /**
      Configurates the inner shadow of the view.
 
@@ -87,7 +87,7 @@ internal extension NSUIView {
     }
 }
 
-internal extension CALayer {
+extension CALayer {
     /**
      Configurates the inner shadow of the layer.
 

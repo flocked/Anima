@@ -13,7 +13,7 @@ import UIKit
 #endif
 
 /// A layer with an inner shadow.
-internal class InnerShadowLayer: CALayer {
+class InnerShadowLayer: CALayer {
     
     /// The configuration of the inner shadow.
     public var configuration: ShadowConfiguration {
@@ -54,7 +54,7 @@ internal class InnerShadowLayer: CALayer {
         self.sharedInit()
     }
     
-    internal func sharedInit() {
+    func sharedInit() {
         self.shadowOpacity = 0
         self.shadowColor = nil
         self.shadowOffset = .zero
@@ -69,7 +69,7 @@ internal class InnerShadowLayer: CALayer {
         didSet { if !isUpdating, oldValue != shadowOffset { self.update() } }
     }
 
-    internal var isUpdating: Bool = false
+    var isUpdating: Bool = false
     override public var frame: CGRect {
         didSet { if !isUpdating, oldValue != frame {
             update() } }
@@ -85,7 +85,7 @@ internal class InnerShadowLayer: CALayer {
             update() } }
     }
 
-    internal func update() {
+    func update() {
             var path = NSUIBezierPath(rect: bounds.insetBy(dx: -20, dy: -20))
             #if os(macOS)
             var innerPart = NSUIBezierPath(rect: bounds).reversed

@@ -13,7 +13,7 @@ import AppKit
 import UIKit
 #endif
 
-internal extension CALayer {
+extension CALayer {
     
     /// The shadow of the layer.
     var shadow: ShadowConfiguration {

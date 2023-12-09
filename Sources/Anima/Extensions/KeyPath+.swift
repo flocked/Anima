@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal extension PartialKeyPath {
+extension PartialKeyPath {
     /// The name of the key path.
     var stringValue: String {
         if let string = self._kvcKeyPathString {

@@ -14,7 +14,7 @@ import UIKit
 #endif
 
 /// Manages all ``Anima`` animations.
-internal class AnimationController {
+class AnimationController {
     public static let shared = AnimationController()
 
     private var displayLink: AnyCancellable?
@@ -27,6 +27,21 @@ internal class AnimationController {
 
     var currentAnimationParameters: AnimationParameters? {
         animationSettingsStack.currentSettings
+    }
+    
+    /// The preferred rame rate of the animations.
+    @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
+    public var preferredFrameRateRange: CAFrameRateRange? {
+        get { _preferredFrameRateRange as? CAFrameRateRange }
+        set { _preferredFrameRateRange = newValue }
+    }
+        
+    private var _preferredFrameRateRange: Any? = nil {
+        didSet {
+            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *), preferredFrameRateRange != nil {
+                restartDisplayLink()
+            }
+        }
     }
 
     func runAnimationBlock(
@@ -58,7 +73,7 @@ internal class AnimationController {
         animations[animation.id] = nil
     }
     
-    func stopAllAnimations(immediately: Bool = true) {
+    public func stopAllAnimations(immediately: Bool = true) {
         animations.values.forEach({$0.stop()})
     }
 
@@ -80,7 +95,7 @@ internal class AnimationController {
 
         for animation in sortedAnimations {
             if animation.state != .running {
-                self.stopAnimation(animation)
+                stopAnimation(animation)
             } else {
                 animation.updateAnimation(deltaTime: deltaTime)
             }
@@ -92,34 +107,16 @@ internal class AnimationController {
             stopDisplayLink()
         }
     }
-    
-    /// The preferred rame rate of the animations.
-    @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
-    internal var preferredFrameRateRange: CAFrameRateRange? {
-        get { _preferredFrameRateRange as? CAFrameRateRange }
-        set { _preferredFrameRateRange = newValue }
-    }
-        
-    private var _preferredFrameRateRange: Any? = nil {
-        didSet {
-            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *), preferredFrameRateRange != nil, displayLinkIsRunning {
-                stopDisplayLink()
-                startDisplayLink()
-            }
-        }
-    }
 
     private func startDisplayLink() {
         guard displayLinkIsRunning == false else { return }
         if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *),  let preferredFrameRateRange = preferredFrameRateRange {
             displayLink = DisplayLink(preferredFrameRateRange: preferredFrameRateRange).sink { [weak self] frame in
-                guard let self = self else { return }
-                self.updateAnimations(frame)
+                self?.updateAnimations(frame)
         }
         } else {
             displayLink = DisplayLink.shared.sink { [weak self] frame in
-                guard let self = self else { return }
-                self.updateAnimations(frame)
+                self?.updateAnimations(frame)
             }
         }
     }
@@ -129,11 +126,17 @@ internal class AnimationController {
         displayLink = nil
     }
     
+    private func restartDisplayLink() {
+        guard displayLinkIsRunning else { return }
+        stopDisplayLink()
+        startDisplayLink()
+    }
+    
     private var displayLinkIsRunning: Bool {
         displayLink != nil
     }
     
-    internal func executeHandler(uuid: UUID?, finished: Bool, retargeted: Bool) {
+    func executeHandler(uuid: UUID?, finished: Bool, retargeted: Bool) {
         guard let uuid = uuid, let block = groupAnimationCompletionBlocks[uuid] else {
             return
         }

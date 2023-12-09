@@ -385,7 +385,7 @@ extension ViewAnimator where View: NSProgressIndicator {
     }
 }
 
-internal extension NSView {
+extension NSView {
     func insertSubview(_ view: NSUIView, aboveSubview siblingSubview: NSUIView) {
         guard subviews.contains(siblingSubview) else { return }
         addSubview(view, positioned: .above, relativeTo: siblingSubview)
@@ -397,7 +397,7 @@ internal extension NSView {
     }
 }
 
-internal extension NSUIScrollView {
+extension NSUIScrollView {
     var magnificationCentered: CGFloat {
         get { magnification }
         set {
@@ -415,7 +415,7 @@ internal extension NSUIScrollView {
     }
 }
 
-internal extension NSBox {
+extension NSBox {
     var titleFontSize: CGFloat {
         get { titleFont.pointSize }
         set { titleFont = titleFont.withSize(newValue) }
@@ -495,7 +495,7 @@ extension ViewAnimator where View: UIView {
     }
 }
 
-internal extension PropertyAnimator<UIView> {
+extension PropertyAnimator<UIView> {
     var preventsUserInteractions: Bool {
         get { getAssociatedValue(key: "preventsUserInteractions", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "preventsUserInteractions", object: self) }
@@ -563,7 +563,7 @@ extension ViewAnimator where View: UIProgressView {
     }
 }
 
-internal extension UIScrollView {
+extension UIScrollView {
     var zoomScaleCentered: CGFloat {
         get { zoomScale }
         set {

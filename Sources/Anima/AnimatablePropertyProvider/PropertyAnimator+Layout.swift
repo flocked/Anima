@@ -38,8 +38,8 @@ public extension Collection where Element == NSLayoutConstraint {
 
 /// An object for animating layout constraints in a collection.
 public struct LayoutConstraintsAnimator<Object: Collection> where Object.Element == NSLayoutConstraint {
-    internal var collection: Object
-    internal init(_ collection: Object) {
+    var collection: Object
+    init(_ collection: Object) {
         self.collection = collection
     }
     

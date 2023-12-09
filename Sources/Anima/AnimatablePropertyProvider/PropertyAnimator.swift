@@ -53,9 +53,9 @@ import UIKit
  ```
  */
 public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
-    internal var object: Provider
+    var object: Provider
     
-    internal init(_ object: Provider) {
+    init(_ object: Provider) {
         self.object = object
     }
     /// A dictionary containing the current animated property keys and associated animations.
@@ -106,7 +106,7 @@ public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     }
 }
 
-internal extension PropertyAnimator {
+extension PropertyAnimator {
     /// The current value of the property at the keypath. If the property is currently animated, it returns the animation target value.
     func value<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Provider, Value>) -> Value {
         if AnimationController.shared.currentAnimationParameters?.animationType.isAnyVelocity == true {
@@ -215,7 +215,7 @@ internal extension PropertyAnimator {
     }
 }
 
-internal extension PropertyAnimator {
+extension PropertyAnimator {
     /// The current animation for the property at the keypath or key, or `nil` if there isn't an animation for the keypath.
     func animation(for keyPath: PartialKeyPath<Provider>) -> (any ConfigurableAnimationProviding)? {
         animations[keyPath.stringValue] as? any ConfigurableAnimationProviding

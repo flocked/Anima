@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-internal extension VectorArithmetic {
+extension VectorArithmetic {
     static func * (lhs: inout Self, rhs: Double)  {
         lhs.scale(by: rhs)
     }

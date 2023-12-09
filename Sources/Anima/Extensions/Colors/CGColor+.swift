@@ -13,7 +13,7 @@ import UIKit
 #endif
 import SwiftUI
 
-internal extension CGColor {
+extension CGColor {
     /// Returns the RGBA (red, green, blue, alpha) components.
     func rgbaComponents() -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
         var color = self
@@ -46,7 +46,7 @@ internal extension CGColor {
 }
 
 #if canImport(UIKit)
-internal extension CGColor {
+extension CGColor {
     /// The clear color in the Generic gray color space.
     static var clear: CGColor {
         return UIColor.clear.cgColor
