@@ -8,7 +8,7 @@ Anima is an animation framework for iOS, tvOS, and macOS. It allows animating pr
 
 Any type conforming to `AnimatableProperty` can be animated by `Anima`.
 
-By default, lots of types already supported it:
+By default, lots of types already conform to it:
 
 - `Float`
 - `Double`
