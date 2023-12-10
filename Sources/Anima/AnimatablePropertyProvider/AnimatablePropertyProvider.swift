@@ -13,9 +13,9 @@ public protocol AnimatablePropertyProvider: AnyObject {
     associatedtype Provider: AnimatablePropertyProvider = Self
     
     /**
-     Provides the animatable properties of the object.
+     Provides animatable properties of the object.
      
-     To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
+     To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update the values outside an animation block.
      
      See ``PropertyAnimator`` for more information.
      */

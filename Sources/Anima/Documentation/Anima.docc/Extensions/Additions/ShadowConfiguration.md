@@ -1,8 +1,8 @@
-# ``ContentConfiguration/Shadow``
+# ``ShadowConfiguration``
 
 ## Topics
 
-### Creating the shadow
+### Creating the shadow configuration
 
 - ``init(color:opacity:radius:offset:)``
 - ``accentColor(opacity:radius:offset:)``
@@ -13,6 +13,6 @@
 ### Configurating the shadow
 
 - ``color``
-- ``offset``
 - ``opacity``
 - ``radius``
+- ``offset``

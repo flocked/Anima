@@ -17,23 +17,26 @@ import SwiftUI
 
 // MARK: - CAKeyframeAnimationEmittable
 
-/// A type that defines the ability to generate a `CAKeyframeAnimation` from an animation.
+/**
+ A type that defines the ability to generate a `CAKeyframeAnimation` from an animation.
+ 
+ Example usage:
+ ```
+ let animation = SpringAnimation(spring: .bouncy, value: 0.0, target: 100.0)
+
+ let keyframeAnimation = animation.keyframeAnimation()
+ keyFrameAnimation.keyPath = "position.y"
+ layer.add(keyFrameAnimation, forKey: "animation")
+ ```
+ */
 public protocol CAKeyframeAnimationEmittable  {
     /**
-     Generates and returns a `CAKeyframeAnimation` based on the animation's current value targeting the animation's target value.
+     Generates a `CAKeyframeAnimation` based on the animation's current value and target.
 
      - Parameters:
         - framerate: The framerate the `CAKeyframeAnimation` should be targeting. If nil, the device's default framerate will be used.
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from the current animation's state to its resolved state.
      - Note: You will be required to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to be useful.
-
-     ```
-     let animation = SpringAnimation(spring: .bouncy, value: 0.0, target: 100.0)
-
-     let keyframeAnimation = animation.keyframeAnimation()
-     keyFrameAnimation.keyPath = "position.y"
-     layer.add(keyFrameAnimation, forKey: "animation")
-     ```
      */
     func keyframeAnimation(forFramerate framerate: Int?) -> CAKeyframeAnimation
 
@@ -54,7 +57,17 @@ public protocol CAKeyframeAnimationEmittable  {
 }
 
 extension CAKeyframeAnimationEmittable {
-    public func keyframeAnimation(forFramerate framerate: Int? = nil) -> CAKeyframeAnimation {
+    /**
+     Generates a `CAKeyframeAnimation` based on the animation's current value and target.
+     
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from the current animation's state to its resolved state.
+     - Note: You will be required to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to be useful.
+     */
+    public func keyframeAnimation() -> CAKeyframeAnimation {
+        keyframeAnimation(forFramerate: nil)
+    }
+    
+    public func keyframeAnimation(forFramerate framerate: Int?) -> CAKeyframeAnimation {
         let deltaTime: TimeInterval
         if let framerate = framerate {
             deltaTime = 1.0 / TimeInterval(framerate)
@@ -77,7 +90,7 @@ extension CAKeyframeAnimationEmittable {
     
     #if os(macOS)
     /**
-     Generates and returns a `CAKeyframeAnimation` based on the animation's current value targeting the animation's target value.
+     Generates a `CAKeyframeAnimation` based on the animation's current value and target.
 
      - Parameters:
         - screen: The screen where the animation is displayed.
@@ -89,7 +102,7 @@ extension CAKeyframeAnimationEmittable {
     }
     #else
     /**
-     Generates and returns a `CAKeyframeAnimation` based on the animation's current value targeting the animation's target value.
+     Generates a `CAKeyframeAnimation` based on the animation's current value and target.
 
      - Parameters:
         - screen: The screen where the animation is displayed.

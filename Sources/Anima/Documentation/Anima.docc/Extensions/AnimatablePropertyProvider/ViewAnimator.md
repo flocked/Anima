@@ -28,17 +28,6 @@
 - ``transform3D``
 - ``translation``
 
-- ``mask``
-- ``layer``
-- ``subviews``
-- ``superview``
-
-- ``addSubview(_:)``
-- ``insertSubview(_:at:)``
-- ``insertSubview(_:aboveSubview:)``
-- ``insertSubview(_:belowSubview:)``
-- ``removeFromSuperview()``
-
 ### NSBox
 
 - ``contentViewMargins``

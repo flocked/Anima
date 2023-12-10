@@ -7,6 +7,7 @@
 - ``integralizeValues``
 - ``repeats``
 - ``autoreverse``
+- ``resetSpringVelocity``
 - ``preventUserInteraction``
 
 ### Initializers

@@ -4,8 +4,9 @@
 
 ### Calculate rubberbanding of a value
 
-- ``value(for:coefficient:boundsSize:contentSize:)``
+- ``value(for:boundsSize:contentSize:coefficient:)``
 - ``value(for:range:interval:coefficient:)``
+- ``value(for:bounds:coefficient:)``
 
 ### Constant
 

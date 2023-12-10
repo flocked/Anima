@@ -13,6 +13,5 @@
 - ``alphaValue``
 - ``backgroundColor``
 - ``center``
-- ``contentView``
 - ``frame``
 - ``size``

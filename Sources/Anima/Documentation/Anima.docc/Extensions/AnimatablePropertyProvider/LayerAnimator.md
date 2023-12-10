@@ -33,12 +33,6 @@
 - ``translation``
 - ``zPosition``
 
-- ``addSublayer(_:)``
-- ``insertSublayer(_:above:)``
-- ``insertSublayer(_:at:)``
-- ``insertSublayer(_:below:)``
-- ``removeFromSuperlayer()``
-
 ### CAShapeLayer
 
 - ``fillColor``
@@ -72,6 +66,7 @@
 - ``instanceTransform``
 
 ### CATiledLayer
+
 - ``tileSize``
 
 ### CAGradientLayer
@@ -90,3 +85,4 @@
 - ``emitterZPosition``
 - ``lifetime``
 - ``spin``
+- ``velocity``

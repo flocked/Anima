@@ -12,12 +12,13 @@ import AppKit
 #elseif canImport(UIKit)
 import UIKit
 #endif
+
 /**
  Provides animatable properties and animations of an object conforming to ``AnimatablePropertyProvider``.
  
  ### Accessing Properties
 
- To access the animatable properties, use their keypath on the ``AnimatablePropertyProvider/animator-94wn0``:
+ To access the animatable properties, use their keypath on the objects ``AnimatablePropertyProvider/animator-94wn0``:
  
  To animate them, change their values inside an  an ``Anima`` animation block. To stop their animations and to update them immediately, change their values outside an animation block.
 
@@ -35,18 +36,18 @@ import UIKit
  }
  ```
  
- For easier access, you can extend the animator.
+ For easier access of the properties, you can extend the animator.
  
  ```swift
  public extension PropertyAnimator<Car> {
     var speed: CGFloat {
-        get { self[\.value] }
-        set { self[\.value] = newValue }
+        get { self[\.speed] }
+        set { self[\.speed] = newValue }
     }
  
     var location: CGPoint {
-        get { self[\.point] }
-        set { self[\.point] = newValue }
+        get { self[\.location] }
+        set { self[\.location] = newValue }
     }
  }
   
@@ -57,9 +58,11 @@ import UIKit
  ```
   
  ### Accessing Animations
- ``animations`` provides a dictionary of all running animations keyed by property names.
  
- To access the animation of a specific property, use it's keypath on the `animator` using ``subscript(animation:)``:
+ ``animations`` is a dictionary of all running animations keyed by property names.
+ 
+ To access the animation for a specific property, use it's keypath on the `animator` using ``subscript(animation:)``:
+ 
  ```swift
  if let speedAnimation = car.animator[animation: \.speed] {
     speedAnimation.stop()
@@ -67,6 +70,7 @@ import UIKit
  ```
  
  ### Accessing Animation velocity
+ 
  To access or change the animation velocity of a property that is currently animated,  use it's keypath on the `animator` using ``subscript(velocity:)``:
  
  ```swift

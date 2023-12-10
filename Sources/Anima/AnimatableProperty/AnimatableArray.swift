@@ -13,6 +13,8 @@ import Accelerate
  An array of animatable values, which is itself animatable.
   
  It's recommended to use `Double` values for much faster calculation in animations.
+ 
+ Take a look at ``AnimatableProperty`` for an example implementation of `AnimatableArray`.
  */
 public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
     var elements: [Element] = []
@@ -84,7 +86,6 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
         get { return elements[bounds] }
         set { elements[bounds] = newValue }
     }
-    
     
     /// The position of the first element in a nonempty array.
     public var startIndex: Int {
@@ -170,7 +171,6 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     
     public static func += (lhs: inout AnimatableArray, rhs: AnimatableArray) {
         lhs = lhs + rhs
-
     }
     
     public static func - (lhs: AnimatableArray, rhs: AnimatableArray) -> AnimatableArray {
