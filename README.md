@@ -1,6 +1,6 @@
 # Anima
 
-Anima is an animation framework for iOS, tvOS, and macOS. It allows animating properties with ease using spring, easing and decay animations.
+Anima is an animation framework for iOS, tvOS, and macOS. It lets you animate properties with ease using spring, easing and decay animations.
 
 **For a full documentation take a look at the** [Online Documentation](https://flocked.github.io/Anima/documentation/anima).
 
@@ -61,7 +61,7 @@ Anima.animate(withSpring: .bouncy) {
 }
 ```
 
-When changing values of properties that are currently animated, the animation’s velocity is preserved to provide fluid animations. That's why spring animation is the recommended animation for a responsive and interactive UI.
+When changing the value of a property that is currently animated, the animation’s velocity is preserved to provide fluid animations. That's why spring animation is the recommended animation for a responsive and interactive UI.
 
 You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
 
@@ -181,15 +181,6 @@ Rubberbanding is the act of making values appear to be on a rubberband (they str
 ## Acknowledgement
 
 It is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion). Without these libraries Anima wouldn't have been possible.
-
-### CAKeyframeAnimationEmittable, DecayAnimation, EasingAnimation
-https://github.com/b3ll/Motion
-
-### Decomposed
-https://github.com/b3ll/Decomposed
-
-### TimingFunction
-https://github.com/timdonnelly/Advance
 
 ## Installation
 
