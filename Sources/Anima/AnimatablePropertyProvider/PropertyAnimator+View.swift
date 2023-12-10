@@ -23,6 +23,9 @@ extension AnimatablePropertyProvider where Self: NSUIView {
 
 /// Provides animatable properties of a view.
 public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
+    
+    // MARK: - Animatable Properties
+    
     /// The bounds of the view.
     public var bounds: CGRect {
         get { self[\.bounds] }
@@ -40,7 +43,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         get { frame.origin }
         set { frame.origin = newValue }
     }
-    
+        
     /// The size of the view. Changing the value keeps the view centered. To change the size without centering use the view's frame size.
     public var size: CGSize {
         get { frame.size }
@@ -239,9 +242,30 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
             self.object.removeFromSuperview()
         })
     }
+    
+    // MARK: - Accessing animations
+    
+    /**
+     The current animation for the property at the specified keypath, or `nil` if there isn't an animation for the keypath.
+     
+     - Parameter keyPath: The keypath to an animatable property.
+     */
+    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> AnimationProviding? {
+        return layerAnimation(for: keyPath) ?? animations[keyPath.stringValue]
+    }
+    
+    /**
+     The current animation velocity for the property at the specified keypath, or `nil` if there isn't an animation for the keypath or the animation doesn't support velocity values.
+     
+     - Parameter keyPath: The keypath to an animatable property.
+     */
+    public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> Value? {
+        return (animation(for: keyPath) as? any ConfigurableAnimationProviding)?.velocity as? Value
+    }
 }
 
 #if os(macOS)
+
 extension ViewAnimator where View: NSTextField {
     /// The text color of the text field.
     public var textColor: NSUIColor? {
@@ -602,3 +626,23 @@ extension UIScrollView {
     }
 }
 #endif
+
+extension ViewAnimator {
+    internal func layerAnimation(for keyPath: PartialKeyPath<ViewAnimator>) -> (any ConfigurableAnimationProviding)? {
+        switch keyPath {
+        case \.backgroundColor: return object.optionalLayer?.animator.animation(for: \.backgroundColor)
+        case \.borderColor: return object.optionalLayer?.animator.animation(for: \.borderColor)
+        case \.borderWidth: return object.optionalLayer?.animator.animation(for: \.borderWidth)
+        case \.shadow: return object.optionalLayer?.animator.animation(for: \.shadow)
+        case \.innerShadow: return object.optionalLayer?.animator.animation(for: \.innerShadow)
+        case \.alpha: return object.optionalLayer?.animator.animation(for: \.opacity)
+        case \.cornerRadius: return object.optionalLayer?.animator.animation(for: \.cornerRadius)
+        case \.transform3D: return object.optionalLayer?.animator.animation(for: \.transform)
+        case \.scale: return object.optionalLayer?.animator.animation(for: \.scale)
+        case \.translation: return object.optionalLayer?.animator.animation(for: \.translation)
+        case \.rotation: return object.optionalLayer?.animator.animation(for: \.rotation)
+        default: return nil
+        }
+    }
+}
+

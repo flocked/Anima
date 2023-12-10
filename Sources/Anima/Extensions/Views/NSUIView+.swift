@@ -13,7 +13,12 @@ import UIKit
 
 extension NSUIView {
     var optionalLayer: CALayer? {
-        get { self.layer }
+        get {
+            #if os(macOS)
+            wantsLayer = true
+            #endif
+           return self.layer
+        }
     }
     
     /**

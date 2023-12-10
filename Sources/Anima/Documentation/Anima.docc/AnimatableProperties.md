@@ -28,7 +28,7 @@ To conform to ``AnimatableProperty`` you have to provide:
 
 `animatableData` is used by `Anima` to calculate the interpolation of the values while animating.
 
-The easist way to provide animatableData,  is to use ``AnimatabeArray``.
+The easist way to provide animatableData,  is to use ``Anima/AnimatableArray``.
 
 Example:
 

@@ -25,9 +25,9 @@ import UIKit
  ## Animations
  
  There are three different types of animations :
- - **Spring:** ``animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
+ - **Decay:** ``animate(withDecay:decelerationRate:delay:options:animations:completion:)``
  - **Easing:** ``animate(withEasing:duration:delay:options:animations:completion:)``
- - **Decay:** ``animate(withDecay:decelerationRate:delay:options:animations:completion:)``.
+ - **Spring:** ``animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
  
  Example usage with a spring animation:
  

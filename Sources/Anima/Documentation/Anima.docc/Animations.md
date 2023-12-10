@@ -1,14 +1,14 @@
 # Animations
 
-Anima provides decay, easing and spring animations.
+Anima provides Decay, Easing and Spring Animations.
 
 ## Overview
 
-There are three types of animations: Decay, Easing and Spring. They let you animate properties conforming to ``AnimatableProperty``.
+There are three animations types: Decay, Easing and Spring. They let you animate properties conforming to ``AnimatableProperty``.
 
-You provide the inital value and target of the animation. 
+You provide the inital and target value of the animation. 
 
-To start an animation use      ``AnimationProviding/start(afterDelay:)``, to pause      ``AnimationProviding/pause()`` and to stop ``AnimationProviding/stop(at:immediately:)``.
+To change the state of the animation, use      ``AnimationProviding/start(afterDelay:)``, ``AnimationProviding/pause()`` and ``AnimationProviding/stop(at:immediately:)``.
 
 ``SpringAnimation/valueChanged`` gets called whenever the current value of the animation changes.
 
@@ -25,7 +25,7 @@ animation.start(afterDelay: 0.0)
 ```swift
 animation.completion = { event in 
     if event.isFinished {
-    // handle finished state
+        // handle finished state
     }
 }
 ```
@@ -36,7 +36,7 @@ animation.completion = { event in
 
 A spring based animation for fluid animations.
 
-You provide a ``Spring`` which describes the spring configuration. `Spring` offers many predefined configurations like ``Spring/bouncy``, ``Spring/smooth`` or ``Spring/snappy``).
+You provide a ``Spring`` which describes the spring configuration. `Spring` offers many predefined configurations like ``Spring/bouncy``, ``Spring/smooth`` or ``Spring/snappy``.
 
 ```swift
 let value = CGPoint(x: 0, y: 0)

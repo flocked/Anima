@@ -49,7 +49,7 @@ public struct Rubberband {
 
 
     /**
-     Rubberbands a floating point value based on the specified boundsSize and contentSize.
+     Rubberbands a floating point value based on the specified bounds size and content size.
 
      - Parameters:
        - value: The floating point value to rubberband.

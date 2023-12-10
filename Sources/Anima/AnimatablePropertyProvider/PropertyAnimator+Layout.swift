@@ -26,3 +26,23 @@ public class LayoutAnimator: PropertyAnimator<NSLayoutConstraint> {
         set { self[\.constant] = newValue }
     }
 }
+
+extension LayoutAnimator {
+    /**
+     The current animation for the property at the specified keypath, or `nil` if there isn't an animation for the keypath.
+
+     - Parameter keyPath: The keypath to an animatable property.
+     */
+    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayoutAnimator, Value>) -> AnimationProviding? {
+        return animations[keyPath.stringValue]
+    }
+    
+    /**
+     The current animation velocity for the property at the specified keypath, or `nil` if there isn't an animation for the keypath or the animation doesn't support velocity values.
+     
+     - Parameter keyPath: The keypath to an animatable property.
+     */
+    public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayoutAnimator, Value>) -> Value? {
+        return (animation(for: keyPath) as? any ConfigurableAnimationProviding)?.velocity as? Value
+    }
+}

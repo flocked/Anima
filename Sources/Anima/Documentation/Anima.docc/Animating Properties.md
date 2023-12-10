@@ -11,7 +11,7 @@ Many objects already conform to it and provide animatable properties:
  - iOS: `UIView`, `UILabel`, `UIImageView` and many more.
  - Shared: `NSLayoutConstraint` and `CALayer`
 
-The properties can can be accessed via the object's ``AnimatablePropertyProvider/animator``. Change their values inside an animation block using `Anima.animate(…)` to animate them.
+The animatable properties can can be accessed via the object's ``AnimatablePropertyProvider/animator``. Change their values inside an animation block using `Anima.animate(…)` to animate them.
 
 ### Spring Animation
 
@@ -29,7 +29,7 @@ Anima.animate(withSpring: .bouncy) {
 }
 ```
 
-When changing values of properties that are currently spring animated, the animation’s velocity is preserved for providing fluid animations. That's why spring animations are the recommended animation for a responsive and interactive UI.
+When changing values of properties that are currently spring animated, the animation’s velocity is preserved to provide fluid animations. That's why spring animation is the recommended animation for a responsive and interactive UI.
 
 You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
 
@@ -80,7 +80,7 @@ Anima.animate(withDecay: .velocity) {
 }
 ```
 
-### Stopping of animations
+### Stop Animation
 
 Updating a property outside an animation block stops its animation and updates it immediately:
 
@@ -92,14 +92,4 @@ You can also stop all animations at the current values:
 
 ```swift
 Anima.stopAllAnimations()
-```
-
-### Changing the velocity
-
-You can change the velocity of running decay or spring animation:
-
-```swift
-Anima.updateVelocity {
-    view.animator.frame.origin.y += 200
-}
 ```

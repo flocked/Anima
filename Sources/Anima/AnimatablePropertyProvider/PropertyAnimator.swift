@@ -52,7 +52,7 @@ import UIKit
  }
  ```
  */
-public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
+open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     var object: Provider
     
     init(_ object: Provider) {
@@ -79,30 +79,6 @@ public class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     public subscript<Value: AnimatableProperty>(velocity velocity: WritableKeyPath<Provider, Value>) -> Value {
         get { animation(for: velocity)?.velocity as? Value ?? .zero  }
         set { animation(for: velocity)?.setVelocity(newValue) }
-    }
-    
-    /**
-     The current animation for the property at the specified keypath.
-     
-     - Parameter keyPath: The keypath to an animatable property.
-     */
-    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<PropertyAnimator, Value>) -> AnimationProviding? {
-        var key = keyPath.stringValue
-        if key.contains("layer."), let viewAnimator = self as? PropertyAnimator<NSUIView> {
-            key = key.replacingOccurrences(of: "layer.", with: "")
-            return viewAnimator.object.optionalLayer?.animator.animations[key]
-        } else {
-            return animations[key]
-        }
-    }
-    
-    /**
-     The current animation velocity for the property at the specified keypath, or `nil` if there isn't an animation for the keypath or the animation doesn't support velocity values.
-     
-     - Parameter keyPath: The keypath to an animatable property.
-     */
-    public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<PropertyAnimator, Value>) -> Value? {
-        return (animation(for: keyPath) as? any ConfigurableAnimationProviding)?.velocity as? Value
     }
 }
 

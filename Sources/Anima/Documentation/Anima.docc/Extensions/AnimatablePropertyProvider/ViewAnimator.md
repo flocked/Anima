@@ -2,6 +2,12 @@
 
 ## Topics
 
+### Accessing animations
+
+- ``PropertyAnimator/animations``
+- ``animation(for:)``
+- ``animationVelocity(for:)``
+
 ### Animatable properties
 
 - ``alpha``
@@ -59,6 +65,7 @@
 
 ### NSScrollView
 
+- ``documentOffset``
 - ``magnification``
 - ``setMagnification(_:centeredAt:)``
 
