@@ -1,28 +1,20 @@
 # ``Anima``
 
-Anima is an animation framework for iOS, tvOS, and macOS. It can animate properties using spring, easing and decay animations.
+An animation framework for iOS, tvOS, and macOS.
 
 ## Overview
+
+Anima is an animation framework for iOS, tvOS, and macOS. It can animate properties using spring, easing and decay animations.
 
 There are two ways you can animate with Anima, depending on your needs.
 
 #### Block-Based Animation
 
-The easiest way to animate is by using Anima’s block-based APIs. It lets you animate properties of objects like `NSView/UIView`, `NSWindow`, `CALayer`, `NSLayoutConstraint` and any object conforming to ``AnimatablePropertyProvider``.
+The easiest way to animate is by using Anima’s block-based APIs. It lets you animate properties of objects like `NSView`, `UIView`, `CALayer`, `NSLayoutConstraint`, `NSWindow` or any other object conforming to ``AnimatablePropertyProvider``.
 
-The animatable properties can can be accessed via the object's ``AnimatablePropertyProvider/animator``. To animate them, change their values inside an animation block using `Anima.animate(…)`.
+The animatable properties can be accessed via the object's ``AnimatablePropertyProvider/animator``. To animate them, change their values inside an animation block using `Anima.animate(…)`.
 
-**Animation types**
-
-There are three animation types:
-- **Decay:** ``Anima/animate(withDecay:decelerationRate:delay:options:animations:completion:)``.
-    - Animates with a decaying acceleration.
-- **Easing:** ``Anima/animate(withEasing:duration:delay:options:animations:completion:)``
-    - Animates with a timing function like `easeIn`, `easeOut` or `linear`.
-- **Spring:** ``Anima/animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
-    - Animates with a spring.
-
-Example spring animation:
+Example of a spring animation:
 ```swift
 Anima.animate(withSpring: .bouncy) {
     view.animator.frame = newFrame
@@ -30,9 +22,18 @@ Anima.animate(withSpring: .bouncy) {
 }
 ```
 
+**Animation types**
+
+- **Decay:** ``Anima/animate(withDecay:decelerationRate:delay:options:animations:completion:)``.
+    - Animates with a decaying acceleration.
+- **Easing:** ``Anima/animate(withEasing:duration:delay:options:animations:completion:)``
+    - Animates with a timing function like `easeIn`, `easeOut` or `linear`.
+- **Spring:** ``Anima/animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
+    - Animates with a spring.
+
 **Stop Animations**
 
-Updating a property outside an animation block stops its animation and updates it immediately:
+Updating a property outside an animation block, stops its animation and its value is changed immediately:
 
  ```swift
  view.animator.backgroundColor = .systemRed
@@ -44,27 +45,35 @@ Updating a property outside an animation block stops its animation and updates i
 
 While the block-based API is often most convenient, you may want to animate something that the block-based API doesn’t yet support. Or, you may want the flexibility of getting the intermediate values of an animation.
 
-Any type conforming to ``AnimatableProperty`` can be animated. Many types already conform to it: `Double`, `CGFöpat`, `CGPoint`, `CGSize`, `CGRect`, `CGColor`, `NSColor`, `UIColor`.
+Any type conforming to ``AnimatableProperty`` can be animated. Many types already conform to it: `Double`, `CGFlpat`, `CGPoint`, `CGSize`, `CGRect`, `CGColor`, `NSColor`, `UIColor`, `CATransform3D`, …
 
-There are three animation types:
+There are three types of animations:
 - ``DecayAnimation``
 - ``EasingAnimation``
 - ``SpringAnimation``
 
-Example spring animation:
+To create an animation you provide an initial value, target value and ``SpringAnimation/valueChanged``, a block that gets called whenever the animation's current value changes.
+
+Example of a spring animation:
 ```swift
 let animation = SpringAnimation(spring: .bouncy, value: view.frame.size, target: CGSize(width: 500, height: 500))
 animation.valueChanged = { newSize in 
     view.frame.size = newSize
 }
-animation.start(afterDelay: 0.0)
+animation.start()
 ```
 
-*For more details about how to make a type animatable by conforming to `AnimatableProperty`, take a look at <doc:AnimatableProperties>.*
+*For more details about how to make a type animatable, take a look at <doc:AnimatableProperties>.*
 
 *For more details about the different animation types and how to set them up, take a look at <doc:Animations>.*
 
 ## Topics
+
+### Animating
+
+- <doc:Animating-Properties>
+- ``Anima``
+- ``Anima/AnimationOptions``
 
 ### Animatable Property
 
@@ -80,12 +89,6 @@ animation.start(afterDelay: 0.0)
 - ``LayoutAnimator``
 - ``ViewAnimator``
 - ``WindowAnimator``
-
-### Animating
-
-- <doc:Animating-Properties>
-- ``Anima``
-- ``Anima/AnimationOptions``
 
 ### Anmations
 
