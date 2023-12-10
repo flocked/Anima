@@ -18,7 +18,11 @@ import Decomposed
 /**
  A type that describes an animatable value.
   
- Example usage:
+ `Anima` can animate any type conforming to this protocol. It uses `animatableData` to calculate new values in an animation.
+ 
+ If the type you want to conform has many properties, consider using ``AnimatableArray`` as `animatableData`. It lets you combine a collection of values.
+ 
+ Example conformance:
  ```swift
  struct MyStruct {
     let value: Double

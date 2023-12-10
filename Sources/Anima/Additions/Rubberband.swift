@@ -18,7 +18,7 @@ public struct Rubberband {
 
      - Parameters:
         - value: The floating point value to rubberband.
-        - range: range of the value.
+        - range: The range over which the value won't rubberband.
         - interval: The interval of the value.
         - coefficient: A multiplier to decay the value when it's being rubberbanded. Defaults to ``ScrollViewRubberBandingConstant``.
      */
@@ -86,5 +86,19 @@ public struct Rubberband {
         } else { // We're beyond the range in the opposite direction
             return -rubberBandedAmount
         }
+    }
+    
+    /**
+     Rubberbands the frame inside the bounds.
+
+     - Parameters:
+        - frame: The frame to rubberband.
+        - bounds: The bounds over which the frame won't rubberband.
+        - coefficient: A multiplier to decay the value when it's being rubberbanded. Defaults to ``ScrollViewRubberBandingConstant``.
+     */
+    public static func value(for frame: CGRect, bounds: CGRect, coefficient: Double = ScrollViewRubberBandingConstant) -> CGRect {
+        let x = self.value(for: frame.origin.x, boundsSize: frame.width, contentSize: bounds.width, coefficient: coefficient)
+        let y = self.value(for: frame.origin.y, boundsSize: frame.height, contentSize: bounds.height, coefficient: coefficient)
+        return CGRect(origin: CGPoint(x, y), size: frame.size)
     }
 }

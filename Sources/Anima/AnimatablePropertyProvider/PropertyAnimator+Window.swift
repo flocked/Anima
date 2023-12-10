@@ -58,8 +58,8 @@ public class WindowAnimator: PropertyAnimator<NSWindow> {
 
     /// The frame of the window.
     public var frame: CGRect {
-        get { self[\.frame_] }
-        set { self[\.frame_] = newValue }
+        get { self[\._frame] }
+        set { self[\._frame] = newValue }
     }
     
     /// The origin of the window.
@@ -94,15 +94,10 @@ public class WindowAnimator: PropertyAnimator<NSWindow> {
         get { self[\.alphaValue] }
         set { self[\.alphaValue] = newValue }
     }
-        
-    /// The animator for the window's content view.
-    public var contentView: PropertyAnimator<NSView>? {
-        object.contentView?.animator
-    }
 }
 
 fileprivate extension NSWindow {
-   @objc dynamic var frame_: CGRect {
+   @objc dynamic var _frame: CGRect {
         get { frame }
         set { setFrame(newValue, display: false) }
     }

@@ -10,238 +10,130 @@ import SwiftUI
 import Accelerate
 
 /**
- An array that can serve as the animatable data of an animatable type (see ``AnimatableProperty``).
+ An array of animatable values, which is itself animatable.
   
- Example usage:
- ```swift
- struct MyStruct {
-    let value: Double
-    let point: CGPoint
- }
- 
- extension MyStruct: AnimatableProperty {
-    init(_ animatableData: AnimatableArray<Double>) {
-        value = animatableData[0]
-        point = CGPoint(x: animatableData[1], y: animatableData[2])
-    }
- 
-    var animatableData: AnimatableArray<Double> {
-        [value, point.x, point.y]
-    }
- 
-    static let zero = MyStruct(value: 0, point: .zero)
- }
- ```
- > Tip:  It's recommended to use `Double` as elements for much faster calculating in animations.
+ It's recommended to use `Double` values for much faster calculation in animations.
  */
 public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
     var elements: [Element] = []
 
+    /// Creates a new, empty array.
     public init() {}
 
+    /**
+     Creates a new array with the given elements from an array literal.
+     
+     - Parameter elements: The elements for the new array..
+     */
     public init(arrayLiteral elements: Element...) {
         self.elements = elements
     }
     
+    /**
+     Creates a new array containing the elements of a sequence.
+     
+     - Parameter elements: The sequence of elements for the new array.
+     */
     public init<S>(_ elements: S) where S: Sequence, Element == S.Element {
         self.elements = .init(elements)
     }
 
+    /**
+     Creates a new array containing the specified number of a single, repeated value.
+     
+     - Parameters
+        -  repeatedValue: The element to repeat.
+        -  count: The number of times to repeat the value passed in the repeating parameter. count must be zero or greater.
+     */
     public init(repeating repeatedValue: Element, count: Int) {
         elements = .init(repeating: repeatedValue, count: count)
     }
     
+    /**
+     Accesses the element at the specified position.
+     
+     - Parameter index: The position of the element to access. index must be greater than or equal to startIndex and less than endIndex.
+     */
     public subscript(index: Int) -> Element {
         get {  return elements[index] }
         set {  elements[index] = newValue }
     }
     
-    public subscript(safe safeIndex: Index) -> Element? {
+    /**
+     Accesses the element at the specified position safety. Returns `nil` If the index is larger than the array,
+     
+     - Parameter index: The position of the element to access.
+     */
+    public subscript(safe index: Index) -> Element? {
         get {
-            if isEmpty == false, safeIndex < count {
-                return self[safeIndex]
-            }
-            return nil
+            guard !isEmpty, index >= 0, index < count else { return nil }
+            return self[index]
         }
         set {
-            if isEmpty == false, safeIndex < count, let newValue = newValue {
-                self[safeIndex] = newValue
-            }
+            guard !isEmpty, index >= 0, index < count, let newValue = newValue else { return }
+            self[index] = newValue
         }
     }
     
-    public subscript(range: ClosedRange<Int>) -> ArraySlice<Element> {
-        get { return elements[range] }
-        set { elements[range] = newValue }
+    /**
+     Accesses a contiguous subrange of the array’s elements.
+     
+     - Parameter bounds: A range of integers. The bounds of the range must be valid indices of the array.
+     */
+    public subscript(bounds: Range<Int>) -> ArraySlice<Element> {
+        get { return elements[bounds] }
+        set { elements[bounds] = newValue }
     }
     
-    public subscript(range: Range<Int>) -> ArraySlice<Element> {
-        get { return elements[range] }
-        set { elements[range] = newValue }
-    }
-
-    public var count: Int {
-        return elements.count
-    }
     
-    public var first: Element? {
-        return elements.first
-    }
-    
-    public var last: Element? {
-        return elements.last
-    }
-
-    public var underestimatedCount: Int {
-        return elements.underestimatedCount
-    }
-
-    public mutating func set(contents: [Element]) {
-        elements = contents
-    }
-
-    public mutating func removeAll() {
-        elements.removeAll()
-    }
-
-    @discardableResult
-    public mutating func remove(at i: Int) -> Element {
-        elements.remove(at: i)
-    }
-
-    @discardableResult
-    public mutating func removeFirst() -> Element {
-        elements.removeFirst()
-    }
-
-    public mutating func removeFirst(_ k: Int) {
-        elements.removeFirst(k)
-    }
-
-    public mutating func removeSubrange(_ bounds: Range<Int>) {
-        elements.removeSubrange(bounds)
-    }
-
-    public mutating func removeAll(where shouldBeRemoved: (Element) throws -> Bool) rethrows {
-        try elements.removeAll(where: shouldBeRemoved)
-    }
-
-    public mutating func removeAll(keepingCapacity keepCapacity: Bool) {
-        elements.removeAll(keepingCapacity: keepCapacity)
-    }
-
-    public mutating func removeLast(_ k: Int) {
-        elements.removeLast(k)
-    }
-
-    public mutating func removeLast() {
-        elements.removeLast()
-    }
-
-    public mutating func append(_ newElement: Element) {
-        elements.append(newElement)
-    }
-
-    public mutating func append<S>(contentsOf newElements: S) where S: Sequence, Element == S.Element {
-        elements.append(contentsOf: newElements)
-    }
-
-    public var indices: Range<Int> {
-        return elements.indices
-    }
-
-    public var isEmpty: Bool {
-        return elements.isEmpty
-    }
-
-    public func distance(from start: Int, to end: Int) -> Int {
-        return elements.distance(from: start, to: end)
-    }
-
-    public mutating func swapAt(_ i: Int, _ j: Int) {
-        elements.swapAt(i, j)
-    }
-
-    public mutating func reserveCapacity(_ n: Int) {
-        elements.reserveCapacity(n)
-    }
-
-    public mutating func insert(_ newElement: Element, at i: Int) {
-        elements.insert(newElement, at: i)
-    }
-
-    public mutating func insert<S>(contentsOf newElements: S, at i: Int) where S: Collection, Element == S.Element {
-        elements.insert(contentsOf: newElements, at: i)
-    }
-
-    public func formIndex(after i: inout Int) {
-        elements.formIndex(after: &i)
-    }
-
-    public func formIndex(before i: inout Int) {
-        elements.formIndex(before: &i)
-    }
-
-    public mutating func partition(by belongsInSecondPartition: (Element) throws -> Bool) rethrows -> Int {
-        try elements.partition(by: belongsInSecondPartition)
-    }
-
-    public func withContiguousStorageIfAvailable<R>(_ body: (UnsafeBufferPointer<Element>) throws -> R) rethrows -> R? {
-        try elements.withContiguousStorageIfAvailable(body)
-    }
-
-    public mutating func withContiguousMutableStorageIfAvailable<R>(_ body: (inout UnsafeMutableBufferPointer<Element>) throws -> R) rethrows -> R? {
-        try elements.withContiguousMutableStorageIfAvailable(body)
-    }
-
-    private func isInBounds(index: Int) -> Bool {
-        return indices ~= index
-    }
-
+    /// The position of the first element in a nonempty array.
     public var startIndex: Int {
         return elements.startIndex
     }
 
+    /// The array’s “past the end” position—that is, the position one greater than the last valid subscript argument.
     public var endIndex: Int {
         return elements.endIndex
     }
 
-    public func index(after i: Int) -> Int {
-        return elements.index(after: i)
+    /// The number of elements in the array.
+    public var count: Int {
+        return elements.count
     }
-
-    public func index(before i: Int) -> Int {
-        return elements.index(before: i)
+    
+    /// A Boolean value indicating whether the collection is empty.
+    public var isEmpty: Bool {
+        return elements.isEmpty
     }
-
-    public func index(_ i: Int, offsetBy distance: Int) -> Int {
-        return elements.index(i, offsetBy: distance)
+    
+    /// The first element of the collection.
+    public var first: Element? {
+        return elements.first
     }
-
-    public func index(_ i: Int, offsetBy distance: Int, limitedBy limit: Int) -> Int? {
-        return elements.index(i, offsetBy: distance, limitedBy: limit)
+    
+    /// The last element of the collection.
+    public var last: Element? {
+        return elements.last
     }
-
+    
+    /**
+     Replaces the specified subrange of elements with the given collection.
+     
+     - Parameters
+        -  subrange: The subrange of the collection to replace. The bounds of the range must be valid indices of the collection.
+        -  newElements: The new elements to add to the collection.
+     */
     public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
-        where C: Collection, R: RangeExpression, Element == C.Element, Int == R.Bound
-    {
+        where C: Collection, R: RangeExpression, Element == C.Element, Int == R.Bound {
         elements.replaceSubrange(subrange, with: newElements)
     }
 }
 
 extension AnimatableArray: MutableCollection, RangeReplaceableCollection, RandomAccessCollection, BidirectionalCollection { }
-
+extension AnimatableArray: ExpressibleByArrayLiteral { }
 extension AnimatableArray: Sendable where Element: Sendable { }
-
-extension AnimatableArray: Encodable where Element: Encodable {}
-
-extension AnimatableArray: Decodable where Element: Decodable {}
-
-extension AnimatableArray: CVarArg {
-    public var _cVarArgEncoding: [Int] {
-        return elements._cVarArgEncoding
-    }
-}
+extension AnimatableArray: Encodable where Element: Encodable { }
+extension AnimatableArray: Decodable where Element: Decodable { }
 
 extension AnimatableArray: CustomStringConvertible, CustomDebugStringConvertible, CustomReflectable {
     public var customMirror: Mirror {
@@ -263,16 +155,7 @@ extension AnimatableArray: Hashable where Element: Hashable {
     }
 }
 
-extension AnimatableArray: ContiguousBytes {
-    public func withUnsafeBytes<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
-        try elements.withUnsafeBytes(body)
-    }
-}
-
-extension AnimatableArray: ExpressibleByArrayLiteral { }
-
 extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
-    
     public static func + (lhs: AnimatableArray, rhs: AnimatableArray) -> AnimatableArray {
         let count = Swift.min(lhs.count, rhs.count)
         if let _lhs = lhs as? AnimatableArray<Double>, let _rhs = rhs as? AnimatableArray<Double> {
