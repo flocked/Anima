@@ -89,13 +89,6 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         set { _value = newValue.animatableData  }
     }
     
-    public var Test: Int = 3
-
-
-    public struct Test {
-        
-    }
-    
     var _value: Value.AnimatableData {
         didSet {
             guard state != .running else { return }

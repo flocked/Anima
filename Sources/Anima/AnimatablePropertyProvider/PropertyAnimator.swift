@@ -12,11 +12,10 @@ import AppKit
 #elseif canImport(UIKit)
 import UIKit
 #endif
-
 /**
- Provides animatable properties of an object conforming to ``AnimatablePropertyProvider``.
+ Provides animatable properties and animations of an object conforming to ``AnimatablePropertyProvider``.
  
- To access the animatable properties, you use their keypath on the ``AnimatablePropertyProvider/animator``.
+ To access the animatable properties, you use their keypath on the ``AnimatablePropertyProvider/animator-94wn0``.
  
  ```swift
  class Car: AnimatablePropertyProvider {
@@ -27,7 +26,8 @@ import UIKit
  let car = Car()
  
  Anima.animate(withSpring: .smooth) {
-    car.animator[\.speed] = 100.0
+    car.animator[\.speed] = 120.0
+    car.animator[\.location].x = 200.0
  }
  ```
  
@@ -48,8 +48,25 @@ import UIKit
   
  Anima.animate(withSpring: .smooth) {
     car.animator.speed = 120.0
-    car.animator.point = CGPoint(x: 100.0, y: 100.0)
+    car.animator.location.x = 200.0
  }
+ ```
+ 
+ ### Access Animations
+ ``animations`` provides a dictionary of all running animations keyed by property names.
+ 
+ To access the animation of a specific property, use it's keypath on the `animator` using ``subscript(animation:)``:
+ ```swift
+ if let speedAnimation = car.animator[animation: \.speed] {
+    speedAnimation.stop()
+ }
+ ```
+ 
+ ### Access Animation velocity
+ To access or change the animation velocity of a property that is currently animated,  use it's keypath on the `animator` using ``subscript(velocity:)``:
+ 
+ ```swift
+ car.animator[velocity: \.speed] = 120.0
  ```
  */
 open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
@@ -72,13 +89,22 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     }
     
     /**
-     The current animation velocity of the property at the specified keypath, or `zero` if there isn't an animation for the property or the animation doesn't support velocity values.
+     The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
 
-     - Parameter velocity: The keypath to the animatable property for the velocity.
+     - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(velocity velocity: WritableKeyPath<Provider, Value>) -> Value {
-        get { animation(for: velocity)?.velocity as? Value ?? .zero  }
-        set { animation(for: velocity)?.setVelocity(newValue) }
+    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> AnimationProviding? {
+        get { self.animation(for: keyPath)  }
+    }
+    
+    /**
+     The current animation velocity for the property at the specified keypath, or `zero` if the property isn't animated or the animation doesn't support velocity values.
+
+     - Parameter keyPath: The keypath to the animatable property for the velocity.
+     */
+    public subscript<Value: AnimatableProperty>(velocity keyPath: WritableKeyPath<Provider, Value>) -> Value {
+        get { animation(for: keyPath)?.velocity as? Value ?? .zero  }
+        set { animation(for: keyPath)?.setVelocity(newValue) }
     }
 }
 

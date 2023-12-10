@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// An object that provides animatable properties that can be accessed via it's ``animator``.
+/// An object that provides animatable properties that can be accessed via it's ``animator-94wn0``.
 public protocol AnimatablePropertyProvider: AnyObject {
     /// The object that provides animatable properties.
     associatedtype Provider: AnimatablePropertyProvider = Self
