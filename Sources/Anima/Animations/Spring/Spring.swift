@@ -103,7 +103,7 @@ public struct Spring: Sendable, Hashable {
 
      - parameters:
         - response: Represents the frequency response of the spring. This value affects how quickly the spring animation reaches its target value. The frequency response is the duration of one period in the spring's undamped system, measured in seconds. Values closer to `0` create a very fast animation, while values closer to `1.0` create a relatively slower animation.
-        - dampingRatio: The amount of oscillation the spring will exhibit (i.e. "springiness"). A value of `1.0` (critically damped) will cause the spring to smoothly reach its target value without any oscillation. Values closer to `0.0` (underdamped) will increase oscillation (and overshoot the target) before settling.
+        - dampingRatio: The amount of oscillation the spring will < (i.e. "springiness"). A value of `1.0` (critically damped) will cause the spring to smoothly reach its target value without any oscillation. Values closer to `0.0` (underdamped) will increase oscillation (and overshoot the target) before settling.
         - mass: The mass "attached" to the spring. The default value of `1.0` rarely needs to be modified.
      */
     public init(response: Double, dampingRatio: Double, mass: Double = 1.0) {
@@ -117,7 +117,9 @@ public struct Spring: Sendable, Hashable {
 
         let unbandedDampingCoefficient = Self.damping(dampingRatio: dampingRatio, response: response, mass: mass)
         
-        self.damping = Rubberband.value(for: unbandedDampingCoefficient, range: 0 ... 60, interval: 15)
+    //    self.damping = Rubberband.value(for: unbandedDampingCoefficient, range: 0 ... 60, interval: 15)
+        
+        self.damping = unbandedDampingCoefficient
         
         self.settlingDuration = Self.settlingTime(dampingRatio: dampingRatio, damping: damping, stiffness: stiffness, mass: mass)
     }
