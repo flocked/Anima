@@ -15,13 +15,51 @@ import Decomposed
 extension CALayer: AnimatablePropertyProvider { }
 
 extension AnimatablePropertyProvider where Self: CALayer {
-    /// Provides animatable properties of the layer.
+    /**
+     Provides animatable properties of the layer.
+     
+     To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
+     
+     See ``LayerAnimator`` for more information.
+     */
     public var animator: LayerAnimator<Self> {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self)) }
     }
 }
 
-/// Provides animatable properties of a layer.
+/**
+ Provides animatable properties of an layer.
+ 
+ ### Animating properties
+
+ To animate the properties, change their values inside an ``Anima`` animation block:
+
+ ```swift
+ Anima.animate(withSpring: .smooth) {
+    layer.animator.frame.size = CGSize(width: 100.0, height: 200.0)
+    layer.animator.backgroundColor = .black
+ }
+ ```
+ To stop animations and to change properties immediately, change their values outside an animation block:
+
+ ```swift
+ layer.animator.backgroundColor = .white
+ ```
+ 
+ ### Accessing Animations
+ 
+ To access the animation for a specific property, use ``animation(for:)``:
+ 
+ ```swift
+ if let animation = layer.animator.animation(for: \.frame) {
+    animation.stop()
+ }
+ ```
+ 
+ ### Accessing Animation Velocity
+ 
+ To access the animation velocity for a specific property, use ``animationVelocity(for:)`.
+ */
 public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
 
     // MARK: - Animatable Properties
@@ -144,98 +182,10 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         set { self[\.innerShadow] = newValue }
     }
     
-    /// The property animators for the layer's sublayers.
-    public var sublayers: [LayerAnimator<CALayer>] {
-        object.sublayers?.compactMap({$0.animator}) ?? []
-    }
-    
-    /// The property animator for the layer's superlayer.
-    public var superlayer: LayerAnimator<CALayer>? {
-        object.superlayer?.animator
-    }
-    
-    /// The property animator for the layer's mask.
-    public var mask: LayerAnimator<CALayer>? {
-        object.mask?.animator
-    }
-    
-    /**
-     Adds the specified layer animated. The sublayers's opacity gets animated to `1.0`.
-     
-     - Note: The animation only occurs if the layer's sublayers doesn't contain the specified sublayer.
-     */
-    public func addSublayer(_ layer: CALayer) {
-        guard layer.superlayer != object else { return }
-        layer.opacity = 0.0
-        Anima.nonAnimate {
-            layer.animator.opacity = 0.0
-        }
-        object.addSublayer(layer)
-        layer.animator.opacity = 1.0
-    }
-    
-    /**
-     Inserts the layer at the specified index animated. The sublayers's opacity gets animated to `1.0`.
-     
-     - Note: The animation only occurs if the layer's sublayers doesn't contain the specified sublayer.
-     */
-    public func insertSublayer(_ layer: CALayer, at index: UInt32) {
-        guard layer.superlayer != object else { return }
-        layer.opacity = 0.0
-        Anima.nonAnimate {
-            layer.animator.opacity = 0.0
-        }
-        object.insertSublayer(layer, at: index)
-        layer.animator.opacity = 1.0
-    }
-    
-    /**
-     Inserts the layer above a different sublayer animated. The sublayers's opacity gets animated to `1.0`.
-     
-     - Note: The animation only occurs if the layer's sublayers doesn't contain the specified sublayer.
-     */
-    public func insertSublayer(_ layer: CALayer, above sibling: CALayer) {
-        guard layer.superlayer != object, object.sublayers?.contains(sibling) == true else { return }
-        layer.opacity = 0.0
-        Anima.nonAnimate {
-            layer.animator.opacity = 0.0
-        }
-        object.insertSublayer(layer, above: sibling)
-        layer.animator.opacity = 1.0
-    }
-    
-    /**
-     Inserts the layer below a different sublayer animated. The sublayers's opacity gets animated to `1.0`.
-     
-     - Note: The animation only occurs if the layer's sublayers doesn't contain the specified sublayer.
-     */
-    public func insertSublayer(_ layer: CALayer, below sibling: CALayer) {
-        guard layer.superlayer != object, object.sublayers?.contains(sibling) == true else { return }
-        layer.opacity = 0.0
-        Anima.nonAnimate {
-            layer.animator.opacity = 0.0
-        }
-        object.insertSublayer(layer, below: sibling)
-        layer.animator.opacity = 1.0
-    }
-    
-    /**
-     Removes the layer from it's superlayer animated. The layer's opacity gets animated to `0.0` and on completion removed from it's superlayer.
-     
-     - Note: The animation only occurs if the layer's superlayer isn't `nil`.
-     */
-    public func removeFromSuperlayer() {
-        guard object.superlayer != nil else { return }
-        setValue(0.0, for: \.opacity, completion: { [weak self] in
-            guard let self = self else { return }
-            self.object.removeFromSuperlayer()
-        })
-    }
-    
     // MARK: - Accessing animations
 
     /**
-     The current animation for the property at the specified keypath, or `nil` if there isn't an animation for the keypath.
+     The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
 
      - Parameter keyPath: The keypath to an animatable property.
      */
@@ -244,8 +194,8 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     }
     
     /**
-     The current animation velocity for the property at the specified keypath, or `nil` if there isn't an animation for the keypath or the animation doesn't support velocity values.
-     
+     The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
+
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayerAnimator, Value>) -> Value? {

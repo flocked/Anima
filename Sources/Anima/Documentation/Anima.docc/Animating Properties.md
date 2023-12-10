@@ -11,9 +11,33 @@ Many objects already conform to it and provide animatable properties:
  - iOS: `UIView`, `UILabel`, `UIImageView` and many more.
  - Shared: `NSLayoutConstraint` and `CALayer`
 
-The animatable properties can can be accessed via the object's ``AnimatablePropertyProvider/animator``. Change their values inside an animation block using `Anima.animate(…)` to animate them.
+The animatable properties can can be accessed via the object's ``AnimatablePropertyProvider/animator``.
 
-### Spring Animation
+#### Animating Properties
+
+To animate properties change their values inside an animation block using `Anima.animate(…)`. For example:
+
+```swift
+Anima.animate(withSpring: .bouncy) {
+    view.animator.frame = newFrame
+    view.animator.backgroundColor = .systemBlue
+}
+```
+To update properties immediately and to stop their animations, change their values outside an animation block. For example:
+
+```swift
+view.animator.backgroundColor = .systemRed
+```
+
+You can also stop all animations at their current values:
+
+```swift
+Anima.stopAllAnimations()
+```
+
+### Animation Types
+
+#### Spring Animation
 
 ``Anima/animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
 
@@ -22,7 +46,6 @@ A spring based animation for fluid animations.
 You provide a ``Spring`` which describes the spring configuration. `Spring` offers many predefined configurations like ``Spring/bouncy``, ``Spring/smooth``, ``Spring/snappy`` or ``Spring/init(duration:bounce:)``).
 
 ```swift
-// Spring animation
 Anima.animate(withSpring: .bouncy) {
     view.animator.frame = newFrame
     view.animator.backgroundColor = .systemBlue
@@ -41,7 +64,7 @@ Anima.animate(withSpring: .snappy, gestureVelocity: velocity) {
 }
 ```
 
-### Easing Animation
+#### Easing Animation
 
 ``Anima/animate(withEasing:duration:delay:options:animations:completion:)``
 
@@ -56,7 +79,7 @@ Anima.animate(withEasing: .easeIn, duration: 3.0) {
 }
 ```
 
-### Decay Animation
+#### Decay Animation
 
 ``Anima/animate(withDecay:decelerationRate:delay:options:animations:completion:)``.
 
@@ -78,18 +101,4 @@ Anima.animate(withDecay: .velocity) {
     // The origin's y value will increase 200 points. (e.g. if the origin`s y value is 250 it will move to 450)
     view.animator.frame.origin.y = 200
 }
-```
-
-### Stop Animation
-
-Updating a property outside an animation block stops its animation and updates it immediately:
-
- ```swift
- view.animator.backgroundColor = .systemRed
- ```
-
-You can also stop all animations at the current values:
-
-```swift
-Anima.stopAllAnimations()
 ```

@@ -9,10 +9,10 @@
 - ``animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
 
 ### Animation Options
-
+- ``preferredFrameRateRange``
 - ``Anima/AnimationOptions``
 - ``DecayAnimationMode``
 
-### Updating animations
+### Updating Animations
 
 - ``stopAllAnimations(immediately:)``

@@ -105,6 +105,7 @@ extension TimingFunction {
 }
 
 extension TimingFunction {
+    /// Additional easing time functions.
     public struct Easing {
         
         //MARK: Quadratic

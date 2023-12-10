@@ -9,13 +9,51 @@
 import AppKit
 
 extension NSWindow: AnimatablePropertyProvider {
-    /// Provides animatable properties of the window.
+    /**
+     Provides animatable properties of the window.
+     
+     To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
+     
+     See ``WindowAnimator`` for more information.
+     */
     public var animator: WindowAnimator {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: WindowAnimator(self)) }
     }
 }
 
-/// Provides animatable properties of a window.
+/**
+ Provides animatable properties of an window.
+ 
+ ### Animating properties
+
+ To animate the properties, change their values inside an ``Anima`` animation block:
+
+ ```swift
+ Anima.animate(withSpring: .smooth) {
+    window.animator.frame.size = CGSize(width: 100.0, height: 200.0)
+    window.animator.backgroundColor = .systemBlue
+ }
+ ```
+ To stop animations and to change properties immediately, change their values outside an animation block:
+
+ ```swift
+ window.animator.backgroundColor = .systemRed
+ ```
+ 
+ ### Accessing Animations
+ 
+ To access the animation for a specific property, use ``animation(for:)``:
+ 
+ ```swift
+ if let animation = window.animator.animation(for: \.frame) {
+    animation.stop()
+ }
+ ```
+ 
+ ### Accessing Animation Velocity
+ 
+ To access the animation velocity for a specific property, use ``animationVelocity(for:)`.
+ */
 public class WindowAnimator: PropertyAnimator<NSWindow> {
 
     /// The frame of the window.
@@ -72,7 +110,7 @@ fileprivate extension NSWindow {
 
 extension WindowAnimator {
     /**
-     The current animation for the property at the specified keypath, or `nil` if there isn't an animation for the keypath.
+     The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
 
      - Parameter keyPath: The keypath to an animatable property.
      */
@@ -81,8 +119,8 @@ extension WindowAnimator {
     }
     
     /**
-     The current animation velocity for the property at the specified keypath, or `nil` if there isn't an animation for the keypath or the animation doesn't support velocity values.
-     
+     The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
+
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<WindowAnimator, Value>) -> Value? {

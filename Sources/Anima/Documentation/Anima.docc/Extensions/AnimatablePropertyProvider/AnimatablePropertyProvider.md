@@ -2,7 +2,7 @@
 
 ## Topics
 
-### Accessing animatable properties
+### Accessing Animatable Properties
 
 - ``animator``
 - ``Provider``

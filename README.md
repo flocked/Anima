@@ -4,7 +4,7 @@ Anima is an animation framework for iOS, tvOS, and macOS. It allows animating pr
 
 **For a full documentation take a look at the** [Online Documentation](https://flocked.github.io/Anima/documentation/anima).
 
-## Animatable properties
+## Animatable Properties
 
 Any type conforming to `AnimatableProperty` can be animated by `Anima`.
 
@@ -29,12 +29,24 @@ There are two ways you can can create animations: **block-based** and **property
 
 Block-based animation lets you easily animate properties of objects conforming to `AnimatablePropertyProvider`.
 
-Many objects provide animatable properties:
+Many objects already conform to it and provide animatable properties:
  - macOS: `NSView`, `NSWindow`, `NSTextField`, `NSImageView` and many more.
  - iOS: `UIView`, `UILabel`, `UIImageView` and many more.
  - Shared: `NSLayoutConstraint` and `CALayer`
  
-The properties can can be accessed via the object's `animator`. To animate them, change their values inside an animation block using `Anima.animate(…)`.
+The properties can can be accessed via the object's `animator`. To animate them change their values inside an animation block using `Anima.animate(…)`. For example:
+
+```swift
+Anima.animate(withSpring: .bouncy) {
+    view.animator.frame = newFrame
+    view.animator.backgroundColor = .systemBlue
+}
+```
+To stop the animation of a property and to update it immediately, change it's value outside an animation block. For example:
+
+```swift
+view.animator.backgroundColor = .systemRed
+```
 
 #### Spring Animation
 
@@ -43,14 +55,13 @@ A spring based animation for fluid animations.
 You provide a `Spring` which describes the spring configuration. `Spring` offers many predefined configurations like `bouncy`, `smooth`, `snappy` or `Spring(duration: CGFloat, bouncy: CGFloat)`).
 
 ```swift
-// Spring animation
 Anima.animate(withSpring: .bouncy) {
     view.animator.frame = newFrame
     view.animator.backgroundColor = .systemBlue
 }
 ```
 
-When changing values of properties that are currently spring animated, the animation’s velocity is preserved to provide fluid animations. That's why spring animation is the recommended animation for a responsive and interactive UI.
+When changing values of properties that are currently animated, the animation’s velocity is preserved to provide fluid animations. That's why spring animation is the recommended animation for a responsive and interactive UI.
 
 You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
 
@@ -66,7 +77,7 @@ Anima.animate(withSpring: .snappy, gestureVelocity: velocity) {
 
 An easing based animation.
 
-You provide it `TimingFunction` which describes the easing of the animation (e.g. `easeIn`, `easeInOut` or `linear`) and a duration.
+You provide a `TimingFunction` which describes the easing of the animation (e.g. `easeIn`, `easeInOut` or `linear`) and a duration.
 
 ```swift
 Anima.animate(withEasing: .easeIn, duration: 3.0) {
@@ -79,7 +90,7 @@ Anima.animate(withEasing: .easeIn, duration: 3.0) {
 
 Performs animations with a decaying acceleration.
 
-You either provide **target** values and the animation will animate the values to the targets with a decelerating acceleration.
+You either provide **values** and the animation will animate the properties to the values with a decelerating acceleration.
 
 ```swift
 Anima.animate(withDecay: .value) {
@@ -88,7 +99,7 @@ Anima.animate(withDecay: .value) {
 }
 ```
 
-Or you provide a **velocity** value. The property will increase or decrease depending on the velocity value and will slow to a stop. This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
+Or you provide **velocity** values. The properties will increase or decrease depending on the velocity values and will slow to a stop. This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
 
 ```swift
 Anima.animate(withDecay: .velocity) {
@@ -97,17 +108,11 @@ Anima.animate(withDecay: .velocity) {
 }
 ```
 
-#### Stop Animations
-
-Changing a property outside an animation block stops its animation and changes its value immediately:
-
- ```swift
- view.animator.backgroundColor = .systemRed
- ```
- 
 ### Property-Based Animations
 
 While the block-based API is often most convenient, you may want to animate an object that doesn't provide animatable properties. Or, you may want the flexibility of getting the intermediate values of an animation and driving an animation yourself.
+
+To create an property-based animation you provide an initial value, target value and `valueChanged`, a block that gets called whenever the animation's current value changes.
 
 #### Spring Animation 
 

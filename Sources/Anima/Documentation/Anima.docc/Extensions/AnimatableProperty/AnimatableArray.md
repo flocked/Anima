@@ -18,6 +18,7 @@
 - ``AnimatableArray/last``
 - ``AnimatableArray/subscript(_:)-9n8mo``
 - ``AnimatableArray/subscript(_:)-h3dp``
+- ``AnimatableArray/subscript(safe:)``
 
 ### Adding Elements
 

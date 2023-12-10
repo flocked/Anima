@@ -11,7 +11,9 @@
 
 ### Starting and stopping the animation
 
+- ``start()``
 - ``start(afterDelay:)``
+- ``stop()``
 - ``stop(at:immediately:)``
 - ``pause()``
 - ``delay``

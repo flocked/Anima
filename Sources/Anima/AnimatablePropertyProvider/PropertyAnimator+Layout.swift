@@ -12,13 +12,44 @@ import UIKit
 #endif
 
 extension NSLayoutConstraint: AnimatablePropertyProvider {
-    /// Provides animatable properties of the layout constraint.
+    /**
+     Provides animatable properties of the layout constraint.
+     
+     To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
+     
+     See ``LayoutAnimator`` for more information.
+     */
     public var animator: LayoutAnimator {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayoutAnimator(self)) }
     }
 }
 
-/// Provides animatable properties of a layout constraint.
+/**
+ Provides animatable properties of an layout constraint.
+
+ To animate the properties, change their values inside an ``Anima`` animation block:
+
+ ```swift
+ Anima.animate(withSpring: .smooth) {
+    widthConstraint.animator.constant = 200.0
+ }
+ ```
+ To stop animations and to change properties immediately, change their values outside an animation block:
+
+ ```swift
+ widthConstraint.animator.constant = 50.0
+ ```
+ 
+ ### Accessing Animations
+ 
+ To access the animation for a specific property, use ``animation(for:)``:
+ 
+ ```swift
+ if let animation = widthConstraint.animator.animation(for: \.constant) {
+    animation.stop()
+ }
+ ```
+ */
 public class LayoutAnimator: PropertyAnimator<NSLayoutConstraint> {
     /// The constant of the layout constraint.
     public var constant: CGFloat {
@@ -29,7 +60,7 @@ public class LayoutAnimator: PropertyAnimator<NSLayoutConstraint> {
 
 extension LayoutAnimator {
     /**
-     The current animation for the property at the specified keypath, or `nil` if there isn't an animation for the keypath.
+     The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
 
      - Parameter keyPath: The keypath to an animatable property.
      */
@@ -38,8 +69,8 @@ extension LayoutAnimator {
     }
     
     /**
-     The current animation velocity for the property at the specified keypath, or `nil` if there isn't an animation for the keypath or the animation doesn't support velocity values.
-     
+     The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
+
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayoutAnimator, Value>) -> Value? {

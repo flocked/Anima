@@ -15,13 +15,51 @@ import Decomposed
 extension NSUIView: AnimatablePropertyProvider { }
 
 extension AnimatablePropertyProvider where Self: NSUIView {
-    /// Provides animatable properties of the view.
+    /**
+     Provides animatable properties of the view.
+     
+     To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
+     
+     See ``ViewAnimator`` for more information.
+     */
     public var animator: ViewAnimator<Self> {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: ViewAnimator(self)) }
     }
 }
 
-/// Provides animatable properties of a view.
+/**
+ Provides animatable properties of an view.
+ 
+ ### Animating properties
+
+ To animate the properties, change their values inside an ``Anima`` animation block:
+
+ ```swift
+ Anima.animate(withSpring: .smooth) {
+    view.animator.frame.size = CGSize(width: 100.0, height: 200.0)
+    view.animator.backgroundColor = .systemBlue
+ }
+ ```
+ To stop animations and to change properties immediately, change their values outside an animation block:
+
+ ```swift
+ view.animator.backgroundColor = .systemRed
+ ```
+ 
+ ### Accessing Animations
+ 
+ To access the animation for a specific property, use ``animation(for:)``:
+ 
+ ```swift
+ if let animation = view.animator.animation(for: \.frame) {
+    animation.stop()
+ }
+ ```
+ 
+ ### Accessing Animation Velocity
+ 
+ To access the animation velocity for a specific property, use ``animationVelocity(for:)`.
+ */
 public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     
     // MARK: - Animatable Properties
@@ -147,107 +185,11 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         set { object.optionalLayer?.animator.translation = newValue }
     }
     
-    /// The view's layer animator.
-    public var layer: LayerAnimator<CALayer> {
-        #if os(macOS)
-        self.object.wantsLayer = true
-        #endif
-        return self.object.optionalLayer!.animator
-    }
-    
-    /// The property animators for the view's subviews.
-    public var subviews: [ViewAnimator<NSUIView>] {
-        object.subviews.compactMap({ $0.animator })
-    }
-    
-    /// The property animator for the view's superview.
-    public var superview: ViewAnimator<NSUIView>? {
-        object.superview?.animator
-    }
-    
-    /// The property animator for the view's mask.
-    public var mask: ViewAnimator<NSUIView>? {
-        object.mask?.animator
-    }
-    
-    /**
-     Adds the specified view animated. The subview's alpha value gets animated to `1.0`.
-     
-     - Note: The animation only occurs if the view's subviews doesn't contain the specified subview.
-     */
-    public func addSubview(_ view: NSUIView) {
-        guard view.superview != object else { return }
-        view.alpha = 0.0
-        Anima.nonAnimate {
-            view.animator.alpha = 0.0
-        }
-        object.addSubview(view)
-        view.animator.alpha = 1.0
-    }
-    
-    /**
-     Inserts the view at the specified index animated. The subview's alpha value gets animated to `1.0`.
-     
-     - Note: The animation only occurs if the view's subviews doesn't contain the specified subview.
-     */
-    public func insertSubview(_ view: NSUIView, at index: Int) {
-        guard view.superview != object else { return }
-        view.alpha = 0.0
-        Anima.nonAnimate {
-            view.animator.alpha = 0.0
-        }
-        object.insertSubview(view, at: index)
-        view.animator.alpha = 1.0
-    }
-    
-    /**
-     Inserts the view above another view animated. The subview's alpha value gets animated to `1.0`.
-     
-     - Note: The animation only occurs if the view's subviews doesn't contain the specified subview.
-     */
-    public func insertSubview(_ view: NSUIView, aboveSubview siblingSubview: NSUIView) {
-        guard view.superview != object, object.subviews.contains(siblingSubview) else { return }
-        view.alpha = 0.0
-        Anima.nonAnimate {
-            view.animator.alpha = 0.0
-        }
-        object.insertSubview(view, aboveSubview: siblingSubview)
-        view.animator.alpha = 1.0
-    }
-    
-    /**
-     Inserts the view below another view animated. The subview's alpha value gets animated to `1.0`.
-     
-     - Note: The animation only occurs if the view's subviews doesn't contain the specified subview.
-     */
-    public func insertSubview(_ view: NSUIView, belowSubview siblingSubview: NSUIView) {
-        guard view.superview != object, object.subviews.contains(siblingSubview) else { return }
-        view.alpha = 0.0
-        Anima.nonAnimate {
-            view.animator.alpha = 0.0
-        }
-        object.insertSubview(view, belowSubview: siblingSubview)
-        view.animator.alpha = 1.0
-    }
-    
-    /**
-     Removes the view from it's superview animated. The view's alpha value gets animated to `0.0` and on completion removed from it's superview.
-     
-     - Note: The animation only occurs if the view's superview isn't `nil`.
-     */
-    public func removeFromSuperview() {
-        guard object.superview != nil else { return }
-        setValue(0.0, for: \.alpha, completion: { [weak self] in
-            guard let self = self else { return }
-            self.object.removeFromSuperview()
-        })
-    }
-    
     // MARK: - Accessing animations
     
     /**
-     The current animation for the property at the specified keypath, or `nil` if there isn't an animation for the keypath.
-     
+     The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
+
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> AnimationProviding? {
@@ -255,8 +197,8 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     }
     
     /**
-     The current animation velocity for the property at the specified keypath, or `nil` if there isn't an animation for the keypath or the animation doesn't support velocity values.
-     
+     The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
+
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> Value? {
