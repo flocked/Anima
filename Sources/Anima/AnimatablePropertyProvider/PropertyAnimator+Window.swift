@@ -24,7 +24,7 @@ extension NSWindow: AnimatablePropertyProvider {
 /**
  Provides animatable properties of `NSWindow`.
  
- ### Animating properties
+ ### Animating Properties
 
  To animate the properties, change their values inside an ``Anima`` animation block:
 
@@ -52,7 +52,7 @@ extension NSWindow: AnimatablePropertyProvider {
  
  ### Accessing Animation Velocity
  
- To access the animation velocity for a specific property, use ``animationVelocity(for:)`.
+ To access the animation velocity for a specific property, use ``animationVelocity(for:)``.
  */
 public class WindowAnimator: PropertyAnimator<NSWindow> {
 

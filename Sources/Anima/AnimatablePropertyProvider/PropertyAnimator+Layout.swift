@@ -27,14 +27,14 @@ extension NSLayoutConstraint: AnimatablePropertyProvider {
 /**
  Provides animatable properties of `NSLayoutConstraint`.
 
- To animate the properties, change their values inside an ``Anima`` animation block:
+ To animate the `constant` of a layer, change it's value inside an ``Anima`` animation block:
 
  ```swift
  Anima.animate(withSpring: .smooth) {
     widthConstraint.animator.constant = 200.0
  }
  ```
- To stop animations and to change properties immediately, change their values outside an animation block:
+ To stop the animation and to change the constant immediately, change it's value outside an animation block:
 
  ```swift
  widthConstraint.animator.constant = 50.0
@@ -42,13 +42,17 @@ extension NSLayoutConstraint: AnimatablePropertyProvider {
  
  ### Accessing Animations
  
- To access the animation for a specific property, use ``animation(for:)``:
+ To access the animation for a property, use ``animation(for:)``:
  
  ```swift
  if let animation = widthConstraint.animator.animation(for: \.constant) {
     animation.stop()
  }
  ```
+ 
+ ### Accessing Animation Velocity
+ 
+ To access the animation velocity for a property, use ``animationVelocity(for:)``.
  */
 public class LayoutAnimator: PropertyAnimator<NSLayoutConstraint> {
     /// The constant of the layout constraint.

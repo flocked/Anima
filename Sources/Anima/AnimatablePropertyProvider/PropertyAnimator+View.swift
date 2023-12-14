@@ -30,7 +30,7 @@ extension AnimatablePropertyProvider where Self: NSUIView {
 /**
  Provides animatable properties of an view.
  
- ### Animating properties
+ ### Animating Properties
 
  To animate the properties, change their values inside an ``Anima`` animation block:
 
@@ -48,7 +48,7 @@ extension AnimatablePropertyProvider where Self: NSUIView {
  
  ### Accessing Animations
  
- To access the animation for a specific property, use ``animation(for:)``:
+ To access the animation for a property, use ``animation(for:)``:
  
  ```swift
  if let animation = view.animator.animation(for: \.frame) {
@@ -58,7 +58,7 @@ extension AnimatablePropertyProvider where Self: NSUIView {
  
  ### Accessing Animation Velocity
  
- To access the animation velocity for a specific property, use ``animationVelocity(for:)`.
+ To access the animation velocity for a property, use ``animationVelocity(for:)``.
  */
 public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     
