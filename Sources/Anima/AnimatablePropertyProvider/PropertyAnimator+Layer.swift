@@ -20,7 +20,7 @@ extension AnimatablePropertyProvider where Self: CALayer {
      
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
      
-     See ``LayerAnimator`` for more information.
+     See ``LayerAnimator`` for more information about usage and all animatable properties.
      */
     public var animator: LayerAnimator<Self> {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self)) }
@@ -28,7 +28,7 @@ extension AnimatablePropertyProvider where Self: CALayer {
 }
 
 /**
- Provides animatable properties of an layer.
+ Provides animatable properties of `CALayer`.
  
  ### Animating properties
 
@@ -199,7 +199,11 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayerAnimator, Value>) -> Value? {
-        return (animation(for: keyPath) as? any ConfigurableAnimationProviding)?.velocity as? Value
+        var velocity: Value?
+        Anima.updateVelocity {
+            velocity = self[keyPath: keyPath]
+        }
+        return velocity
     }
 }
 

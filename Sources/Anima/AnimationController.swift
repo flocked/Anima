@@ -74,7 +74,7 @@ class AnimationController {
     }
     
     public func stopAllAnimations(immediately: Bool = true) {
-        animations.values.forEach({$0.stop()})
+        animations.values.forEach({$0.stop(at: .current, immediately: immediately)})
     }
 
     private func updateAnimations(_ frame: DisplayLink.Frame) {

@@ -20,7 +20,7 @@ extension AnimatablePropertyProvider where Self: NSUIView {
      
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
      
-     See ``ViewAnimator`` for more information.
+     See ``ViewAnimator`` for more information about usage and all animatable properties.
      */
     public var animator: ViewAnimator<Self> {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: ViewAnimator(self)) }
@@ -202,7 +202,11 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> Value? {
-        return (animation(for: keyPath) as? any ConfigurableAnimationProviding)?.velocity as? Value
+        var velocity: Value?
+        Anima.updateVelocity {
+            velocity = self[keyPath: keyPath]
+        }
+        return velocity
     }
 }
 

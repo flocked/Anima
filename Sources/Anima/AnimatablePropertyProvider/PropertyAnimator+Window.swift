@@ -14,7 +14,7 @@ extension NSWindow: AnimatablePropertyProvider {
      
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
      
-     See ``WindowAnimator`` for more information.
+     See ``WindowAnimator`` for more information about usage and all animatable properties.
      */
     public var animator: WindowAnimator {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: WindowAnimator(self)) }
@@ -22,7 +22,7 @@ extension NSWindow: AnimatablePropertyProvider {
 }
 
 /**
- Provides animatable properties of an window.
+ Provides animatable properties of `NSWindow`.
  
  ### Animating properties
 
@@ -119,7 +119,11 @@ extension WindowAnimator {
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<WindowAnimator, Value>) -> Value? {
-        return (animation(for: keyPath) as? any ConfigurableAnimationProviding)?.velocity as? Value
+        var velocity: Value?
+        Anima.updateVelocity {
+            velocity = self[keyPath: keyPath]
+        }
+        return velocity
     }
 }
 

@@ -18,6 +18,7 @@ extension CALayer {
     var shadow: ShadowConfiguration {
         get { .init(color: shadowColor?.nsUIColor, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point) }
         set {
+            masksToBounds = false
             shadowColor = newValue.color?.cgColor
             shadowOpacity = Float(newValue.opacity)
             shadowRadius = newValue.radius
