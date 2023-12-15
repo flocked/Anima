@@ -24,14 +24,14 @@ extension Anima {
         /**
          The velocity of spring animated properties will be reset.
          
-         Usually the velocity of a spring animated property is perseved when you animate it to another value. This option will reset the velocity for any new spring animation.
+         Usually the animation velocity is perserved when you spring animate it to another value. This option will reset the velocity for any new spring animation.
          */
         public static let resetSpringVelocity = AnimationOptions(rawValue: 1 << 3)
         
-#if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS)
         /// Prevents the user to interact with views while they are being animated.
         public static let preventUserInteraction = AnimationOptions(rawValue: 1 << 4)
-#endif
+        #endif
         
         /// Creates a structure that represents animation options.
         public init(rawValue: UInt) {

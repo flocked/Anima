@@ -69,7 +69,7 @@ easingAnimation.start()
 
 Performs animations with a decaying acceleration. There are two ways ways to create a decay animation:
 
-- **target**: You provide a target and the animation will animate the value to the target with a decaying acceleration.
+- **target**: You provide a target and the animation will animate it's value to the target with a decaying acceleration.
 
 ```swift
 let decayAnimation = DecayAnimation(value: value, target: target)
@@ -79,7 +79,7 @@ decayAnimation.valueChanged = { newValue in
 decayAnimation.start()
 ```
 
-- **velocity**: You provide a velocity and the animation will increase or decrease the initial value depending on the velocity and will slow to a stop. This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
+- **velocity**: You provide a velocity and the animation will increase or decrease it's value depending on the velocity and will slow to a stop. This essentially provides the same "decaying" that a scroll view does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
 
 ```swift
 let decayAnimation = DecayAnimation(value: value, velocity: velocity)

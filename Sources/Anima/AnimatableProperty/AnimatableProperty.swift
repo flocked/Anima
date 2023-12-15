@@ -271,22 +271,6 @@ extension CGQuaternion: AnimatableProperty, Animatable {
     }
 }
 
-extension ShadowConfiguration: AnimatableProperty, Animatable {
-    public static var zero: ShadowConfiguration {
-        .none()
-    }
-    
-    public init(_ animatableData: AnimatableArray<Double>) {
-        self.init(color: .init([animatableData[0], animatableData[1], animatableData[2], animatableData[3]]), opacity: animatableData[4], radius: animatableData[5], offset: .init(animatableData[6], animatableData[7]))
-    }
-    
-    public var animatableData: AnimatableArray<Double> {
-        get { (self.color ?? .zero).animatableData + [opacity, radius, offset.x, offset.y] }
-        set { self = .init(newValue) }
-    }
-}
-
-
 extension Array: AnimatableProperty where Element: AnimatableProperty {
     public init(_ animatableData: AnimatableArray<Element.AnimatableData>) {
         self.init(animatableData.elements.compactMap({Element($0)}))

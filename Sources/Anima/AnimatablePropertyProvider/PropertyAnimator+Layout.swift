@@ -17,7 +17,7 @@ extension NSLayoutConstraint: AnimatablePropertyProvider {
      
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
      
-     See ``LayoutAnimator`` for more information.
+     See ``LayoutAnimator`` for more information about how to animate and all animatable properties.
      */
     public var animator: LayoutAnimator {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayoutAnimator(self)) }
@@ -53,6 +53,12 @@ extension NSLayoutConstraint: AnimatablePropertyProvider {
  ### Accessing Animation Velocity
  
  To access the animation velocity for a property, use ``animationVelocity(for:)``.
+ 
+ ```swift
+ if let velocity = widthConstraint.animator.animation(for: \.constant) {
+ 
+ }
+ ```
  */
 public class LayoutAnimator: PropertyAnimator<NSLayoutConstraint> {
     /// The constant of the layout constraint.

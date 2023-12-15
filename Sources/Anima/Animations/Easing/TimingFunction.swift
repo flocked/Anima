@@ -14,6 +14,7 @@ import Foundation
 /**
  The timing function maps an input time normalized to the range `[0,1]` to an output time also in the range `[0,1]`. It's used to define the pacing of an animation as a timing curve.
  
+ Example usage:
  ```swift
  let timingFunction = TimingFunction.easeIn
  let time = 0.3
@@ -24,9 +25,6 @@ import Foundation
  > Tip:  ``Easing`` provides addtional timing functions.
  */
 public enum TimingFunction {
-    /// No easing.
-    case linear
-    
     /// The specified unit bezier is used to drive the timing function.
     case bezier(UnitBezier)
     
@@ -48,8 +46,6 @@ public enum TimingFunction {
      */
     public func solve(at time: Double, epsilon: Double = 0.0001) -> Double {
         switch self {
-        case .linear:
-            return time
         case .bezier(let unitBezier):
             return unitBezier.solve(x: time, epsilon: epsilon)
         case .function(let function):
@@ -67,8 +63,6 @@ public enum TimingFunction {
      */
     public func solve(at time: Double, duration: Double) -> Double {
         switch self {
-        case .linear:
-            return time
         case .bezier(let unitBezier):
             return unitBezier.solve(x: time, epsilon: 1.0 / (duration * 1000.0))
         case .function(let function):
@@ -78,17 +72,27 @@ public enum TimingFunction {
 }
 
 extension TimingFunction {
-    /// A `easeIn` timing function, equivalent to `kCAMediaTimingFunctionEaseIn`.
+    /// A linear timing function.
+    public static var linear: TimingFunction {
+        return TimingFunction.function { $0 }
+    }
+    
+    /// The system default timing function. Use this function to ensure that the timing of your animations matches that of most system animations.
+    public static var `default`: TimingFunction {
+        return TimingFunction(x1: 0.25, y1: 0.1, x2: 0.25, y2: 1.0)
+    }
+    
+    /// A `easeIn` timing function.
     public static var easeIn: TimingFunction {
         return TimingFunction(x1: 0.42, y1: 0.0, x2: 1.0, y2: 1.0)
     }
     
-    /// A `easeOut` timing function, equivalent to `kCAMediaTimingFunctionEaseOut`.
+    /// A `easeOut` timing function.
     public static var easeOut: TimingFunction {
         return TimingFunction(x1: 0.0, y1: 0.0, x2: 0.58, y2: 1.0)
     }
     
-    /// A `easeInEaseOut` timing function, equivalent to `kCAMediaTimingFunctionEaseInEaseOut`.
+    /// A `easeInEaseOut` timing function.
     public static var easeInEaseOut: TimingFunction {
         return TimingFunction(x1: 0.42, y1: 0.0, x2: 0.58, y2: 1.0)
     }
@@ -96,11 +100,6 @@ extension TimingFunction {
     /// A `swiftOut` timing function, inspired by the default curve in Google Material Design.
     public static var swiftOut: TimingFunction {
         return TimingFunction(x1: 0.4, y1: 0.0, x2: 0.2, y2: 1.0)
-    }
-    
-    /// The system default timing function. Use this function to ensure that the timing of your animations matches that of most system animations.
-    public static var `default`: TimingFunction {
-        return TimingFunction(x1: 0.25, y1: 0.1, x2: 0.25, y2: 1.0)
     }
 }
 
@@ -120,9 +119,9 @@ extension TimingFunction {
             return Easing.easeOutQuad(x)
         })
         
-        /// A `easeInOutQuad` timing function.
-        public static var easeInOutQuad = TimingFunction.function({ x in
-            return Easing.easeInOutQuad(x)
+        /// A `easeInEaseOutQuad` timing function.
+        public static var easeInEaseOutQuad = TimingFunction.function({ x in
+            return Easing.easeInEaseOutQuad(x)
         })
         
         //MARK: Cubic
@@ -137,9 +136,9 @@ extension TimingFunction {
             return Easing.easeOutCubic(x)
         })
         
-        /// A `easeInOutCubic` timing function.
-        public static var easeInOutCubic = TimingFunction.function({ x in
-            return Easing.easeInOutCubic(x)
+        /// A `easeInEaseOutCubic` timing function.
+        public static var easeInEaseOutCubic = TimingFunction.function({ x in
+            return Easing.easeInEaseOutCubic(x)
         })
         
         //MARK: Quartic
@@ -154,9 +153,9 @@ extension TimingFunction {
             return Easing.easeOutQuart(x)
         })
         
-        /// A `easeInOutQuart` timing function.
-        public static var easeInOutQuart = TimingFunction.function({ x in
-            return Easing.easeInOutQuart(x)
+        /// A `easeInEaseOutQuart` timing function.
+        public static var easeInEaseOutQuart = TimingFunction.function({ x in
+            return Easing.easeInEaseOutQuart(x)
         })
         
         //MARK: Quintic
@@ -171,9 +170,9 @@ extension TimingFunction {
             return Easing.easeOutQuint(x)
         })
         
-        /// A `easeInOutQuint` timing function.
-        public static var easeInOutQuint = TimingFunction.function({ x in
-            return Easing.easeInOutQuint(x)
+        /// A `easeInEaseOutQuint` timing function.
+        public static var easeInEaseOutQuint = TimingFunction.function({ x in
+            return Easing.easeInEaseOutQuint(x)
         })
         
         //MARK: Sinusoidal
@@ -188,9 +187,9 @@ extension TimingFunction {
             return Easing.easeOutSine(x)
         })
         
-        /// A `easeInOutSine` timing function.
-        public static var easeInOutSine = TimingFunction.function({ x in
-            return Easing.easeInOutSine(x)
+        /// A `easeInEaseOutSine` timing function.
+        public static var easeInEaseOutSine = TimingFunction.function({ x in
+            return Easing.easeInEaseOutSine(x)
         })
         
         //MARK: Exponential
@@ -205,9 +204,9 @@ extension TimingFunction {
             return Easing.easeOutExpo(x)
         })
         
-        /// A `easeInOutExpo` timing function.
-        public static var easeInOutExpo = TimingFunction.function({ x in
-            return Easing.easeInOutExpo(x)
+        /// A `easeInEaseOutExpo` timing function.
+        public static var easeInEaseOutExpo = TimingFunction.function({ x in
+            return Easing.easeInEaseOutExpo(x)
         })
         
         //MARK: Circular
@@ -222,9 +221,9 @@ extension TimingFunction {
             return Easing.easeOutCirc(x)
         })
         
-        /// A `easeInOutCirc` timing function.
-        public static var easeInOutCirc = TimingFunction.function({ x in
-            return Easing.easeInOutCirc(x)
+        /// A `easeInEaseOutCirc` timing function.
+        public static var easeInEaseOutCirc = TimingFunction.function({ x in
+            return Easing.easeInEaseOutCirc(x)
         })
         
         //MARK: Bounce
@@ -239,9 +238,9 @@ extension TimingFunction {
             return Easing.easeOutBounce(x)
         })
         
-        /// A `easeInOutBounce` timing function.
-        public static var easeInOutBounce = TimingFunction.function({ x in
-            return Easing.easeInOutBounce(x)
+        /// A `easeInEaseOutBounce` timing function.
+        public static var easeInEaseOutBounce = TimingFunction.function({ x in
+            return Easing.easeInEaseOutBounce(x)
         })
         
         //MARK: Elastic
@@ -256,9 +255,9 @@ extension TimingFunction {
             return Easing.easeOutElastic(x)
         })
         
-        /// A `easeInOutElastic` timing function.
-        public static var easeInOutElastic = TimingFunction.function({ x in
-            return Easing.easeInOutElastic(x)
+        /// A `easeInEaseOutElastic` timing function.
+        public static var easeInEaseOutElastic = TimingFunction.function({ x in
+            return Easing.easeInEaseOutElastic(x)
         })
         
         //MARK: Back
@@ -273,9 +272,9 @@ extension TimingFunction {
             return Easing.easeOutBack(x)
         })
         
-        /// A `easeInOutBack` timing function.
-        public static var easeInOutBack = TimingFunction.function({ x in
-            return Easing.easeInOutBack(x)
+        /// A `easeInEaseOutBack` timing function.
+        public static var easeInEaseOutBack = TimingFunction.function({ x in
+            return Easing.easeInEaseOutBack(x)
         })
     }
 }
@@ -291,7 +290,7 @@ extension TimingFunction.Easing {
         return -t * (t - 2)
     }
     
-    static func easeInOutQuad(_ t: Double) -> Double {
+    static func easeInEaseOutQuad(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * _t * _t
@@ -311,7 +310,7 @@ extension TimingFunction.Easing {
         return _t * _t * _t + 1
     }
     
-    static func easeInOutCubic(_ t: Double) -> Double {
+    static func easeInEaseOutCubic(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * _t * _t * _t
@@ -331,7 +330,7 @@ extension TimingFunction.Easing {
         return -(_t * _t * _t * _t + 1)
     }
     
-    static func easeInOutQuart(_ t: Double) -> Double {
+    static func easeInEaseOutQuart(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * _t * _t * _t * _t
@@ -351,7 +350,7 @@ extension TimingFunction.Easing {
         return _t * _t * _t * _t * _t + 1
     }
     
-    static func easeInOutQuint(_ t: Double) -> Double {
+    static func easeInEaseOutQuint(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * _t * _t * _t * _t * _t
@@ -370,7 +369,7 @@ extension TimingFunction.Easing {
         return sin(t * (Double.pi/2.0))
     }
     
-    static func easeInOutSine(_ t: Double) -> Double {
+    static func easeInEaseOutSine(_ t: Double) -> Double {
         return -0.5 * (cos(Double.pi * t) - 1.0)
     }
     
@@ -384,7 +383,7 @@ extension TimingFunction.Easing {
         return (-pow(2.0, -10.0 * t) + 1.0)
     }
     
-    static func easeInOutExpo(_ t: Double) -> Double {
+    static func easeInEaseOutExpo(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * pow(2.0, 10.0 * (_t - 1.0))
@@ -404,7 +403,7 @@ extension TimingFunction.Easing {
         return sqrt(1.0 - _t * _t)
     }
     
-    static func easeInOutCirc(_ t: Double) -> Double {
+    static func easeInEaseOutCirc(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return -0.5 * (sqrt(1.0 - _t * _t) - 1.0)
@@ -431,7 +430,7 @@ extension TimingFunction.Easing {
         }
     }
     
-    static func easeInOutBounce(_ x: Double) -> Double {
+    static func easeInEaseOutBounce(_ x: Double) -> Double {
         if (x < 0.5) {
             return (1 - easeOutBounce(1 - 2 * x)) / 2
         } else {
@@ -461,7 +460,7 @@ extension TimingFunction.Easing {
         }
     }
 
-    static func easeInOutElastic(_ x: Double) -> Double {
+    static func easeInEaseOutElastic(_ x: Double) -> Double {
         if (x == 0) {
             return 0
         } else if (x == 1) {
@@ -483,7 +482,7 @@ extension TimingFunction.Easing {
         return 1 + 2.70158 * pow(x - 1, 3) + 1.70158 * pow(x - 1, 2)
     }
 
-    static func easeInOutBack(_ x: Double) -> Double {
+    static func easeInEaseOutBack(_ x: Double) -> Double {
         if (x < 0.5) {
             return (pow(2 * x, 2) * (7.189819 * x - 2.5949095)) / 2
         } else {
@@ -515,6 +514,8 @@ extension TimingFunction: CustomStringConvertible {
         switch self {
         case .linear:
             return "Linear"
+        case .default:
+            return "default"
         case .easeIn:
             return "EaseIn"
         case .easeOut:
@@ -523,60 +524,60 @@ extension TimingFunction: CustomStringConvertible {
             return "EaseInEaseOut"
         case .swiftOut:
             return "SwiftOut"
-        case TimingFunction.Easing.easeInCirc:
+        case Easing.easeInCirc:
             return "EaseInCirc"
-        case TimingFunction.Easing.easeOutCirc:
+        case Easing.easeOutCirc:
             return "EaseOutCirc"
-        case TimingFunction.Easing.easeInOutCirc:
-            return "EaseInOutCirc"
-        case TimingFunction.Easing.easeInCubic:
+        case Easing.easeInEaseOutCirc:
+            return "EaseInEaseOutCirc"
+        case Easing.easeInCubic:
             return "EaseInCubic"
-        case TimingFunction.Easing.easeOutCubic:
+        case Easing.easeOutCubic:
             return "EaseOutCubic"
-        case TimingFunction.Easing.easeInOutCubic:
-            return "EaseInOutCubic"
-        case TimingFunction.Easing.easeInBack:
+        case Easing.easeInEaseOutCubic:
+            return "EaseInEaseOutCubic"
+        case Easing.easeInBack:
             return "EaseInBack"
-        case TimingFunction.Easing.easeOutBack:
+        case Easing.easeOutBack:
             return "EaseOutBack"
-        case TimingFunction.Easing.easeInOutBack:
-            return "EaseInOutBack"
-        case TimingFunction.Easing.easeInQuint:
+        case Easing.easeInEaseOutBack:
+            return "EaseInEaseOutBack"
+        case Easing.easeInQuint:
             return "EaseInQuint"
-        case TimingFunction.Easing.easeOutQuint:
+        case Easing.easeOutQuint:
             return "EaseOutQuint"
-        case TimingFunction.Easing.easeInOutQuint:
-            return "EaseInOutQuint"
-        case TimingFunction.Easing.easeInBounce:
+        case Easing.easeInEaseOutQuint:
+            return "EaseInEaseOutQuint"
+        case Easing.easeInBounce:
             return "EaseInBounce"
-        case TimingFunction.Easing.easeOutBounce:
+        case Easing.easeOutBounce:
             return "EaseOutBounce"
-        case TimingFunction.Easing.easeInOutBounce:
-            return "EaseInOutBounce"
-        case TimingFunction.Easing.easeInElastic:
+        case Easing.easeInEaseOutBounce:
+            return "EaseInEaseOutBounce"
+        case Easing.easeInElastic:
             return "EaseInElastic"
-        case TimingFunction.Easing.easeOutElastic:
+        case Easing.easeOutElastic:
             return "EaseOutElastic"
-        case TimingFunction.Easing.easeInOutElastic:
-            return "EaseInOutElastic"
-        case TimingFunction.Easing.easeInQuart:
+        case Easing.easeInEaseOutElastic:
+            return "EaseInEaseOutElastic"
+        case Easing.easeInQuart:
             return "EaseInQuart"
-        case TimingFunction.Easing.easeOutQuart:
+        case Easing.easeOutQuart:
             return "EaseOutQuart"
-        case TimingFunction.Easing.easeInOutQuart:
-            return "EaseInOutQuart"
-        case TimingFunction.Easing.easeInExpo:
+        case Easing.easeInEaseOutQuart:
+            return "EaseInEaseOutQuart"
+        case Easing.easeInExpo:
             return "EaseInExpo"
-        case TimingFunction.Easing.easeOutExpo:
+        case Easing.easeOutExpo:
             return "EaseOutExpo"
-        case TimingFunction.Easing.easeInOutExpo:
-            return "EaseInOutExpo"
-        case TimingFunction.Easing.easeInSine:
+        case Easing.easeInEaseOutExpo:
+            return "EaseInEaseOutExpo"
+        case Easing.easeInSine:
             return "EaseInSine"
-        case TimingFunction.Easing.easeOutSine:
+        case Easing.easeOutSine:
             return "EaseOutSine"
-        case TimingFunction.Easing.easeInOutSine:
-            return "EaseInOutSine"
+        case Easing.easeInEaseOutSine:
+            return "EaseInEaseOutSine"
         case .function(_):
             return "Function"
         case .bezier(let unitBezier):

@@ -20,7 +20,7 @@ extension AnimatablePropertyProvider where Self: NSUIView {
      
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
      
-     See ``ViewAnimator`` for more information about usage and all animatable properties.
+     See ``ViewAnimator`` for more information about how to animate and all animatable properties.
      */
     public var animator: ViewAnimator<Self> {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: ViewAnimator(self)) }
@@ -59,8 +59,20 @@ extension AnimatablePropertyProvider where Self: NSUIView {
  ### Accessing Animation Velocity
  
  To access the animation velocity for a property, use ``animationVelocity(for:)``.
+ 
+ ```swift
+ if let velocity = view.animator.animation(for: \.origin) {
+ 
+ }
+ ```
+ 
  */
 public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
+    
+    func test() {
+        self.border.color = .red
+        self.border.width = 30.0
+    }
     
     // MARK: - Animatable Properties
     
@@ -85,10 +97,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     /// The size of the view. Changing the value keeps the view centered. To change the size without centering use the view's frame size.
     public var size: CGSize {
         get { frame.size }
-        set {
-            guard size != newValue else { return }
-            frame.sizeCentered = newValue
-        }
+        set { frame.sizeCentered = newValue }
     }
     
     /// The center of the view.
@@ -120,6 +129,20 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         set { object.optionalLayer?.animator.cornerRadius = newValue }
     }
     
+    /// The border of the view.
+    public var border: BorderConfiguration {
+        get { object.optionalLayer?.animator.border ?? .zero }
+        set { 
+            #if os(macOS)
+            object.dynamicColors.border = newValue.color
+            #endif
+            var newValue = newValue
+            newValue.color =  newValue.color?.resolvedColor(for: object)
+            object.optionalLayer?.animator.border = newValue
+        }
+    }
+
+    /*
     /// The border color of the view.
     public var borderColor: NSUIColor? {
         get { object.optionalLayer?.animator.borderColor?.nsUIColor }
@@ -135,6 +158,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         get { object.optionalLayer?.animator.borderWidth ?? 0.0 }
         set { object.optionalLayer?.animator.borderWidth = newValue }
     }
+     */
     
     /// The shadow of the view.
     public var shadow: ShadowConfiguration {
@@ -577,8 +601,9 @@ extension ViewAnimator {
     internal func layerAnimation(for keyPath: PartialKeyPath<ViewAnimator>) -> (any ConfigurableAnimationProviding)? {
         switch keyPath {
         case \.backgroundColor: return object.optionalLayer?.animator.animation(for: \.backgroundColor)
-        case \.borderColor: return object.optionalLayer?.animator.animation(for: \.borderColor)
-        case \.borderWidth: return object.optionalLayer?.animator.animation(for: \.borderWidth)
+        case \.border: return object.optionalLayer?.animator.animation(for: \.border)
+     //   case \.borderColor: return object.optionalLayer?.animator.animation(for: \.borderColor)
+     //   case \.borderWidth: return object.optionalLayer?.animator.animation(for: \.borderWidth)
         case \.shadow: return object.optionalLayer?.animator.animation(for: \.shadow)
         case \.innerShadow: return object.optionalLayer?.animator.animation(for: \.innerShadow)
         case \.alpha: return object.optionalLayer?.animator.animation(for: \.opacity)

@@ -14,24 +14,6 @@ import UIKit
 #endif
 
 extension CALayer {
-    /// The shadow of the layer.
-    var shadow: ShadowConfiguration {
-        get { .init(color: shadowColor?.nsUIColor, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point) }
-        set {
-            masksToBounds = false
-            shadowColor = newValue.color?.cgColor
-            shadowOpacity = Float(newValue.opacity)
-            shadowRadius = newValue.radius
-            shadowOffset = newValue.offset.size
-        }
-    }
-    
-    /// The inner shadow of the layer.
-    var innerShadow: ShadowConfiguration {
-        get { self.innerShadowLayer?.configuration ?? .none() }
-        set { self.configurateInnerShadow(using: newValue) }
-    }
-    
     /// Sends the layer to the front of it's superlayer.
     func sendToFront() {
         guard let superlayer = superlayer else { return }
@@ -49,7 +31,7 @@ extension CALayer {
     
     /// Returns the first sublayer of a specific type.
     func firstSublayer<V>(type _: V.Type) -> V? {
-        self.sublayers?.first(where: { $0 is V }) as? V
+        sublayers?.first(where: { $0 is V }) as? V
     }
     
     /**
@@ -62,7 +44,7 @@ extension CALayer {
         - insets: Insets from the new sublayer border to the layer border.
      */
     func addSublayer(withConstraint layer: CALayer, insets: NSDirectionalEdgeInsets = .zero) {
-        self.addSublayer(layer)
+        addSublayer(layer)
         layer.constraintTo(layer: self, insets: insets)
     }
     
@@ -77,7 +59,7 @@ extension CALayer {
         - insets: Insets from the new sublayer border to the layer border.
      */
     func insertSublayer(withConstraint layer: CALayer, at index: UInt32, insets: NSDirectionalEdgeInsets = .zero) {
-        self.insertSublayer(layer, at: index)
+        insertSublayer(layer, at: index)
         layer.constraintTo(layer: self, insets: insets)
     }
     
@@ -99,15 +81,15 @@ extension CALayer {
                 shapeRect = shapeRect.inset(by: insets)
             }
             let position = CGPoint(x: frameSize.width/2, y: frameSize.height/2)
-            self.bounds = shapeRect
+            bounds = shapeRect
             self.position = position
         }
         
         let layerUpdate: (()->()) = { [weak self] in
             guard let self = self else { return }
-            self.cornerRadius = layer.cornerRadius
-            self.maskedCorners = layer.maskedCorners
-            self.cornerCurve = layer.cornerCurve
+            cornerRadius = layer.cornerRadius
+            maskedCorners = layer.maskedCorners
+            cornerCurve = layer.cornerCurve
         }
         
         if layerObserver?.observedObject != layer {
@@ -139,7 +121,7 @@ extension CALayer {
     
     /// Removes the layer constraints.
     func removeConstraints() {
-        self.layerObserver = nil
+        layerObserver = nil
     }
     
      var layerObserver: KeyValueObserver<CALayer>? {

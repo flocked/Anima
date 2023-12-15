@@ -14,7 +14,7 @@ extension NSWindow: AnimatablePropertyProvider {
      
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
      
-     See ``WindowAnimator`` for more information about usage and all animatable properties.
+     See ``WindowAnimator`` for more information about how to animate and all animatable properties.
      */
     public var animator: WindowAnimator {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: WindowAnimator(self)) }
@@ -53,6 +53,12 @@ extension NSWindow: AnimatablePropertyProvider {
  ### Accessing Animation Velocity
  
  To access the animation velocity for a specific property, use ``animationVelocity(for:)``.
+ 
+ ```swift
+ if let velocity = window.animator.animation(for: \.origin) {
+ 
+ }
+ ```
  */
 public class WindowAnimator: PropertyAnimator<NSWindow> {
 

@@ -1,4 +1,4 @@
-# ``Anima/AnimationOptions``
+# ``Anima/Anima/AnimationOptions``
 
 ## Topics
 

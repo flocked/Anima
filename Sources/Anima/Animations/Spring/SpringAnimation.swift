@@ -35,13 +35,13 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     /// A unique identifier for the animation.
     public let id = UUID()
     
-    /// A unique identifier that associates an animation with an grouped animation block.
+    /// A unique identifier that associates the animation with an grouped animation block.
     public internal(set) var groupID: UUID?
     
     /// The relative priority of the animation.
     public var relativePriority: Int = 0
     
-    /// The current state of the animation (`inactive`, `running`, or `ended`).
+    /// The current state of the animation.
     public internal(set) var state: AnimatingState = .inactive
     
     /// The delay (in seconds) after which the animations begin.
@@ -79,7 +79,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     var _value: Value.AnimatableData {
         didSet {
             guard state != .running else { return }
-            _fromValue = _value
+            _startValue = _value
         }
     }
 
@@ -122,12 +122,12 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         }
     }
 
-    var fromValue: Value {
-        get { Value(_fromValue) }
-        set { _fromValue = newValue.animatableData }
+    var startValue: Value {
+        get { Value(_startValue) }
+        set { _startValue = newValue.animatableData }
     }
     
-    var _fromValue: Value.AnimatableData
+    var _startValue: Value.AnimatableData
     
     var fromVelocity: Value {
         get { Value(_fromVelocity) }
@@ -159,7 +159,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         self._target = target.animatableData
         self._velocity = initialVelocity.animatableData
         self.spring = spring
-        self._fromValue = _value
+        self._startValue = _value
         self._fromVelocity = _velocity
     }
     
@@ -170,6 +170,9 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     /// The item that starts the animation delayed.
     var delayedStart: DispatchWorkItem? = nil
+    
+    /// The animation type.
+    let animationType: AnimationController.AnimationParameters.AnimationType = .spring
 
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
@@ -177,18 +180,22 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         repeats = settings.repeats
         autoreverse = settings.autoreverse
         integralizeValues = settings.integralizeValues
-        spring = settings.animationType.spring ?? spring
+        spring = settings.configuration.spring ?? spring
         
         if settings.resetSpringVelocity {
            _velocity = .zero
         }
-        if let gestureVelocity = settings.animationType.gestureVelocity {
-            if let animation = self as? SpringAnimation<CGRect> {
-                animation.velocity.origin = gestureVelocity
-                animation.fromVelocity.origin = gestureVelocity
-            } else if let animation = self as? SpringAnimation<CGPoint> {
-                animation.velocity = gestureVelocity
-                animation.fromVelocity = gestureVelocity
+        if let gestureVelocity = settings.configuration.gestureVelocity {
+            if let gestureVelocity = gestureVelocity as? CGPoint {
+                if let animation = self as? SpringAnimation<CGRect> {
+                    animation.velocity.origin = gestureVelocity
+                    animation.fromVelocity.origin = gestureVelocity
+                } else if let animation = self as? SpringAnimation<CGPoint> {
+                    animation.velocity = gestureVelocity
+                    animation.fromVelocity = gestureVelocity
+                }
+            } else {
+                self.setVelocity(gestureVelocity)
             }
         }
     }
@@ -204,7 +211,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         let isAnimated = spring.response > .zero
 
         if isAnimated {
-            spring.update(value: &_value, velocity: &_velocity, target: isReversed ? _fromValue : _target, deltaTime: deltaTime)
+            spring.update(value: &_value, velocity: &_velocity, target: isReversed ? _startValue : _target, deltaTime: deltaTime)
         } else {
             self._value = _target
             velocity = Value.zero
@@ -219,7 +226,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
                 if autoreverse {
                     isReversed = !isReversed
                 }
-                _value = isReversed ? _target : _fromValue
+                _value = isReversed ? _target : _startValue
                 _velocity = isReversed ? .zero : _fromVelocity
             } else {
                 _value = _target
@@ -285,7 +292,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         if immediately == false {
             switch position {
             case .start:
-                target = fromValue
+                target = startValue
             case .current:
                 target = value
             default: break
@@ -295,7 +302,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
             state = .inactive
             switch position {
             case .start:
-                value = fromValue
+                value = startValue
                 valueChanged?(value)
             case .end:
                 value = target

@@ -20,7 +20,7 @@ extension AnimatablePropertyProvider where Self: CALayer {
      
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
      
-     See ``LayerAnimator`` for more information about usage and all animatable properties.
+     See ``LayerAnimator`` for more information about how to animate and all animatable properties.
      */
     public var animator: LayerAnimator<Self> {
         get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self)) }
@@ -59,6 +59,12 @@ extension AnimatablePropertyProvider where Self: CALayer {
  ### Accessing Animation Velocity
  
  To access the animation velocity for a property, use ``animationVelocity(for:)``.
+ 
+ ```swift
+ if let velocity = layer.animator.animation(for: \.origin) {
+ 
+ }
+ ```
  */
 public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
 
@@ -85,10 +91,7 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     /// The size of the layer. Changing the value keeps the layer centered. To change the size without centering use the layer's frame size.
     public var size: CGSize {
         get { frame.size }
-        set {
-            guard size != newValue else { return }
-            frame.sizeCentered = newValue
-        }
+        set { frame.sizeCentered = newValue }
     }
     
     /// The center of the layer.
@@ -109,16 +112,16 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         set { self[\.anchorPoint] = newValue }
     }
     
-    /// The background color of the layer.
-    public var backgroundColor: CGColor? {
-        get { self[\.backgroundColor] }
-        set { self[\.backgroundColor] = newValue }
-    }
-    
     /// The anchor point for the layer’s position along the z axis.
     public var anchorPointZ: CGFloat {
         get { self[\.anchorPointZ] }
         set { self[\.anchorPointZ] = newValue }
+    }
+    
+    /// The background color of the layer.
+    public var backgroundColor: CGColor? {
+        get { self[\.backgroundColor] }
+        set { self[\.backgroundColor] = newValue }
     }
         
     /// The opacity value of the layer.
@@ -158,17 +161,25 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         set { self[\.cornerRadius] = newValue }
     }
     
+    /// The border of the layer.
+    public var border: BorderConfiguration {
+        get { self[\.border] }
+        set { self[\.border] = newValue }
+    }
+    
+    /*
     /// The border color of the layer.
-    public var borderColor: CGColor? {
+    var borderColor: CGColor? {
         get { self[\.borderColor] }
         set { self[\.borderColor] = newValue }
     }
     
     /// The border width of the layer.
-    public var borderWidth: CGFloat {
+    var borderWidth: CGFloat {
         get { self[\.borderWidth] }
         set { self[\.borderWidth] = newValue }
     }
+    */
     
     /// The shadow of the layer.
     public var shadow: ShadowConfiguration {

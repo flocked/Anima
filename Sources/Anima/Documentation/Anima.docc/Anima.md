@@ -117,6 +117,7 @@ animation.start()
 
 - ``CAKeyframeAnimationEmittable``
 - ``CAKeyframeAnimationValueConvertible``
+- ``BorderConfiguration``
+- ``ShadowConfiguration``
 - ``FloatingPointInitializable``
 - ``Rubberband``
-- ``ShadowConfiguration``

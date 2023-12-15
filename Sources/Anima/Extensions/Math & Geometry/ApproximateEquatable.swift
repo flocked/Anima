@@ -67,7 +67,7 @@ extension Set: ApproximateEquatable where Element: FloatingPointInitializable {
 
 extension AnimatablePair: ApproximateEquatable  where First: ApproximateEquatable, Second: ApproximateEquatable {
     func isApproximatelyEqual(to other: AnimatablePair<First, Second>, epsilon: Double) -> Bool {
-        self.first.isApproximatelyEqual(to: other.first, epsilon: First.Epsilon(epsilon)) &&  self.second.isApproximatelyEqual(to: other.second, epsilon: Second.Epsilon(epsilon))
+        first.isApproximatelyEqual(to: other.first, epsilon: First.Epsilon(epsilon)) &&  second.isApproximatelyEqual(to: other.second, epsilon: Second.Epsilon(epsilon))
     }
 }
 
@@ -99,7 +99,7 @@ extension Numeric where Magnitude: FloatingPoint {
         absoluteTolerance: Magnitude,
         relativeTolerance: Magnitude = 0
     ) -> Bool {
-        self.isApproximatelyEqual(
+        isApproximatelyEqual(
             to: other,
             absoluteTolerance: absoluteTolerance,
             relativeTolerance: relativeTolerance,

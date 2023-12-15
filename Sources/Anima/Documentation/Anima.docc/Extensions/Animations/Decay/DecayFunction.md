@@ -14,12 +14,12 @@
 ### Getting destination and velocity
 
 - ``destination(value:velocity:decelerationRate:)``
-- ``velocity(fromValue:toValue:decelerationRate:)``
+- ``velocity(startValue:toValue:decelerationRate:)``
 
 ### Getting duration
 
 - ``duration(value:velocity:decelerationRate:)``
-- ``duration(fromValue:toValue:decelerationRate:)``
+- ``duration(startValue:toValue:decelerationRate:)``
 
 ### Constants
 

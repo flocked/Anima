@@ -21,7 +21,7 @@ extension NSUIColor {
 
         return (r, g, b, a)
       #elseif os(macOS)
-        guard let rgbaColor = self.usingColorSpace(.deviceRGB) else {
+        guard let rgbaColor = usingColorSpace(.deviceRGB) else {
           fatalError("Could not convert color to RGBA.")
         }
 
@@ -39,15 +39,15 @@ extension NSUIColor {
      */
     func resolvedColor(for view: NSUIView) -> NSUIColor {
         #if os(macOS)
-        self.resolvedColor(for: view.effectiveAppearance)
+        resolvedColor(for: view.effectiveAppearance)
         #elseif canImport(UIKit)
-        self.resolvedColor(with: view.traitCollection)
+        resolvedColor(with: view.traitCollection)
         #endif
     }
     
     /// A Boolean value that indicates whether the color contains a different light and dark color variant.
     var isDynamic: Bool {
-        let dyamic = self.dynamicColors
+        let dyamic = dynamicColors
         return dyamic.light != dyamic.dark
     }
 }
@@ -56,8 +56,8 @@ extension NSUIColor {
 extension NSColor {
     /// Returns the dynamic light and dark colors.
     var dynamicColors: (light: NSColor, dark: NSColor) {
-        let light = self.resolvedColor(for: NSAppearance(named: .aqua)!)
-        let dark = self.resolvedColor(for: NSAppearance(named: .darkAqua)!)
+        let light = resolvedColor(for: NSAppearance(named: .aqua)!)
+        let dark = resolvedColor(for: NSAppearance(named: .darkAqua)!)
         return (light, dark)
     }
     
@@ -86,7 +86,7 @@ extension NSColor {
                 if #available(macOS 11.0, *) {
                     let appearance = appearance ?? .currentDrawing()
                     appearance.performAsCurrentDrawingAppearance {
-                        color = self.usingColorSpace(colorSpace)
+                        color = usingColorSpace(colorSpace)
                     }
                 } else {
                     let appearance = appearance ?? .current
@@ -113,8 +113,8 @@ extension NSColor {
 extension UIColor {
     /// Returns the dynamic light and dark colors.
     var dynamicColors: (light: UIColor, dark: UIColor) {
-        let light = self.resolvedColor(with: .init(userInterfaceStyle: .light))
-        let dark = self.resolvedColor(with: .init(userInterfaceStyle: .dark))
+        let light = resolvedColor(with: .init(userInterfaceStyle: .light))
+        let dark = resolvedColor(with: .init(userInterfaceStyle: .dark))
         return (light, dark)
     }
     

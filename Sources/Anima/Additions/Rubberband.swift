@@ -97,8 +97,8 @@ public struct Rubberband {
         - coefficient: A multiplier to decay the value when it's being rubberbanded. Defaults to ``ScrollViewRubberBandingConstant``.
      */
     public static func value(for frame: CGRect, bounds: CGRect, coefficient: Double = ScrollViewRubberBandingConstant) -> CGRect {
-        let x = self.value(for: frame.origin.x, boundsSize: frame.width, contentSize: bounds.width, coefficient: coefficient)
-        let y = self.value(for: frame.origin.y, boundsSize: frame.height, contentSize: bounds.height, coefficient: coefficient)
+        let x = value(for: frame.origin.x, boundsSize: frame.width, contentSize: bounds.width, coefficient: coefficient)
+        let y = value(for: frame.origin.y, boundsSize: frame.height, contentSize: bounds.height, coefficient: coefficient)
         return CGRect(origin: CGPoint(x, y), size: frame.size)
     }
 }

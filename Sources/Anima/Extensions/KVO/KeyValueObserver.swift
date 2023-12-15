@@ -36,7 +36,7 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
      */
     public func add<Value: Equatable>(_ keyPath: KeyPath<Object, Value>, sendInitalValue: Bool = false, handler: @escaping (( _ oldValue: Value, _ newValue: Value)->())) {
         guard let name = keyPath._kvcKeyPathString else { return }
-        self.add(name, sendInitalValue: sendInitalValue) { old, new in
+        add(name, sendInitalValue: sendInitalValue) { old, new in
             guard let old = old as? Value, let new = new as? Value, old != new else { return }
             handler(old, new)
         }
@@ -52,7 +52,7 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
     public func add<Value>(_ keyPath: KeyPath<Object, Value>, sendInitalValue: Bool = false, handler: @escaping (( _ oldValue: Value, _ newValue: Value)->())) {
         guard let name = keyPath._kvcKeyPathString else { return }
         
-        self.add(name, sendInitalValue: sendInitalValue) { old, new in
+        add(name, sendInitalValue: sendInitalValue) { old, new in
             guard let old = old as? Value, let new = new as? Value else { return }
             handler(old, new)
         }
@@ -82,7 +82,7 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
      */
     public func remove(_ keyPath: PartialKeyPath<Object>) {
         guard let name = keyPath._kvcKeyPathString else { return }
-        self.remove(name)
+        remove(name)
     }
     
     /**
@@ -91,7 +91,7 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
      - Parameter keyPaths: The keypaths to remove.
      */
     public func remove<S: Sequence<PartialKeyPath<Object>>>(_ keyPaths: S)  {
-        keyPaths.compactMap({$0._kvcKeyPathString}).forEach({ self.remove($0) })
+        keyPaths.compactMap({$0._kvcKeyPathString}).forEach({ remove($0) })
     }
     
     /**
@@ -100,21 +100,21 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
      - Parameter keyPath: The keypath to remove.
      */
     public func remove(_ keyPath: String) {
-        guard let observedObject = self.observedObject else { return }
-        if self.observers[keyPath] != nil {
+        guard let observedObject = observedObject else { return }
+        if observers[keyPath] != nil {
             observedObject.removeObserver(self, forKeyPath: keyPath)
-            self.observers[keyPath] = nil
+            observers[keyPath] = nil
         }
     }
     
     /// Removes all observers.
     public func removeAll() {
-        self.observers.keys.forEach({ self.remove( $0) })
+        observers.keys.forEach({ remove( $0) })
     }
     
     /// A bool indicating whether any value is observed.
     public func isObserving() -> Bool {
-        return  self.observers.isEmpty != false
+        return  observers.isEmpty != false
     }
     
     /**
@@ -124,7 +124,7 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
      */
     public func isObserving(_ keyPath: PartialKeyPath<Object>) -> Bool {
         guard let name = keyPath._kvcKeyPathString else { return false }
-        return self.isObserving(name)
+        return isObserving(name)
     }
     
     /**
@@ -133,14 +133,14 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
      - Parameter keyPath: The keyPath to the value.
      */
     public func isObserving(_ keyPath: String) -> Bool {
-        return self.observers[keyPath] != nil
+        return observers[keyPath] != nil
     }
     
     override public func observeValue(forKeyPath keyPath:String?, of object:Any?, change:[NSKeyValueChangeKey:Any]?, context:UnsafeMutableRawPointer?) {
         guard
-            self.observedObject != nil,
+            observedObject != nil,
             let keyPath = keyPath,
-            let handler = self.observers[keyPath],
+            let handler = observers[keyPath],
             let change = change,
             let oldValue = change[NSKeyValueChangeKey.oldKey],
             let newValue = change[NSKeyValueChangeKey.newKey] else {
@@ -151,7 +151,7 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
     }
     
     deinit {
-        self.removeAll()
+        removeAll()
     }
 }
 
@@ -159,14 +159,14 @@ extension KeyValueObserver {
     subscript<Value: Equatable>(keyPath: KeyPath<Object, Value>) -> ((_ oldValue: Value, _ newValue: Value)->())? {
         get {
             guard let name = keyPath._kvcKeyPathString else { return nil }
-            return self.observers[name] as ((_ oldValue: Value, _ newValue: Value)->())?
+            return observers[name] as ((_ oldValue: Value, _ newValue: Value)->())?
         }
         set {
             if let newValue = newValue {
                 guard keyPath._kvcKeyPathString != nil else { return }
-                self.add(keyPath, handler: newValue)
+                add(keyPath, handler: newValue)
             } else {
-                self.remove(keyPath)
+                remove(keyPath)
             }
         }
         
@@ -175,26 +175,26 @@ extension KeyValueObserver {
     subscript<Value>(keyPath: KeyPath<Object, Value>) -> ((_ oldValue: Value, _ newValue: Value)->())? {
         get {
             guard let name = keyPath._kvcKeyPathString else { return nil }
-            return self.observers[name] as ((_ oldValue: Value, _ newValue: Value)->())?
+            return observers[name] as ((_ oldValue: Value, _ newValue: Value)->())?
         }
         set {
             if let newValue = newValue {
                 guard keyPath._kvcKeyPathString != nil else { return }
-                self.add(keyPath, handler: newValue)
+                add(keyPath, handler: newValue)
             } else {
-                self.remove(keyPath)
+                remove(keyPath)
             }
         }
     }
     
     subscript(keyPath: String) -> ((_ oldValue: Any, _ newValue: Any)->())? {
-        get { self.observers[keyPath] }
+        get { observers[keyPath] }
         set {
-            self.remove(keyPath)
+            remove(keyPath)
             if let newValue = newValue {
-                self.add(keyPath, handler: newValue)
+                add(keyPath, handler: newValue)
             } else {
-                self.remove(keyPath)
+                remove(keyPath)
             }
         }
     }

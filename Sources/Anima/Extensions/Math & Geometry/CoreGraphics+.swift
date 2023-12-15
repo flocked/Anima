@@ -110,9 +110,10 @@ extension CGRect {
     var sizeCentered: CGSize {
         get { size }
         set {
-            let old = self
+            guard size != newValue else { return }
+            let previousCenter = center
             size = newValue
-            self.center = old.center
+            center = previousCenter
         }
     }
 }

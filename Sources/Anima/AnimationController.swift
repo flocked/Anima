@@ -19,7 +19,7 @@ class AnimationController {
 
     private var displayLink: AnyCancellable?
 
-    private var animations: [UUID: AnimationProviding] = [:]
+    private var animations: [UUID: any ConfigurableAnimationProviding] = [:]
     private var animationSettingsStack = SettingsStack()
     
     typealias CompletionBlock = (_ finished: Bool, _ retargeted: Bool) -> Void
@@ -31,14 +31,16 @@ class AnimationController {
     
     /// The preferred rame rate of the animations.
     @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
-    public var preferredFrameRateRange: CAFrameRateRange? {
-        get { _preferredFrameRateRange as? CAFrameRateRange }
-        set { _preferredFrameRateRange = newValue }
+    public var preferredFrameRateRange: CAFrameRateRange {
+        get { (_preferredFrameRateRange as? CAFrameRateRange) ?? .default }
+        set { 
+            guard newValue != preferredFrameRateRange else { return }
+            _preferredFrameRateRange = newValue }
     }
         
     private var _preferredFrameRateRange: Any? = nil {
         didSet {
-            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *), preferredFrameRateRange != nil {
+            if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *) {
                 restartDisplayLink()
             }
         }
@@ -59,7 +61,7 @@ class AnimationController {
         animationSettingsStack.pop()
     }
 
-    public func runAnimation(_ animation: AnimationProviding) {
+    public func runAnimation(_ animation: some ConfigurableAnimationProviding) {
         if displayLinkIsRunning == false {
             startDisplayLink()
         }
@@ -73,7 +75,7 @@ class AnimationController {
         animations[animation.id] = nil
     }
     
-    public func stopAllAnimations(immediately: Bool = true) {
+    public func stopAllAnimations(immediately: Bool) {
         animations.values.forEach({$0.stop(at: .current, immediately: immediately)})
     }
 
@@ -110,7 +112,7 @@ class AnimationController {
 
     private func startDisplayLink() {
         guard displayLinkIsRunning == false else { return }
-        if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *),  let preferredFrameRateRange = preferredFrameRateRange {
+        if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *), preferredFrameRateRange != .default {
             displayLink = DisplayLink(preferredFrameRateRange: preferredFrameRateRange).sink { [weak self] frame in
                 self?.updateAnimations(frame)
         }
@@ -153,14 +155,14 @@ extension AnimationController {
     struct AnimationParameters {
         let groupID: UUID
         let delay: CGFloat
-        let animationType: AnimationType
+        let configuration: AnimationConfiguration
         let options: Anima.AnimationOptions
         let completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)?
         
-        init(groupID: UUID, delay: CGFloat = 0.0, animationType: AnimationType, options: Anima.AnimationOptions = [], completion: ( (_: Bool, _: Bool) -> Void)? = nil) {
+        init(groupID: UUID, delay: CGFloat = 0.0, configuration: AnimationConfiguration, options: Anima.AnimationOptions = [], completion: ( (_: Bool, _: Bool) -> Void)? = nil) {
             self.groupID = groupID
             self.delay = delay
-            self.animationType = animationType
+            self.configuration = configuration
             self.options = options
             self.completion = completion
         }
@@ -178,7 +180,7 @@ extension AnimationController {
         }
         
         var isAnimation: Bool {
-            !animationType.isNonAnimated
+            !configuration.isNonAnimated
         }
         
         var resetSpringVelocity: Bool {
@@ -191,12 +193,31 @@ extension AnimationController {
         }
         #endif
         
+        var animationType: AnimationType? {
+            configuration.type
+        }
+        
         enum AnimationType {
-            case spring(spring: Spring, gestureVelocity: CGPoint?)
+            case spring
+            case easing
+            case decay
+        }
+        
+        enum AnimationConfiguration {
+            case spring(spring: Spring, gestureVelocity: (any AnimatableProperty)?)
             case easing(timingFunction: TimingFunction, duration: TimeInterval)
             case decay(mode: Anima.DecayAnimationMode, decelerationRate: Double)
             case nonAnimated
             case velocityUpdate
+            
+            var type: AnimationType? {
+                switch self {
+                case .spring: return .spring
+                case .easing: return .easing
+                case .decay: return .decay
+                default: return nil
+                }
+            }
             
             var isDecayVelocity: Bool {
                 switch self {
@@ -254,7 +275,7 @@ extension AnimationController {
                 }
             }
             
-            var gestureVelocity: CGPoint? {
+            var gestureVelocity: (any AnimatableProperty)? {
                 switch self {
                 case .spring(_, let gestureVelocity): return gestureVelocity
                 default: return nil

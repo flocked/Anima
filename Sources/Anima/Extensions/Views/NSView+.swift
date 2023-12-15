@@ -63,7 +63,7 @@ extension NSView {
 }
 
 extension NSView {
-    // Saves dynamics colors that provide both a light and dark color variants and updates them inside the view if the appearance changes from light to dark or vice versa.
+    // Saves dynamics colors that provide both a light and dark color variant and updates them inside the view if the appearance changes from light to dark or vice versa.
     struct DynamicColors {
         var shadow: NSColor? = nil {
             didSet { if shadow?.isDynamic == false { shadow = nil } } }
@@ -112,10 +112,10 @@ extension NSView {
     }
     
     func updateEffectiveColors() {
-        dynamicColors.update(\.shadow, cgColor: self.layer?.shadowColor)
-        dynamicColors.update(\.background, cgColor: self.layer?.backgroundColor)
-        dynamicColors.update(\.border, cgColor: self.layer?.borderColor)
-        dynamicColors.update(\.innerShadow, cgColor: self.innerShadowLayer?.shadowColor)
+        dynamicColors.update(\.shadow, cgColor: layer?.shadowColor)
+        dynamicColors.update(\.background, cgColor: layer?.backgroundColor)
+        dynamicColors.update(\.border, cgColor: layer?.borderColor)
+        dynamicColors.update(\.innerShadow, cgColor: layer?.innerShadowLayer?.shadowColor)
         
         if let color = dynamicColors.shadow?.resolvedColor(for: self).cgColor {
             layer?.shadowColor = color
@@ -127,7 +127,7 @@ extension NSView {
             layer?.backgroundColor = color
         }
         if let color = dynamicColors.innerShadow?.resolvedColor(for: self).cgColor {
-            innerShadowLayer?.shadowColor = color
+            layer?.innerShadowLayer?.shadowColor = color
         }
 
         if dynamicColors.needsAppearanceObserver == false {

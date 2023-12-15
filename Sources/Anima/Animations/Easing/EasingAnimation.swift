@@ -23,19 +23,19 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     /// A unique identifier for the animation.
     public let id = UUID()
 
-    /// A unique identifier that associates an animation with an grouped animation block.
+    /// A unique identifier that associates the animation with an grouped animation block.
     public internal(set) var groupID: UUID?
 
     /// The relative priority of the animation.
     public var relativePriority: Int = 0
     
-    /// The current state of the animation (`inactive`, `running`, or `ended`).
+    /// The current state of the animation.
     public internal(set) var state: AnimatingState = .inactive
     
     /// The delay (in seconds) after which the animations begin.
     public internal(set) var delay: TimeInterval = 0.0
     
-    /// The information used to determine the timing curve for the animation.
+    /// The timing function of the animation.
     public var timingFunction: TimingFunction = .easeInEaseOut
     
     /// The total duration (in seconds) of the animation.
@@ -77,7 +77,7 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     var _value: Value.AnimatableData {
         didSet {
             guard state != .running else { return }
-            _fromValue = _value
+            _startValue = _value
         }
     }
     
@@ -104,12 +104,12 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     }
 
     /// The start value of the animation.
-    var fromValue: Value {
-        get { Value(_fromValue) }
-        set { _fromValue = newValue.animatableData }
+    var startValue: Value {
+        get { Value(_startValue) }
+        set { _startValue = newValue.animatableData }
     }
     
-    var _fromValue: Value.AnimatableData
+    var _startValue: Value.AnimatableData
     
     /// The current velocity of the animation.
     public internal(set) var velocity: Value {
@@ -118,7 +118,12 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     }
     
     var _velocity: Value.AnimatableData = .zero
-        
+    
+    var fromVelocity: Value {
+        get { .zero }
+        set {  }
+    }
+    
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     public var valueChanged: ((_ currentValue: Value) -> Void)?
 
@@ -137,7 +142,7 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
      */
     public init(timingFunction: TimingFunction, duration: CGFloat, value: Value, target: Value) {
         self._value = value.animatableData
-        self._fromValue = _value
+        self._startValue = _value
         self._target = target.animatableData
         self.duration = duration
         self.timingFunction = timingFunction
@@ -151,6 +156,10 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     /// The item that starts the animation delayed.
     var delayedStart: DispatchWorkItem? = nil
     
+    /// The animation type.
+    let animationType: AnimationController.AnimationParameters.AnimationType = .easing
+
+    
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
         groupID = settings.groupID
@@ -158,8 +167,8 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         autoreverse = settings.autoreverse
         integralizeValues = settings.integralizeValues
         
-        timingFunction = settings.animationType.timingFunction ?? timingFunction
-        duration = settings.animationType.duration ?? duration
+        timingFunction = settings.configuration.timingFunction ?? timingFunction
+        duration = settings.configuration.duration ?? duration
     }
             
     /**
@@ -179,10 +188,10 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         if isAnimated {
             let secondsElapsed = deltaTime/duration
             fractionComplete = isReversed ? (fractionComplete - secondsElapsed) : (fractionComplete + secondsElapsed)
-            _value = _fromValue.interpolated(towards: _target, amount: resolvedFractionComplete)
+            _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
         } else {
             fractionComplete = isReversed ? 0.0 : 1.0
-            _value = isReversed ? _fromValue : _target
+            _value = isReversed ? _startValue : _target
         }
         
         _velocity = (_value - previousValue).scaled(by: 1.0/deltaTime)
@@ -197,7 +206,7 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
                 fractionComplete = isReversed ? 1.0 : 0.0
                 _value = isReversed ? _target : _value
             } else {
-                _value = isReversed ? _fromValue : _target
+                _value = isReversed ? _startValue : _target
             }
         }
         
@@ -259,7 +268,7 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         if immediately == false {
             switch position {
             case .start:
-                target = fromValue
+                target = startValue
             case .current:
                 target = value
             default: break
@@ -269,7 +278,7 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
             state = .inactive
             switch position {
             case .start:
-                value = fromValue
+                value = startValue
                 valueChanged?(value)
             case .end:
                 value = target
@@ -302,7 +311,7 @@ extension EasingAnimation: CustomStringConvertible {
         
             value: \(value)
             target: \(target)
-            fromValue: \(fromValue)
+            startValue: \(startValue)
             velocity: \(velocity)
             fractionComplete: \(fractionComplete)
 
@@ -335,9 +344,9 @@ var scrubsLinearly: Bool = false
 func updateValue() {
     guard state != .running else { return }
     if scrubsLinearly {
-        _value = _fromValue.interpolated(towards: _target, amount: fractionComplete)
+        _value = _startValue.interpolated(towards: _target, amount: fractionComplete)
     } else {
-        _value = _fromValue.interpolated(towards: _target, amount: resolvedFractionComplete)
+        _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
     }
     valueChanged?(value)
 }

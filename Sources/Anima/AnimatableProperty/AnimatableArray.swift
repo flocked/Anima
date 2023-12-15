@@ -159,8 +159,8 @@ extension AnimatableArray: Hashable where Element: Hashable {
 extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     public static func + (lhs: AnimatableArray, rhs: AnimatableArray) -> AnimatableArray {
         let count = Swift.min(lhs.count, rhs.count)
-        if let _lhs = lhs as? AnimatableArray<Double>, let _rhs = rhs as? AnimatableArray<Double> {
-            return AnimatableArray<Double>(vDSP.add(_lhs[0..<count], _rhs[0..<count])) as! Self
+        if let lhs = lhs as? AnimatableArray<Double>, let rhs = rhs as? AnimatableArray<Double> {
+            return AnimatableArray<Double>(vDSP.add(lhs[0..<count], rhs[0..<count])) as! Self
         }
         var lhs = lhs
         for index in 0..<count {
@@ -175,8 +175,8 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     
     public static func - (lhs: AnimatableArray, rhs: AnimatableArray) -> AnimatableArray {
         let count = Swift.min(lhs.count, rhs.count)
-        if let _lhs = lhs as? AnimatableArray<Double>, let _rhs = rhs as? AnimatableArray<Double> {
-            return AnimatableArray<Double>(vDSP.subtract(_lhs[0..<count], _rhs[0..<count])) as! Self
+        if let lhs = lhs as? AnimatableArray<Double>, let rhs = rhs as? AnimatableArray<Double> {
+            return AnimatableArray<Double>(vDSP.subtract(lhs[0..<count], rhs[0..<count])) as! Self
         }
         var lhs = lhs
         for index in 0..<count {
@@ -190,8 +190,8 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     }
     
     public mutating func scale(by rhs: Double) {
-        if let _self = self as? AnimatableArray<Double> {
-            self.elements = vDSP.multiply(rhs, _self.elements) as! [Element]
+        if let self = self as? AnimatableArray<Double> {
+            elements = vDSP.multiply(rhs, self.elements) as! [Element]
         } else {
             for index in startIndex..<endIndex {
                 self[index].scale(by: rhs)
@@ -200,8 +200,8 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     }
     
     public var magnitudeSquared: Double {
-        if let _self = self as? AnimatableArray<Double> {
-            return vDSP.sum(vDSP.multiply(_self.elements, _self.elements))
+        if let self = self as? AnimatableArray<Double> {
+            return vDSP.sum(vDSP.multiply(self.elements, self.elements))
         }
        return reduce(into: 0.0) { (result, new) in
             result += new.magnitudeSquared

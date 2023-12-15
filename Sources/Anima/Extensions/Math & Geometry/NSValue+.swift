@@ -23,7 +23,7 @@ extension NSValue {
     /// Returns the directional edge insets structure representation of the value.
     var directionalEdgeInsetsValue: NSDirectionalEdgeInsets {
         var insets = NSDirectionalEdgeInsets()
-        self.getValue(&insets)
+        getValue(&insets)
         return insets
     }
     
@@ -36,7 +36,7 @@ extension NSValue {
     /// Returns the CoreGraphics affine transform representation of the value.
     var cgAffineTransformValue: CGAffineTransform {
         var transform = CGAffineTransform.identity
-        self.getValue(&transform)
+        getValue(&transform)
         return transform
     }
 }
@@ -80,13 +80,13 @@ extension NSRange {
 
 public extension ClosedRange where Bound: BinaryInteger {
     var nsValue: NSValue {
-        return NSValue(range: self.nsRange)
+        return NSValue(range: nsRange)
     }
 }
 
 extension Range where Bound: BinaryInteger {
     var nsValue: NSValue {
-        return NSValue(range: self.nsRange)
+        return NSValue(range: nsRange)
     }
 }
 
@@ -116,15 +116,15 @@ extension CATransform3D {
 extension ClosedRange where Bound: BinaryInteger {
     /// The closed range as `NSRange`.
     var nsRange: NSRange {
-        let length = self.upperBound-self.lowerBound-1
-        return NSRange(location: Int(self.lowerBound), length: Int(length))
+        let length = upperBound-lowerBound-1
+        return NSRange(location: Int(lowerBound), length: Int(length))
     }
 }
 
 extension Range where Bound: BinaryInteger {
     /// The range as `NSRange`.
     var nsRange: NSRange {
-        let length = self.upperBound-self.lowerBound
-        return NSRange(location: Int(self.lowerBound), length: Int(length))
+        let length = upperBound-lowerBound
+        return NSRange(location: Int(lowerBound), length: Int(length))
     }
 }

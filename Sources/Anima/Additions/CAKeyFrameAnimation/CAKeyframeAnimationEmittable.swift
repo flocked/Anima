@@ -136,18 +136,18 @@ extension EasingAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeA
     public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
         var fractionComplete: CGFloat = isReversed ? 1.0 : 0.0
         let secondsElapsed = deltaTime/duration
-        var value = isReversed ? target : fromValue
+        var value = isReversed ? target : startValue
         var runningTime: TimeInterval = 0.0
         while runningTime < duration {
             fractionComplete = isReversed ? (fractionComplete - secondsElapsed) : (fractionComplete + secondsElapsed)
             let resolvedFractionComplete = timingFunction.solve(at: fractionComplete, duration: duration)
-            value = Value(fromValue.animatableData.interpolated(towards: target.animatableData, amount: resolvedFractionComplete))
+            value = Value(startValue.animatableData.interpolated(towards: target.animatableData, amount: resolvedFractionComplete))
             values.append(value.toKeyframeValue())
             keyTimes.append(runningTime as NSNumber)
             runningTime += deltaTime
         }
         
-        values.append(isReversed ? fromValue.toKeyframeValue() : target.toKeyframeValue())
+        values.append(isReversed ? startValue.toKeyframeValue() : target.toKeyframeValue())
         keyTimes.append(duration as NSNumber)
         return runningTime
     }

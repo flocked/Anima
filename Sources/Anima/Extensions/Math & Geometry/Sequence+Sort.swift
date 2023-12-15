@@ -23,11 +23,7 @@ extension Sequence {
      - Parameter order: The order of the sorting.
      */
     func sorted<Value>(by keyPath: KeyPath<Element, Value>, _ order : SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
-        if order == .ascending {
-            return self.sorted(by: keyPath, using: <)
-        } else {
-            return self.sorted(by: keyPath, using: >)
-        }
+        return order == .ascending ? sorted(by: keyPath, using: <) : sorted(by: keyPath, using: >)
     }
     
     /**
@@ -37,11 +33,7 @@ extension Sequence {
      - Parameter order: The order of the sorting.
      */
     func sorted<Value>(by keyPath: KeyPath<Element, Value?>, _ order : SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
-        if order == .ascending {
-            return self.sorted(by: keyPath, using: <)
-        } else {
-            return self.sorted(by: keyPath, using: >)
-        }
+        return order == .ascending ? sorted(by: keyPath, using: <) : sorted(by: keyPath, using: >)
     }
     
     private func sorted<Value>(by compare: (Element) -> Value?, using comparator: (Value, Value) -> Bool) -> [Element] where Value: Comparable {

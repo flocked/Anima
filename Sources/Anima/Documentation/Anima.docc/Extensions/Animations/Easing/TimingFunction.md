@@ -2,25 +2,28 @@
 
 ## Topics
 
-### Creating a Timing Function
+### Creating a timing function
 
 -  ``init(x1:y1:x2:y2:)``
 -  ``init(_:)``
 -  ``bezier(_:)``
 -  ``function(_:)``
--  ``name``
 
-### Built-in Timing Functions
+### Built-in timing functions
 
 -  ``default``
+-  ``linear``
 -  ``easeIn``
 -  ``easeInEaseOut``
 -  ``easeOut``
--  ``linear``
 -  ``swiftOut``
 -  ``Easing``
 
-### Solve Time
+### Getting name
+
+-  ``name``
+
+### Solve time
 
 -  ``solve(at:epsilon:)``
 -  ``solve(at:duration:)``

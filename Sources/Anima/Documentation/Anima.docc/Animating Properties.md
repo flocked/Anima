@@ -1,6 +1,6 @@
 # Animating Properties
 
-Animate properties of objects like `NSView`, `UIView`, `CALayer` and `NSLayoutConstraint`. 
+Animate properties of objects like `NSView`, `UIView`, `CALayer` and `NSLayoutConstraint` using block-based animations.
 
 ## Overview
 
