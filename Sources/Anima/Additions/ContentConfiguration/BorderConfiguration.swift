@@ -14,14 +14,45 @@ import SwiftUI
 
 /// A configuration that specifies the appearance of a border.
 public struct BorderConfiguration: Hashable {
+    
     /// The color of the border.
-    public var color: NSUIColor? = nil
+    public var color: NSUIColor? = .black
     
     /// The width of the border.
-    public var width: CGFloat = 0.0
+    public var width: CGFloat = 2.0
     
-    /// A configuration without border.
-    public static func none() -> Self { return Self() }
+    /// No border.
+    public static var none: Self { Self(color: nil) }
+    
+    /// A black border.
+    public static func black(width: CGFloat = 2.0) -> Self {
+        Self(color: .black, width: width)
+    }
+    
+    
+    /// A colored border.
+    public static func color(_ color: NSUIColor, width: CGFloat) -> Self {
+        Self(color: color, width: width)
+    }
+    
+    /**
+     Creates a border configuration.
+     
+     - Parameters:
+        - color: The border color. The default value is `black`.
+        - width: The border width. The default value is `2.0`.
+     */
+    public init(color: NSUIColor? = .black, width: CGFloat = 2.0) {
+        self.color = color
+        self.width = width
+    }
+    
+    #if os(macOS)
+    /// A  border with control accent color.
+    public static func controlAccent(width: CGFloat = 2.0) -> Self {
+        Self(color: .controlAccentColor, width: width)
+    }
+    #endif
 }
 
 extension CALayer {
@@ -36,7 +67,7 @@ extension CALayer {
 
 extension BorderConfiguration: AnimatableProperty, Animatable {
     public static var zero: BorderConfiguration {
-        BorderConfiguration()
+        BorderConfiguration.none
     }
     
     public init(_ animatableData: AnimatableArray<Double>) {

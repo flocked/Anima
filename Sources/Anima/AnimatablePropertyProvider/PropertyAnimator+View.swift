@@ -162,7 +162,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     
     /// The shadow of the view.
     public var shadow: ShadowConfiguration {
-        get { object.optionalLayer?.animator.shadow ?? .none() }
+        get { object.optionalLayer?.animator.shadow ?? .none }
         set { 
             #if os(macOS)
             object.dynamicColors.shadow = newValue.color
@@ -174,7 +174,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     
     /// The inner shadow of the view.
     public var innerShadow: ShadowConfiguration {
-        get { object.optionalLayer?.animator.innerShadow ?? .none() }
+        get { object.optionalLayer?.animator.innerShadow ?? .none }
         set {
             #if os(macOS)
             object.dynamicColors.innerShadow = newValue.color
@@ -217,7 +217,13 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> AnimationProviding? {
-        return layerAnimation(for: keyPath) ?? animations[keyPath.stringValue]
+        object.optionalLayer?.animator.lastAccessedPropertyKey = ""
+        lastAccessedPropertyKey = ""
+        _ = self[keyPath: keyPath]
+        if let layerKey = object.optionalLayer?.animator.lastAccessedPropertyKey, layerKey != "" {
+            return object.optionalLayer?.animator.animations[layerKey]
+        }
+        return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
     }
     
     /**

@@ -14,6 +14,9 @@ import SwiftUI
 
 /// A configuration that specifies the appearance of a shadow.
 public struct ShadowConfiguration: Hashable {
+    
+    // MARK: - Configurating the shadow
+
     /// The color of the shadow.
     public var color: NSUIColor? = .black
     
@@ -31,8 +34,19 @@ public struct ShadowConfiguration: Hashable {
         return (color?.alphaComponent == 0.0 || opacity == 0.0 || color == nil)
     }
     
-    /// Create an inner shadow configuration.
-    public init(color: NSUIColor? = .black,
+    // MARK: - Creating the shadow configuration
+    
+    /**
+     Creates a shadow configuration.
+     
+     - Parameters:
+        - color: The shadow color. The default value is `black`.
+        - opacity: The shadow opacity. The default value is `0.3`.
+        - radius: The shadow radius. The default value is `2.0`.
+        - offset: The shadow offset. The default value is `CGPoint(x: 1.0, y: -1.5)`.
+     */
+    public init(
+        color: NSUIColor? = .black,
         opacity: CGFloat = 0.3,
         radius: CGFloat = 2.0,
         offset: CGPoint = CGPoint(x: 1.0, y: -1.5))
@@ -42,27 +56,29 @@ public struct ShadowConfiguration: Hashable {
         self.radius = radius
         self.offset = offset
     }
-
-    /// A configuration without shadow.
-    public static func none() -> Self { return Self(color: nil, opacity: 0.0) }
     
-    /// A configuration for a black shadow.
+    // MARK: - Built-in shadow configurations
+
+    /// No shadow.
+    public static var none: Self { Self(color: nil, opacity: 0.0) }
+    
+    /// A black shadow.
     public static func black(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .black, opacity: opacity, radius: radius, offset: offset) }
     
-    #if os(macOS)
-    /// A configuration for a accent color shadow.
-    public static func accentColor(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .controlAccentColor, opacity: opacity, radius: radius, offset: offset) }
-    #endif
-    
-    /// A configuration for a shadow with the specified color.
+    /// A colored shadow.
     public static func color(_ color: NSUIColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
         return Self(color: color, opacity: opacity, radius: radius, offset: offset)
     }
+    
+    #if os(macOS)
+    /// A shadow with control accent color.
+    public static func controlAccent(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .controlAccentColor, opacity: opacity, radius: radius, offset: offset) }
+    #endif
 }
 
 extension ShadowConfiguration: AnimatableProperty, Animatable {
     public static var zero: ShadowConfiguration {
-        .none()
+        .none
     }
     
     public init(_ animatableData: AnimatableArray<Double>) {
@@ -90,7 +106,7 @@ extension CALayer {
     
     /// The inner shadow of the layer.
     var innerShadow: ShadowConfiguration {
-        get { innerShadowLayer?.configuration ?? .none() }
+        get { innerShadowLayer?.configuration ?? .none }
         set {
             if newValue.isInvisible {
                 innerShadowLayer?.removeFromSuperlayer()

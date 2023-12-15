@@ -118,7 +118,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     var _velocity: Value.AnimatableData {
         didSet {
             guard state != .running else { return }
-            _fromVelocity = _velocity
+            _startVelocity = _velocity
         }
     }
 
@@ -129,12 +129,12 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     var _startValue: Value.AnimatableData
     
-    var fromVelocity: Value {
-        get { Value(_fromVelocity) }
-        set { _fromVelocity = newValue.animatableData }
+    var startVelocity: Value {
+        get { Value(_startVelocity) }
+        set { _startVelocity = newValue.animatableData }
     }
     
-    var _fromVelocity: Value.AnimatableData
+    var _startVelocity: Value.AnimatableData
     
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     public var valueChanged: ((_ currentValue: Value) -> Void)?
@@ -160,7 +160,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         self._velocity = initialVelocity.animatableData
         self.spring = spring
         self._startValue = _value
-        self._fromVelocity = _velocity
+        self._startVelocity = _velocity
     }
     
     deinit {
@@ -189,13 +189,13 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
             if let gestureVelocity = gestureVelocity as? CGPoint {
                 if let animation = self as? SpringAnimation<CGRect> {
                     animation.velocity.origin = gestureVelocity
-                    animation.fromVelocity.origin = gestureVelocity
+                    animation.startVelocity.origin = gestureVelocity
                 } else if let animation = self as? SpringAnimation<CGPoint> {
                     animation.velocity = gestureVelocity
-                    animation.fromVelocity = gestureVelocity
+                    animation.startVelocity = gestureVelocity
                 }
             } else {
-                self.setVelocity(gestureVelocity)
+                setVelocity(gestureVelocity)
             }
         }
     }
@@ -213,7 +213,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         if isAnimated {
             spring.update(value: &_value, velocity: &_velocity, target: isReversed ? _startValue : _target, deltaTime: deltaTime)
         } else {
-            self._value = _target
+            _value = _target
             velocity = Value.zero
         }
                 
@@ -227,7 +227,7 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
                     isReversed = !isReversed
                 }
                 _value = isReversed ? _target : _startValue
-                _velocity = isReversed ? .zero : _fromVelocity
+                _velocity = isReversed ? .zero : _startVelocity
             } else {
                 _value = _target
             }
@@ -292,9 +292,9 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         if immediately == false {
             switch position {
             case .start:
-                target = startValue
+                _target = _startValue
             case .current:
-                target = value
+                _target = _value
             default: break
             }
         } else {
@@ -302,14 +302,13 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
             state = .inactive
             switch position {
             case .start:
-                value = startValue
+                _value = _startValue
                 valueChanged?(value)
             case .end:
-                value = target
+                _value = _target
                 valueChanged?(value)
             default: break
             }
-            target = value
             reset()
             velocity = .zero
             completion?(.finished(at: value))

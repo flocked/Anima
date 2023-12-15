@@ -319,23 +319,28 @@ extension Optional: AnimatableColor where Wrapped: AnimatableColor {
 }
 
 
-// MARK: - AnimatableShadow
+// MARK: - AnimatableConfiguration
 
-// Updates shadows for better interpolation/animations.
-protocol AnimatableShadow {
-    var color: NSUIColor? { get }
-    func animatable(to other: any AnimatableShadow) -> Self
+
+// Updates shadows and shadow configuration for better interpolation/animations.
+protocol AnimatableConfiguration {
+    var color: NSUIColor? { get set }
+    func animatable(to other: any AnimatableConfiguration) -> Self
 }
 
-extension ShadowConfiguration: AnimatableShadow {
-    func animatable(to other: AnimatableShadow) -> Self {
-        var shadow = self
+extension AnimatableConfiguration {
+    func animatable(to other: AnimatableConfiguration) -> Self {
+        var configuration = self
         if self.color == nil || self.color?.alpha == 0.0, let otherColor = other.color {
-            shadow.color = otherColor.withAlphaComponent(0.0)
+            configuration.color = otherColor.withAlphaComponent(0.0)
         }
-        return shadow
+        return configuration
     }
 }
+
+extension ShadowConfiguration: AnimatableConfiguration { }
+
+extension BorderConfiguration: AnimatableConfiguration { }
 
 // MARK: - AnimatableCollection
 

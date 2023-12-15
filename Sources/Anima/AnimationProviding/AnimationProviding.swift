@@ -71,8 +71,8 @@ protocol ConfigurableAnimationProviding<Value>: AnimationProviding {
     var valueChanged: ((_ currentValue: Value) -> Void)? { get set }
     var delayedStart: DispatchWorkItem? { get set }
     var velocity: Value { get set }
-    var fromVelocity: Value { get set }
     var _velocity: Value.AnimatableData { get set }
+    var startVelocity: Value { get set }
     var animationType: AnimationController.AnimationParameters.AnimationType { get }
     func configure(withSettings settings: AnimationController.AnimationParameters)
     func reset()
@@ -85,7 +85,7 @@ extension ConfigurableAnimationProviding {
         var animation = self
         animation.velocity = velocity
         if includingFromVelocity {
-            animation.fromVelocity = velocity
+            animation.startVelocity = velocity
         }
     }
 }

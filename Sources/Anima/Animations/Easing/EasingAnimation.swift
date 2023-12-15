@@ -119,7 +119,7 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     var _velocity: Value.AnimatableData = .zero
     
-    var fromVelocity: Value {
+    var startVelocity: Value {
         get { .zero }
         set {  }
     }
@@ -132,7 +132,6 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     /**
      Creates a new animation with the specified timing curve and duration, and optionally, an initial and target value.
-     While `value` and `target` are optional in the initializer, they must be set to non-nil values before the animation can start.
 
      - Parameters:
         - timingFunction: The timing curve of the animation.
@@ -268,9 +267,9 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
         if immediately == false {
             switch position {
             case .start:
-                target = startValue
+                _target = _startValue
             case .current:
-                target = value
+                _target = _value
             default: break
             }
         } else {
@@ -278,16 +277,14 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
             state = .inactive
             switch position {
             case .start:
-                value = startValue
+                _value = _startValue
                 valueChanged?(value)
             case .end:
-                value = target
+                _value = _target
                 valueChanged?(value)
             default: break
             }
-            target = value
             reset()
-            velocity = .zero
             completion?(.finished(at: value))
         }
     }
@@ -296,7 +293,7 @@ public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     func reset() {
         delayedStart?.cancel()
         fractionComplete = 0.0
-        _velocity = .zero
+        velocity = .zero
     }
 }
 

@@ -77,8 +77,8 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
     }
     
     func updateTarget() {
-        _target = DecayFunction.destination(value: _startValue, velocity: _fromVelocity, decelerationRate: decayFunction.decelerationRate)
-        duration = DecayFunction.duration(value: _startValue, velocity: _fromVelocity, decelerationRate: decelerationRate)
+        _target = DecayFunction.destination(value: _startValue, velocity: _startVelocity, decelerationRate: decayFunction.decelerationRate)
+        duration = DecayFunction.duration(value: _startValue, velocity: _startVelocity, decelerationRate: decelerationRate)
     }
     
     /// The decay function used to calculate the animation.
@@ -86,14 +86,17 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
     
      public var value: Value {
         get { Value(_value) }
-        set { _value = newValue.animatableData  }
+        set { 
+            guard newValue != value else { return }
+            _value = newValue.animatableData
+            updateTarget()
+        }
     }
     
     var _value: Value.AnimatableData {
         didSet {
             guard state != .running else { return }
             _startValue = _value
-            updateTarget()
         }
     }
     
@@ -111,7 +114,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
     var _velocity: Value.AnimatableData {
         didSet {
             guard state != .running, oldValue != _velocity else { return }
-            _fromVelocity = _velocity
+            _startVelocity = _velocity
             if autoStarts, _velocity != .zero {
                 start(afterDelay: 0.0)
             }
@@ -128,13 +131,12 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
             _velocity == .zero ? value : Value(DecayFunction.destination(value: _value, velocity: _velocity, decelerationRate: decayFunction.decelerationRate)) }
         set {
             let newVelocity = DecayFunction.velocity(startValue: value.animatableData, toValue: newValue.animatableData)
-            if newVelocity != _velocity {
-                _velocity = DecayFunction.velocity(startValue: value.animatableData, toValue: newValue.animatableData)
-                _fromVelocity = _velocity
-                duration = DecayFunction.duration(value: _startValue, velocity: _fromVelocity, decelerationRate: decelerationRate)
-                _target = newValue.animatableData
-                runningTime = 0.0
-            }
+            guard newVelocity != _velocity else { return }
+            _velocity = newVelocity
+            _startVelocity = _velocity
+            duration = DecayFunction.duration(value: _startValue, velocity: _startVelocity, decelerationRate: decelerationRate)
+            _target = newValue.animatableData
+            runningTime = 0.0
         }
     }
     
@@ -158,14 +160,14 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         }
     }
     
-    var fromVelocity: Value {
-        get { Value(_fromVelocity) }
-        set { _fromVelocity = newValue.animatableData }
+    var startVelocity: Value {
+        get { Value(_startVelocity) }
+        set { _startVelocity = newValue.animatableData }
     }
     
-    var _fromVelocity: Value.AnimatableData {
+    var _startVelocity: Value.AnimatableData {
         didSet {
-            guard oldValue != _fromVelocity else { return }
+            guard oldValue != _startVelocity else { return }
             updateTarget()
         }
     }
@@ -198,7 +200,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         _value = value.animatableData
         _startValue = _value
         _velocity = velocity.animatableData
-        _fromVelocity = _velocity
+        _startVelocity = _velocity
         updateTarget()
     }
     
@@ -215,7 +217,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         _value = value.animatableData
         _startValue = _value
         _velocity = DecayFunction.velocity(startValue: value.animatableData, toValue: target.animatableData)
-        _fromVelocity = _velocity
+        _startVelocity = _velocity
         updateTarget()
     }
     
@@ -254,7 +256,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
                 
         if animationFinished, repeats {
             _value = _startValue
-            _velocity = _fromVelocity
+            _velocity = _startVelocity
         }
         
         runningTime = runningTime + deltaTime
@@ -317,9 +319,9 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         if immediately == false {
             switch position {
             case .start:
-                target = startValue
+                _target = _startValue
             case .current:
-                target = value
+                _target = _value
             default: break
             }
         } else {
@@ -327,22 +329,21 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
             state = .inactive
             switch position {
             case .start:
-                value = startValue
+                _value = _startValue
                 valueChanged?(value)
             case .end:
-                value = target
+                _value = _target
                 valueChanged?(value)
             default: break
             }
-            target = value
             reset()
-            velocity = .zero
             completion?(.finished(at: value))
         }
     }
     
     func reset() {
         runningTime = 0.0
+        velocity = .zero
         delayedStart?.cancel()
     }
 }

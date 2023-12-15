@@ -116,6 +116,8 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
         get { animation(for: keyPath)?.velocity as? Value ?? .zero  }
         set { animation(for: keyPath)?.setVelocity(newValue) }
     }
+    
+    var lastAccessedPropertyKey: String = ""
 }
 
 extension PropertyAnimator {
@@ -144,6 +146,7 @@ extension PropertyAnimator {
                 return
             }
         }
+        
         
         var value = object[keyPath: keyPath]
         var target = newValue
@@ -177,7 +180,7 @@ extension PropertyAnimator {
         
         if settings.configuration.isDecayVelocity, let animation = animation as? DecayAnimation<Value> {
             animation.velocity = target
-            animation._fromVelocity = animation._velocity
+            animation._startVelocity = animation._velocity
         } else {
             animation.target = target
         }
@@ -221,16 +224,16 @@ extension PropertyAnimator {
     }
     
     /// Updates the current value and target of an animatable property for better interpolation/animations.
-    func updateValue<V: AnimatableProperty>(_ value: inout V, target: inout V) {
+    func updateValue<V>(_ value: inout V, target: inout V) where V: AnimatableProperty {
         if let color = value as? any AnimatableColor, let targetColor = target.animatableData as? any AnimatableColor {
             value = color.animatable(to: targetColor) as! V
             target = targetColor.animatable(to: color) as! V
         } else if let collection = value.animatableData as? any AnimatableCollection, let targetCollection = target.animatableData as? any AnimatableCollection, collection.count != targetCollection.count {
-            value =  V(collection.animatable(to: targetCollection) as! V.AnimatableData)
-            target =  V(targetCollection.animatable(to: collection) as! V.AnimatableData)
-        } else if let shadow = value as? any AnimatableShadow, let targetShaodw = target as? AnimatableShadow {
-            value = shadow.animatable(to: targetShaodw) as! V
-            target = targetShaodw.animatable(to: shadow) as! V
+            value = V(collection.animatable(to: targetCollection) as! V.AnimatableData)
+            target = V(targetCollection.animatable(to: collection) as! V.AnimatableData)
+        } else if let configuration = value as? any AnimatableConfiguration, let targetConfiguration = target as? AnimatableConfiguration {
+            value = configuration.animatable(to: targetConfiguration) as! V
+            target = targetConfiguration.animatable(to: configuration) as! V
         }
     }
 }
@@ -238,7 +241,8 @@ extension PropertyAnimator {
 extension PropertyAnimator {
     /// The current animation for the property at the keypath, or `nil` if there isn't an animation for the keypath.
     func animation(for keyPath: PartialKeyPath<Provider>) -> (any ConfigurableAnimationProviding)? {
-        animations[keyPath.stringValue] as? any ConfigurableAnimationProviding
+        lastAccessedPropertyKey = keyPath.stringValue
+        return animations[lastAccessedPropertyKey] as? any ConfigurableAnimationProviding
     }
     
     /// The current decay animation for the property at the keypath, or `nil` if there isn't a decay animation for the keypath.

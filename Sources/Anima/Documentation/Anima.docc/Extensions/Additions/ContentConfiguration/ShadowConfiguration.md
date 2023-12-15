@@ -5,10 +5,13 @@
 ### Creating the shadow configuration
 
 - ``init(color:opacity:radius:offset:)``
-- ``accentColor(opacity:radius:offset:)``
+
+### Built-in shadow configurations
+
 - ``black(opacity:radius:offset:)``
+- ``controlAccent(opacity:radius:offset:)``
 - ``color(_:opacity:radius:offset:)``
-- ``none()``
+- ``none``
 
 ### Configurating the shadow
 

@@ -138,8 +138,8 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     
     /// The scale of the layer.
     public var scale: CGPoint {
-        get { CGPoint(self.transform.scale.x, self.transform.scale.y) }
-        set { self.transform.scale = Scale(newValue.x, newValue.y, transform.scale.z) }
+        get { CGPoint(transform.scale.x, transform.scale.y) }
+        set { transform.scale = Scale(newValue.x, newValue.y, transform.scale.z) }
     }
     
     /// The rotation of the layer.
@@ -150,8 +150,8 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     
     /// The translation transform of the layer.
     public var translation: CGPoint {
-        get { CGPoint(self.transform.translation.x, self.transform.translation.y) }
-        set { self.transform.translation = Translation(newValue.x, newValue.y, self.transform.translation.z)
+        get { CGPoint(transform.translation.x, transform.translation.y) }
+        set { transform.translation = Translation(newValue.x, newValue.y, transform.translation.z)
         }
     }
     
@@ -201,7 +201,9 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
      - Parameter keyPath: The keypath to an animatable property.
      */
     public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayerAnimator, Value>) -> AnimationProviding? {
-        return animations[keyPath.stringValue]
+        lastAccessedPropertyKey = ""
+        _ = self[keyPath: keyPath]
+        return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
     }
     
     /**
@@ -414,11 +416,7 @@ fileprivate extension CAShapeLayer {
 
 fileprivate extension CAGradientLayer {
     var _colors: [CGColor] {
-        get { return (self.colors as? [CGColor]) ??  [] }
-        set { self.colors = newValue }
+        get { return (colors as? [CGColor]) ??  [] }
+        set { colors = newValue }
     }
-}
-
-extension LayerAnimator {
-
 }
