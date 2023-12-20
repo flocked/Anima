@@ -131,7 +131,7 @@ public struct Spring: Sendable, Hashable {
         - epsilon: The threshold for how small all subsequent values need to be before the spring is considered to have settled. The default value is `0.001`.
      */
     @available(macOS 14.0, iOS 17, tvOS 17, *)
-    public init(settlingDuration: TimeInterval, dampingRatio: Double, epsilon: Double = 0.001) {
+    public init(settlingDuration: TimeInterval, dampingRatio: Double, epsilon: Double = 0.0001) {
         let spring = SwiftUI.Spring(settlingDuration: settlingDuration, dampingRatio: dampingRatio, epsilon: epsilon)
         self.init(spring)
     }

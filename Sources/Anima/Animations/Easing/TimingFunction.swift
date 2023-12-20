@@ -497,14 +497,10 @@ extension TimingFunction: Hashable {
     }
     
     public static func == (lhs: TimingFunction, rhs: TimingFunction) -> Bool {
-        switch (lhs, rhs) {
-        case (.linear, .linear), (.easeOut, .easeOut), (.easeInEaseOut, .easeInEaseOut), (.swiftOut, .swiftOut), (.easeIn, .easeIn):
+        if lhs.name != "Function", lhs.name == rhs.name {
             return true
-        case (.bezier(let bezier1), .bezier(let bezier2)):
-            return bezier1 == bezier2
-        default:
-            return false
         }
+        return false
     }
 }
 

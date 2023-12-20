@@ -88,3 +88,7 @@ decayAnimation.valueChanged = { newValue in
 }
 decayAnimation.start()
 ```
+
+## Create your own animations
+
+Subclassing ``PropertyAnimation`` let's you create your own animations. Itself isn't animating and your have to provide your own animation implemention.

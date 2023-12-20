@@ -67,13 +67,17 @@ animation.start()
 
 *For more details about the different animation types and how to set them up, take a look at <doc:Animations>.*
 
+#### Creating your own animations
+
+Subclassing ``PropertyAnimation`` let's you create your own animations. Itself isn't animating and your have to provide your own animation implemention.
+
+
 ## Topics
 
 ### Animating
 
 - <doc:Animating-Properties>
 - ``Anima``
-- ``Anima/AnimationOptions``
 
 ### Animatable Property
 
@@ -90,7 +94,7 @@ animation.start()
 - ``ViewAnimator``
 - ``WindowAnimator``
 
-### Anmations
+### Animations
 
 - <doc:Animations>
 - ``AnimationProviding``
@@ -112,6 +116,10 @@ animation.start()
 
 - ``SpringAnimation``
 - ``Spring``
+
+### Creating Own Animations
+
+- ``PropertyAnimation``
 
 ### Additions
 

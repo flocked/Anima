@@ -271,6 +271,36 @@ extension CGQuaternion: AnimatableProperty, Animatable {
     }
 }
 
+extension CGVector3: AnimatableProperty, Animatable {
+    public init(_ animatableData: AnimatableArray<Double>) {
+        self.init(animatableData[0], animatableData[1], animatableData[2])
+    }
+    
+    public var animatableData: AnimatableArray<Double> {
+        get { [x, y, z] }
+        set { self = .init(newValue) }
+    }
+    
+    public static var zero: CGVector3 {
+        CGVector3(0, 0, 0)
+    }
+}
+
+extension CGVector4: AnimatableProperty, Animatable {
+    public init(_ animatableData: AnimatableArray<Double>) {
+        self.init(m14: animatableData[0], m24: animatableData[1], m34: animatableData[2], m44: animatableData[3])
+    }
+
+    public var animatableData: AnimatableArray<Double> {
+        get { [m14, m24, m34, m44] }
+        set { self = .init(newValue) }
+    }
+        
+    public static var zero: CGVector4 {
+        CGVector4(0, 0, 0, 0)
+    }
+}
+
 extension Array: AnimatableProperty where Element: AnimatableProperty {
     public init(_ animatableData: AnimatableArray<Element.AnimatableData>) {
         self.init(animatableData.elements.compactMap({Element($0)}))

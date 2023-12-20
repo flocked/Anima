@@ -13,6 +13,7 @@ import AppKit
 import UIKit
 #endif
 
+
 /**
  Performs animations on animatable properties of objects conforming to ``AnimatablePropertyProvider``.
  
@@ -37,6 +38,9 @@ import UIKit
     myView.animator.backgroundColor = .systemBlue
  }
  ```
+ 
+ - Note: All animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.
+
  ### Stop Animations
  
  Changing an `animator` property outside an animation block stops its animation and changes its value immediately.
@@ -60,9 +64,7 @@ import UIKit
  ```swift
  Anima.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 45, preferred: 30)
  ```
- 
- - Note: All animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.
- */
+*/
 public class Anima {
     /**
      Performs spring animations based on a ``Spring`` configuration.
@@ -79,14 +81,14 @@ public class Anima {
 
      - Parameters:
         - spring: The ``Spring`` used to determine the timing curve and duration of the animation.
-        - gestureVelocity: If provided, this value will be used to set the spring ``SpringAnimation/velocity`` of whatever underlying animations run in the `animations` block that animates the same type. This should be primarily used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
+        - gestureVelocity: If provided, this value will be used to set the spring ``SpringAnimation/velocity`` of whatever underlying animations run in the `animations` block that animates the same type. This should be primarily used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations. If you apply a velocity of type `CGPoint` it's used for animating properties of type `GGPoint` and `CGRect`.
         - delay: An optional delay, in seconds, after which to start the animation.
         - options: The options to apply to the animations. For a list of options, see ``AnimationOptions``. The default value is `[]`.
         - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself.
         - completion: An optional block to be executed when the specified animations have either finished or retargeted to a new value.
      */
     public static func animate(
-        withSpring spring: Spring,
+        withSpring spring: Spring = .snappy,
         gestureVelocity: (some AnimatableProperty)? = nil,
         delay: TimeInterval = 0,
         options: AnimationOptions = [],
@@ -194,11 +196,6 @@ public class Anima {
         )
         
         AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
-    }
-    
-    @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
-    public static func tt() {
-        preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 45)
     }
     
     /**

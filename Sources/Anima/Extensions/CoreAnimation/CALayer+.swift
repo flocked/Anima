@@ -21,6 +21,15 @@ extension CALayer {
         superlayer.addSublayer(self)
     }
     
+    var _transform: CATransform3D {
+        get { transform }
+        set {
+            DisableActions {
+              transform = newValue
+            }
+        }
+    }
+    
     /// Sends the layer to the back of it's superlayer.
     func sendToBack() {
         guard let superlayer = superlayer else { return }
@@ -136,5 +145,11 @@ extension CALayer {
         }
         return superlayer?.parentView
     }
+}
 
+internal let DisableActions = { (changes: () -> Void) in
+  CATransaction.begin()
+  CATransaction.setDisableActions(true)
+  changes()
+  CATransaction.commit()
 }

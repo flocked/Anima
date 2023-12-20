@@ -12,13 +12,6 @@ import AppKit
 import UIKit
 #endif
 
-import Foundation
-#if os(macOS)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
-
 /**
  An animation that animates a value using a physically-modeled spring.
  
@@ -186,14 +179,19 @@ public class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
            _velocity = .zero
         }
         if let gestureVelocity = settings.configuration.gestureVelocity {
-            if let gestureVelocity = gestureVelocity as? CGPoint {
+            func applyGestureVelocity(_ gestureVelocity: CGRect) {
                 if let animation = self as? SpringAnimation<CGRect> {
-                    animation.velocity.origin = gestureVelocity
-                    animation.startVelocity.origin = gestureVelocity
-                } else if let animation = self as? SpringAnimation<CGPoint> {
                     animation.velocity = gestureVelocity
                     animation.startVelocity = gestureVelocity
+                } else if let animation = self as? SpringAnimation<CGPoint> {
+                    animation.velocity = gestureVelocity.origin
+                    animation.startVelocity = gestureVelocity.origin
                 }
+            }
+            if let gestureVelocity = gestureVelocity as? CGPoint {
+                applyGestureVelocity(CGRect(origin: gestureVelocity, size: .zero))
+            } else if let gestureVelocity = gestureVelocity as? CGRect {
+                applyGestureVelocity(gestureVelocity)
             } else {
                 setVelocity(gestureVelocity)
             }

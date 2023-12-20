@@ -8,39 +8,49 @@
 import AppKit
 
 /**
- An animation that animates any type conforming to ``AnimatableProperty``.
+ Subclassing this class let's you create your own animations. the animation itself isn't animating and your have to provide your own animation implemention in your subclass.
  
- This class lets you create your own property-based animation by subclassing it.
+ ## Start and stop the animation
    
- To start your animation, use ``start(afterDelay:)``. It  changes the ``state`` to `running` and ``updateAnimation(deltaTime:)`` gets called until you stop the animation.
- 
- Make sure to update ``startValue`` at start. It's used as value when the position of ``stop(at:immediately:)`` is `start`.
- 
- To stop an running animation either use ``stop(at:immediately:)`` or change the `state` to `ended` or `inactive`.
+ To start your animation, use ``start(afterDelay:)``. It  changes the ``state`` to `running` and updates ``delay``. ``updateAnimation(deltaTime:)`` gets called until you stop the animation.
+  
+ To stop a running animation either use ``stop(at:immediately:)`` or change the `state` to `ended` or `inactive`.
  
  Calling ``pause()`` changes the `state` to `inactive`.
   
  If you overwrite ``start(afterDelay:)``, ``pause()`` or ``stop(at:immediately:)`` make sure to call super.
  
- Note: Changing `state` itself isn't starting or stopping an animation. It only reflects the state of your animation. You have to use the above functions.
-*/
+ - Note: Changing `state` itself isn't starting or stopping an animation. It only reflects the state of your animation. You have to use the above functions.
+ 
+ ## Update animation values
+ 
+ ``startValue`` is value when the animation starts. Make sure to update it on start as it's used as value when the position of ``stop(at:immediately:)`` is `start`.
+ 
+ ``target`` is the target value of the animation. Your animation should stop when it reaches the animation by calling ``stop(at:immediately:)``.
+ 
+ ``value`` is the current value of the animation. Update it's value in ``updateAnimation(deltaTime:)``.
+ 
+ Calling super in ``updateAnimation(deltaTime:)`` will send the current value to ``valueChanged`` and stops it if the value equals the target value.
+ 
+
+
+ */
 open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
-    public var groupID: UUID?
     
     /// A unique identifier for the animation.
     public let id = UUID()
     
     /// A unique identifier that associates an animation with an grouped animation block.
-    public internal(set) var groupUUID: UUID?
+    open var groupID: UUID?
 
     /// The relative priority of the animation.
     open var relativePriority: Int = 0
     
     /// The current state of the animation (`inactive`, `running`, or `ended`).
-    open internal(set) var state: AnimatingState = .inactive
+    open var state: AnimatingState = .inactive
     
     /// The delay (in seconds) after which the animations begin.
-    open internal(set) var delay: TimeInterval = 0.0
+    open var delay: TimeInterval = 0.0
     
     /// The _current_ value of the animation. This value will change as the animation executes.
     open var value: Value {
@@ -122,7 +132,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
-        groupUUID = settings.groupID
+        groupID = settings.groupID
     }
                 
     /**
@@ -131,7 +141,12 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
      - parameter deltaTime: The delta time.
      */
     open func updateAnimation(deltaTime: TimeInterval) {
+        let callbackValue = integralizeValues ? value.scaledIntegral : value
+        valueChanged?(callbackValue)
 
+        if _value == _target {
+            stop(at: .end)
+        }
     }
     
     /**

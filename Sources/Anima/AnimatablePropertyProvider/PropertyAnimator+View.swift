@@ -197,16 +197,34 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         set { object.optionalLayer?.animator.scale = newValue  }
     }
     
-    /// The rotation transform of the view.
-    public var rotation: CGQuaternion {
-        get { object.optionalLayer?.animator.rotation ?? .zero }
-        set { object.optionalLayer?.animator.rotation = newValue }
-    }
-    
     /// The translation transform of the view.
     public var translation: CGPoint {
         get { object.optionalLayer?.animator.translation ?? .zero }
         set { object.optionalLayer?.animator.translation = newValue }
+    }
+        
+    /// The rotation of the view as euler angles in degrees.
+    public var rotation: CGVector3 {
+        get { object.optionalLayer?.animator.rotation ?? .zero }
+        set { object.optionalLayer?.animator.rotation = newValue }
+    }
+    
+    /// The rotation of the view as euler angles in radians.
+    public var rotationInRadians: CGVector3 {
+        get { object.optionalLayer?.animator.rotationInRadians ?? .zero }
+        set { object.optionalLayer?.animator.rotationInRadians = newValue }
+    }
+    
+    /// The perspective of the view's transform (e.g. .m34).
+    public var perspective: Perspective {
+        get { object.optionalLayer?.animator.perspective ?? .zero }
+        set { object.optionalLayer?.animator.perspective = newValue }
+    }
+    
+    /// The shearing of the view's transform.
+    public var skew: Skew {
+        get { object.optionalLayer?.animator.skew ?? .zero }
+        set { object.optionalLayer?.animator.skew = newValue }
     }
     
     // MARK: - Accessing animations

@@ -187,8 +187,16 @@ extension PropertyAnimator {
 
         animation.startValue = animation.value
         animation.configure(withSettings: settings)
-        animation.valueChanged = { [weak self] value in
-            self?.object[keyPath: keyPath] = value
+        if Provider.self is CALayer.Type {
+            animation.valueChanged = { [weak self] value in
+                DisableActions {
+                    self?.object[keyPath: keyPath] = value
+                }
+            }
+        } else {
+            animation.valueChanged = { [weak self] value in
+                self?.object[keyPath: keyPath] = value
+            }
         }
         
         #if os(iOS) || os(tvOS)

@@ -129,32 +129,7 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         get { CGFloat(self[\.opacity]) }
         set { self[\.opacity] = Float(newValue) }
     }
-    
-    /// The three-dimensional transform of the layer.
-    public var transform: CATransform3D {
-        get { self[\.transform] }
-        set { self[\.transform] = newValue }
-    }
-    
-    /// The scale of the layer.
-    public var scale: CGPoint {
-        get { CGPoint(transform.scale.x, transform.scale.y) }
-        set { transform.scale = Scale(newValue.x, newValue.y, transform.scale.z) }
-    }
-    
-    /// The rotation of the layer.
-    public var rotation: CGQuaternion {
-        get { self[\.rotation] }
-        set { self[\.rotation] = newValue }
-    }
-    
-    /// The translation transform of the layer.
-    public var translation: CGPoint {
-        get { CGPoint(transform.translation.x, transform.translation.y) }
-        set { transform.translation = Translation(newValue.x, newValue.y, transform.translation.z)
-        }
-    }
-    
+        
     /// The corner radius of the layer.
     public var cornerRadius: CGFloat {
         get { self[\.cornerRadius] }
@@ -191,6 +166,49 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     public var innerShadow: ShadowConfiguration {
         get { self[\.innerShadow] }
         set { self[\.innerShadow] = newValue }
+    }
+    
+    /// The three-dimensional transform of the layer.
+    public var transform: CATransform3D {
+        get { self[\._transform] }
+        set { self[\._transform] = newValue }
+    }
+    
+    /// The scale transform of the layer.
+    public var scale: CGPoint {
+        get { CGPoint(transform.scale.x, transform.scale.y) }
+        set { transform.scale = Scale(newValue.x, newValue.y, transform.scale.z) }
+    }
+    
+    /// The translation transform of the layer.
+    public var translation: CGPoint {
+        get { CGPoint(transform.translation.x, transform.translation.y) }
+        set { transform.translation = Translation(newValue.x, newValue.y, transform.translation.z)
+        }
+    }
+        
+    /// The rotation of the layer's transform as euler angles in degrees.
+    public var rotation: CGVector3 {
+        get { transform.eulerAnglesDegrees }
+        set { transform.eulerAnglesDegrees = newValue }
+    }
+    
+    /// The rotation of the layer's transform as euler angles in radians.
+    public var rotationInRadians: CGVector3 {
+        get { transform.eulerAngles }
+        set { transform.eulerAngles = newValue }
+    }
+    
+    /// The perspective of the layer's transform (e.g. .m34).
+    public var perspective: Perspective {
+        get { transform.perspective }
+        set { transform.perspective = newValue }
+    }
+    
+    /// The shearing of the layer's transform.
+    public var skew: Skew {
+        get { transform.skew }
+        set { transform.skew = newValue }
     }
     
     // MARK: - Accessing animations
@@ -420,3 +438,4 @@ fileprivate extension CAGradientLayer {
         set { colors = newValue }
     }
 }
+
