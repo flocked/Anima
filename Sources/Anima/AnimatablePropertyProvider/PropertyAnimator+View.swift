@@ -106,8 +106,9 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         set { frame.center = newValue }
     }
     
+    #if os(macOS)
     /// The background color of the view.
-    public var backgroundColor: NSUIColor? {
+    public var backgroundColor: NSColor? {
         get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
         set {
             object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
@@ -116,6 +117,18 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
             #endif
         }
     }
+    #else
+    /// The background color of the view.
+    public var backgroundColor: UIColor? {
+        get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
+        set {
+            object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
+            #if os(macOS)
+            object.dynamicColors.background = newValue
+            #endif
+        }
+    }
+    #endif
     
     /// The alpha value of the view.
     public var alpha: CGFloat {
@@ -262,7 +275,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
 
 extension ViewAnimator where View: NSTextField {
     /// The text color of the text field.
-    public var textColor: NSUIColor? {
+    public var textColor: NSColor? {
         get { self[\.textColor] }
         set { self[\.textColor] = newValue }
     }
@@ -282,7 +295,7 @@ extension ViewAnimator where View: NSTextView {
     }
     
     /// The text color of the text view.
-    public var textColor: NSUIColor? {
+    public var textColor: NSColor? {
         get { self[\.textColor] }
         set { self[\.textColor] = newValue }
     }
@@ -443,7 +456,7 @@ extension NSBox {
 #elseif canImport(UIKit)
 extension ViewAnimator where View: UITextField {
     /// The text color of the text field.
-    public var textColor: NSUIColor? {
+    public var textColor: UIColor? {
         get { self[\.textColor] }
         set { self[\.textColor] = newValue }
     }
@@ -463,7 +476,7 @@ extension ViewAnimator where View: UITextView {
     }
     
     /// The text color of the text view.
-    public var textColor: NSUIColor? {
+    public var textColor: UIColor? {
         get { self[\.textColor] }
         set { self[\.textColor] = newValue }
     }

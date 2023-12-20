@@ -15,8 +15,12 @@ import SwiftUI
 /// A configuration that specifies the appearance of a border.
 public struct BorderConfiguration: Hashable {
     
+    #if os(macOS)
     /// The color of the border.
-    public var color: NSUIColor? = .black
+    public var color: NSColor? = .black
+    #else
+    public var color: UIColor? = .black
+    #endif
     
     /// The width of the border.
     public var width: CGFloat = 2.0
@@ -30,8 +34,9 @@ public struct BorderConfiguration: Hashable {
     }
     
     
+    #if os(macOS)
     /// A colored border.
-    public static func color(_ color: NSUIColor, width: CGFloat) -> Self {
+    public static func color(_ color: NSColor, width: CGFloat) -> Self {
         Self(color: color, width: width)
     }
     
@@ -42,15 +47,31 @@ public struct BorderConfiguration: Hashable {
         - color: The border color. The default value is `black`.
         - width: The border width. The default value is `2.0`.
      */
-    public init(color: NSUIColor? = .black, width: CGFloat = 2.0) {
+    public init(color: NSColor? = .black, width: CGFloat = 2.0) {
         self.color = color
         self.width = width
     }
     
-    #if os(macOS)
     /// A  border with control accent color.
     public static func controlAccent(width: CGFloat = 2.0) -> Self {
         Self(color: .controlAccentColor, width: width)
+    }
+    #else
+    /**
+     Creates a border configuration.
+     
+     - Parameters:
+        - color: The border color. The default value is `black`.
+        - width: The border width. The default value is `2.0`.
+     */
+    public init(color: UIColor? = .black, width: CGFloat = 2.0) {
+        self.color = color
+        self.width = width
+    }
+    
+    /// A colored border.
+    public static func color(_ color: UIColor, width: CGFloat) -> Self {
+        Self(color: color, width: width)
     }
     #endif
 }

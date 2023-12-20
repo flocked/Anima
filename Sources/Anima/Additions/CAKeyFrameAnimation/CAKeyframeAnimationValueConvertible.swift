@@ -82,11 +82,19 @@ extension CGColor: CAKeyframeAnimationValueConvertible {
     }
 }
 
-extension NSUIColor: CAKeyframeAnimationValueConvertible {
+#if os(macOS)
+extension NSColor: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {
         self.cgColor
     }
 }
+#else
+extension UIColor: CAKeyframeAnimationValueConvertible {
+    public func toKeyframeValue() -> AnyObject {
+        self.cgColor
+    }
+}
+#endif
 
 extension CATransform3D: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {

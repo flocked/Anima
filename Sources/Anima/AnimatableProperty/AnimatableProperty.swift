@@ -147,7 +147,8 @@ extension CGRect: AnimatableProperty {
     }
 }
 
-extension AnimatableProperty where Self: NSUIColor {
+#if os(macOS)
+extension AnimatableProperty where Self: NSColor {
     public init(_ animatableData: AnimatableArray<Double>) {
         #if os(macOS)
         self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
@@ -157,7 +158,7 @@ extension AnimatableProperty where Self: NSUIColor {
     }
 }
 
-extension NSUIColor: AnimatableProperty {
+extension NSColor: AnimatableProperty {
     public var animatableData: AnimatableArray<Double> {
         let rgba = self.rgbaComponents()
         return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
@@ -167,6 +168,28 @@ extension NSUIColor: AnimatableProperty {
         Self(red: 0, green: 0, blue: 0, alpha: 0)
     }
 }
+#else
+extension AnimatableProperty where Self: UIColor {
+    public init(_ animatableData: AnimatableArray<Double>) {
+        #if os(macOS)
+        self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
+        #else
+        self.init(red: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
+        #endif
+    }
+}
+
+extension UIColor: AnimatableProperty {
+    public var animatableData: AnimatableArray<Double> {
+        let rgba = self.rgbaComponents()
+        return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
+    }
+    
+    public static var zero: Self {
+        Self(red: 0, green: 0, blue: 0, alpha: 0)
+    }
+}
+#endif
 
 extension AnimatableProperty where Self: CGColor {
     public init(_ animatableData: AnimatableArray<Double>) {

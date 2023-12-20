@@ -17,8 +17,13 @@ public struct ShadowConfiguration: Hashable {
     
     // MARK: - Configurating the shadow
 
+    #if os(macOS)
     /// The color of the shadow.
-    public var color: NSUIColor? = .black
+    public var color: NSColor? = .black
+    #else
+    /// The color of the shadow.
+    public var color: UIColor? = .black
+    #endif
     
     /// The opacity of the shadow.
     public var opacity: CGFloat = 0.3
@@ -36,6 +41,7 @@ public struct ShadowConfiguration: Hashable {
     
     // MARK: - Creating the shadow configuration
     
+    #if os(macOS)
     /**
      Creates a shadow configuration.
      
@@ -46,7 +52,7 @@ public struct ShadowConfiguration: Hashable {
         - offset: The shadow offset. The default value is `CGPoint(x: 1.0, y: -1.5)`.
      */
     public init(
-        color: NSUIColor? = .black,
+        color: NSColor? = .black,
         opacity: CGFloat = 0.3,
         radius: CGFloat = 2.0,
         offset: CGPoint = CGPoint(x: 1.0, y: -1.5))
@@ -57,6 +63,41 @@ public struct ShadowConfiguration: Hashable {
         self.offset = offset
     }
     
+    /// A colored shadow.
+    public static func color(_ color: NSColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
+        return Self(color: color, opacity: opacity, radius: radius, offset: offset)
+    }
+    
+    /// A shadow with control accent color.
+    public static func controlAccent(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .controlAccentColor, opacity: opacity, radius: radius, offset: offset) }
+    #else
+    /**
+     Creates a shadow configuration.
+     
+     - Parameters:
+        - color: The shadow color. The default value is `black`.
+        - opacity: The shadow opacity. The default value is `0.3`.
+        - radius: The shadow radius. The default value is `2.0`.
+        - offset: The shadow offset. The default value is `CGPoint(x: 1.0, y: -1.5)`.
+     */
+    public init(
+        color: UIColor? = .black,
+        opacity: CGFloat = 0.3,
+        radius: CGFloat = 2.0,
+        offset: CGPoint = CGPoint(x: 1.0, y: -1.5))
+    {
+        self.color = color
+        self.opacity = opacity
+        self.radius = radius
+        self.offset = offset
+    }
+    
+    /// A colored shadow.
+    public static func color(_ color: UIColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
+        return Self(color: color, opacity: opacity, radius: radius, offset: offset)
+    }
+    #endif
+    
     // MARK: - Built-in shadow configurations
 
     /// No shadow.
@@ -64,16 +105,6 @@ public struct ShadowConfiguration: Hashable {
     
     /// A black shadow.
     public static func black(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .black, opacity: opacity, radius: radius, offset: offset) }
-    
-    /// A colored shadow.
-    public static func color(_ color: NSUIColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
-        return Self(color: color, opacity: opacity, radius: radius, offset: offset)
-    }
-    
-    #if os(macOS)
-    /// A shadow with control accent color.
-    public static func controlAccent(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .controlAccentColor, opacity: opacity, radius: radius, offset: offset) }
-    #endif
 }
 
 extension ShadowConfiguration: AnimatableProperty, Animatable {
