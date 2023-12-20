@@ -9,6 +9,7 @@ import SwiftUI
 
 #if os(macOS)
 import AppKit
+/// NSView
 public typealias NSUIView = NSView
 typealias NSUIColor = NSColor
 typealias NSUIBezierPath = NSBezierPath
@@ -18,6 +19,7 @@ typealias NSUITextField = NSTextField
 typealias NSUITextView = NSTextView
 #elseif canImport(UIKit)
 import UIKit
+/// UIView
 public typealias NSUIView = UIView
 typealias NSUIColor = UIColor
 typealias NSUIBezierPath = UIBezierPath
