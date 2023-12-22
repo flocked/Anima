@@ -91,7 +91,18 @@ extension AnimatableProperty where Self.AnimatableData == Self {
     }
 }
 
-extension Float: AnimatableProperty { }
+extension Float: AnimatableProperty { 
+    public var scaledIntegral: Self {
+        #if os(macOS)
+        let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
+        #elseif os(iOS) || os(tvOS)
+        let scale = Float(UIScreen.main.scale)
+        #else
+        let scale: Float = 1.0
+        #endif
+        return rounded(toNearest: 1.0/scale)
+    }
+}
  
 extension Double: AnimatableProperty {
     public var animatableData: Self {
@@ -100,6 +111,17 @@ extension Double: AnimatableProperty {
     
     public init(_ animatableData: Self) {
         self = animatableData
+    }
+    
+    public var scaledIntegral: Self {
+        #if os(macOS)
+        let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
+        #elseif os(iOS) || os(tvOS)
+        let scale = UIScreen.main.scale
+        #else
+        let scale = 1.0
+        #endif
+        return rounded(toNearest: 1.0/scale)
     }
 }
 
@@ -110,6 +132,17 @@ extension CGFloat: AnimatableProperty {
     
     public init(_ animatableData: Self) {
         self = animatableData
+    }
+    
+    public var scaledIntegral: Self {
+        #if os(macOS)
+        let scale = NSScreen.main?.backingScaleFactor ?? 1.0
+        #elseif os(iOS) || os(tvOS)
+        let scale = UIScreen.main.scale
+        #else
+        let scale = 1.0
+        #endif
+        return rounded(toNearest: 1.0/scale)
     }
 }
 

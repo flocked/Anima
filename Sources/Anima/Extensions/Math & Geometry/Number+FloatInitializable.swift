@@ -31,3 +31,21 @@ extension BinaryFloatingPoint {
         return self * 180 / Self.pi
     }
 }
+
+extension Float {
+    func rounded(toNearest roundingFactor: Self) -> Self {
+        (self / roundingFactor).rounded(.up) * roundingFactor
+    }
+}
+
+extension Double {
+    func rounded(toNearest roundingFactor: Self) -> Self {
+        (self / roundingFactor).rounded(.up) * roundingFactor
+    }
+}
+
+extension CGFloat {
+    func rounded(toNearest roundingFactor: Self) -> Self {
+        (self / roundingFactor).rounded(.up) * roundingFactor
+    }
+}
