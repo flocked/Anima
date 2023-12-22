@@ -180,7 +180,7 @@ Rubberbanding is the act of making values appear to be on a rubberband (they str
 
 ## Acknowledgement
 
-It is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion). Without these libraries Anima wouldn't have been possible.
+Anima is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion). Without these libraries Anima wouldn't have been possible.
 
 ## Installation
 

@@ -1,3 +1,7 @@
+### Acknowledgment
+
+Anima is partly based on ´Wave´ and `Motion`. Without these libraries Anima wouldn't have been possible.
+
 CAKeyframeAnimation/EquatableEnough/SIMDRepresentable
 - Adam Bell
 - https://github.com/b3ll/Motion
