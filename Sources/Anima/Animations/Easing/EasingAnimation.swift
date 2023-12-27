@@ -20,6 +20,7 @@ import Foundation
  ```
  */
 public class EasingAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
+
     /// A unique identifier for the animation.
     public let id = UUID()
 
