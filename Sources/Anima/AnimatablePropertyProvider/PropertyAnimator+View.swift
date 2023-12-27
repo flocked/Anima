@@ -12,9 +12,10 @@ import UIKit
 #endif
 import Decomposed
 
-extension NSUIView: AnimatablePropertyProvider { }
+#if os(macOS)
+extension NSView: AnimatablePropertyProvider { }
 
-extension AnimatablePropertyProvider where Self: NSUIView {
+extension AnimatablePropertyProvider where Self: NSView {
     /**
      Provides animatable properties of the view.
      
@@ -67,7 +68,7 @@ extension AnimatablePropertyProvider where Self: NSUIView {
  ```
  
  */
-public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
+public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
     
     func test() {
         self.border.color = .red
@@ -106,29 +107,14 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         set { frame.center = newValue }
     }
     
-    #if os(macOS)
     /// The background color of the view.
     public var backgroundColor: NSColor? {
         get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
         set {
             object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
-            #if os(macOS)
             object.dynamicColors.background = newValue
-            #endif
         }
     }
-    #else
-    /// The background color of the view.
-    public var backgroundColor: UIColor? {
-        get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
-        set {
-            object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
-            #if os(macOS)
-            object.dynamicColors.background = newValue
-            #endif
-        }
-    }
-    #endif
     
     /// The alpha value of the view.
     public var alpha: CGFloat {
@@ -146,9 +132,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     public var border: BorderConfiguration {
         get { object.optionalLayer?.animator.border ?? .zero }
         set { 
-            #if os(macOS)
             object.dynamicColors.border = newValue.color
-            #endif
             var newValue = newValue
             newValue.color =  newValue.color?.resolvedColor(for: object)
             object.optionalLayer?.animator.border = newValue
@@ -177,9 +161,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     public var shadow: ShadowConfiguration {
         get { object.optionalLayer?.animator.shadow ?? .none }
         set { 
-            #if os(macOS)
             object.dynamicColors.shadow = newValue.color
-            #endif
             var newValue = newValue
             newValue.color = newValue.color?.resolvedColor(for: object)
             object.optionalLayer?.animator.shadow = newValue }
@@ -189,9 +171,7 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
     public var innerShadow: ShadowConfiguration {
         get { object.optionalLayer?.animator.innerShadow ?? .none }
         set {
-            #if os(macOS)
             object.dynamicColors.innerShadow = newValue.color
-            #endif
             var newValue = newValue
             newValue.color = newValue.color?.resolvedColor(for: object)
             object.optionalLayer?.animator.innerShadow = newValue
@@ -270,6 +250,241 @@ public class ViewAnimator<View: NSUIView>: PropertyAnimator<View> {
         return velocity
     }
 }
+#else
+extension UIView: AnimatablePropertyProvider { }
+
+extension AnimatablePropertyProvider where Self: UIView {
+    /**
+     Provides animatable properties of the view.
+     
+     To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
+     
+     See ``ViewAnimator`` for more information about how to animate and all animatable properties.
+     */
+    public var animator: ViewAnimator<Self> {
+        get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: ViewAnimator(self)) }
+    }
+}
+
+/**
+ Provides animatable properties of an view.
+ 
+ ### Animating Properties
+
+ To animate the properties, change their values inside an ``Anima`` animation block:
+
+ ```swift
+ Anima.animate(withSpring: .smooth) {
+    view.animator.frame.size = CGSize(width: 100.0, height: 200.0)
+    view.animator.backgroundColor = .systemBlue
+ }
+ ```
+ To stop animations and to change properties immediately, change their values outside an animation block:
+
+ ```swift
+ view.animator.backgroundColor = .systemRed
+ ```
+ 
+ ### Accessing Animations
+ 
+ To access the animation for a property, use ``animation(for:)``:
+ 
+ ```swift
+ if let animation = view.animator.animation(for: \.frame) {
+    animation.stop()
+ }
+ ```
+ 
+ ### Accessing Animation Velocity
+ 
+ To access the animation velocity for a property, use ``animationVelocity(for:)``.
+ 
+ ```swift
+ if let velocity = view.animator.animation(for: \.origin) {
+ 
+ }
+ ```
+ 
+ */
+public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
+    
+    func test() {
+        self.border.color = .red
+        self.border.width = 30.0
+    }
+    
+    // MARK: - Animatable Properties
+    
+    /// The bounds of the view.
+    public var bounds: CGRect {
+        get { self[\.bounds] }
+        set { self[\.bounds] = newValue }
+    }
+    
+    /// The frame of the view.
+    public var frame: CGRect {
+        get { self[\.frame] }
+        set { self[\.frame] = newValue }
+    }
+    
+    /// The origin of the view.
+    public var origin: CGPoint {
+        get { frame.origin }
+        set { frame.origin = newValue }
+    }
+        
+    /// The size of the view. Changing the value keeps the view centered. To change the size without centering use the view's frame size.
+    public var size: CGSize {
+        get { frame.size }
+        set { frame.sizeCentered = newValue }
+    }
+    
+    /// The center of the view.
+    public var center: CGPoint {
+        get { frame.center }
+        set { frame.center = newValue }
+    }
+    
+    /// The background color of the view.
+    public var backgroundColor: UIColor? {
+        get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
+        set {
+            object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
+        }
+    }
+    
+    /// The alpha value of the view.
+    public var alpha: CGFloat {
+        get { object.optionalLayer?.animator.opacity ?? 1.0 }
+        set { object.optionalLayer?.animator.opacity = newValue }
+    }
+    
+    /// The corner radius of the view.
+    public var cornerRadius: CGFloat {
+        get { object.optionalLayer?.animator.cornerRadius ?? 0.0 }
+        set { object.optionalLayer?.animator.cornerRadius = newValue }
+    }
+    
+    /// The border of the view.
+    public var border: BorderConfiguration {
+        get { object.optionalLayer?.animator.border ?? .zero }
+        set {
+            var newValue = newValue
+            newValue.color =  newValue.color?.resolvedColor(for: object)
+            object.optionalLayer?.animator.border = newValue
+        }
+    }
+
+    /*
+    /// The border color of the view.
+    public var borderColor: NSUIColor? {
+        get { object.optionalLayer?.animator.borderColor?.nsUIColor }
+        set { object.optionalLayer?.animator.borderColor = newValue?.resolvedColor(for: object).cgColor
+            #if os(macOS)
+            object.dynamicColors.border = newValue
+            #endif
+        }
+    }
+    
+    /// The border width of the view.
+    public var borderWidth: CGFloat {
+        get { object.optionalLayer?.animator.borderWidth ?? 0.0 }
+        set { object.optionalLayer?.animator.borderWidth = newValue }
+    }
+     */
+    
+    /// The shadow of the view.
+    public var shadow: ShadowConfiguration {
+        get { object.optionalLayer?.animator.shadow ?? .none }
+        set {
+            var newValue = newValue
+            newValue.color = newValue.color?.resolvedColor(for: object)
+            object.optionalLayer?.animator.shadow = newValue }
+    }
+    
+    /// The inner shadow of the view.
+    public var innerShadow: ShadowConfiguration {
+        get { object.optionalLayer?.animator.innerShadow ?? .none }
+        set {
+            var newValue = newValue
+            newValue.color = newValue.color?.resolvedColor(for: object)
+            object.optionalLayer?.animator.innerShadow = newValue
+        }
+    }
+    
+    /// The three-dimensional transform of the view.
+    public var transform3D: CATransform3D {
+        get { object.optionalLayer?.animator.transform ?? CATransform3DIdentity }
+        set { object.optionalLayer?.animator.transform = newValue }
+    }
+    
+    /// The scale transform of the view.
+    public var scale: CGPoint {
+        get { object.optionalLayer?.animator.scale ?? CGPoint(1, 1) }
+        set { object.optionalLayer?.animator.scale = newValue  }
+    }
+    
+    /// The translation transform of the view.
+    public var translation: CGPoint {
+        get { object.optionalLayer?.animator.translation ?? .zero }
+        set { object.optionalLayer?.animator.translation = newValue }
+    }
+        
+    /// The rotation of the view as euler angles in degrees.
+    public var rotation: CGVector3 {
+        get { object.optionalLayer?.animator.rotation ?? .zero }
+        set { object.optionalLayer?.animator.rotation = newValue }
+    }
+    
+    /// The rotation of the view as euler angles in radians.
+    public var rotationInRadians: CGVector3 {
+        get { object.optionalLayer?.animator.rotationInRadians ?? .zero }
+        set { object.optionalLayer?.animator.rotationInRadians = newValue }
+    }
+    
+    /// The perspective of the view's transform (e.g. .m34).
+    public var perspective: Perspective {
+        get { object.optionalLayer?.animator.perspective ?? .zero }
+        set { object.optionalLayer?.animator.perspective = newValue }
+    }
+    
+    /// The shearing of the view's transform.
+    public var skew: Skew {
+        get { object.optionalLayer?.animator.skew ?? .zero }
+        set { object.optionalLayer?.animator.skew = newValue }
+    }
+    
+    // MARK: - Accessing animations
+    
+    /**
+     The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
+
+     - Parameter keyPath: The keypath to an animatable property.
+     */
+    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> AnimationProviding? {
+        object.optionalLayer?.animator.lastAccessedPropertyKey = ""
+        lastAccessedPropertyKey = ""
+        _ = self[keyPath: keyPath]
+        if let layerKey = object.optionalLayer?.animator.lastAccessedPropertyKey, layerKey != "" {
+            return object.optionalLayer?.animator.animations[layerKey]
+        }
+        return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
+    }
+    
+    /**
+     The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
+
+     - Parameter keyPath: The keypath to an animatable property.
+     */
+    public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> Value? {
+        var velocity: Value?
+        Anima.updateVelocity {
+            velocity = self[keyPath: keyPath]
+        }
+        return velocity
+    }
+}
+#endif
 
 #if os(macOS)
 
