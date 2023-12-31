@@ -1,6 +1,10 @@
 ### Acknowledgment
 
-Anima is partly based on ´Wave´ and `Motion`. Without these libraries Anima wouldn't have been possible.
+Anima is partly based on ´Wave´ and `Motion`.
+
+It uses `Waves` spring calculation and some of the animation logic and `Motion`s decay and easing calculation.
+
+Without these libraries Anima wouldn't have been possible.
 
 CAKeyframeAnimation/EquatableEnough/SIMDRepresentable
 - Adam Bell
