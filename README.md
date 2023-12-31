@@ -151,6 +151,10 @@ decayAnimation.start()
 let decayVelocityAnimation = DecayAnimation(value: value, velocity: velocity)
 ```
 
+#### PropertyAnimation
+
+To create your own animations overwrite this `PropertyAnimation`. The class isn't animating and you have to provide your own animation logic.
+
 ## Additions
 
 ### CAKeyframeAnimationEmittable
@@ -180,7 +184,9 @@ Rubberbanding is the act of making values appear to be on a rubberband (they str
 
 ## Acknowledgement
 
-Anima is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion). Without these libraries Anima wouldn't have been possible.
+Anima is partly based on [Wave](https://github.com/jtrivedi/Wave) and [Motion](https://github.com/b3ll/Motion).It uses `Waves` Spring calculation and animation logic and `Motion`s decay and easing calculation.
+
+Without these libraries Anima wouldn't have been possible. 
 
 ## Installation
 
