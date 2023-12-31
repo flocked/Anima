@@ -63,7 +63,7 @@ Anima.animate(withSpring: .bouncy) {
 
 When changing the value of a property that is currently animated, the animation’s velocity is preserved to provide fluid animations. That's why spring animation is the recommended animation for a responsive and interactive UI.
 
-You can provide a gesture velocity for spring animations that animate `CGPoint` or `CGRect` values. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.
+You can provide a gesture velocity for spring animations. This can be used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations.  If you apply a velocity of type `CGPoint` it's used for animating properties of type `GGPoint` and `CGRect`.
 
 ```swift
 let velocity = panGestureRecognizer.velocity(in: view)
