@@ -147,7 +147,8 @@ extension CALayer {
     }
 }
 
-internal let DisableActions = { (changes: () -> Void) in
+// Runs the `CALayer` changes without any animations.
+let DisableActions = { (changes: () -> Void) in
   CATransaction.begin()
   CATransaction.setDisableActions(true)
   changes()

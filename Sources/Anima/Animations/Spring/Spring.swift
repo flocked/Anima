@@ -343,21 +343,21 @@ public struct Spring: Sendable, Hashable {
 }
 
 @available(macOS 14.0, iOS 17, tvOS 17, *)
-public extension Spring {
+extension Spring {
     /// A SwiftUI representation of the spring.
-    internal var swiftUI: SwiftUI.Spring {
+    var swiftUI: SwiftUI.Spring {
         SwiftUI.Spring.init(mass: mass, stiffness: stiffness, damping: damping, allowOverDamping: true)
     }
     
     // MARK: - Calculating forces and durations
     
     /// Calculates the force upon the spring given a current position, target, and velocity amount of change.
-    func force<V: VectorArithmetic>(target: V, position: V, velocity: V) -> V {
+    public func force<V: VectorArithmetic>(target: V, position: V, velocity: V) -> V {
         swiftUI.force(target: target, position: position, velocity: velocity)
     }
     
     /// Calculates the force upon the spring given a current position, velocity, and divisor from the starting and end values for the spring to travel.
-    func force<V: AnimatableProperty>(fromValue: V, toValue: V, position: V, velocity: V) -> V {
+    public func force<V: AnimatableProperty>(fromValue: V, toValue: V, position: V, velocity: V) -> V {
         let fromValue = AnimatableProxy(fromValue)
         let toValue = AnimatableProxy(toValue)
         let position = AnimatableProxy(position)
@@ -367,12 +367,12 @@ public extension Spring {
     }
         
     /// The estimated duration required for the spring system to be considered at rest.
-    func settlingDuration<V: VectorArithmetic>(target: V, initialVelocity: V = .zero, epsilon: Double = 0.001) -> Double {
+    public func settlingDuration<V: VectorArithmetic>(target: V, initialVelocity: V = .zero, epsilon: Double = 0.001) -> Double {
         swiftUI.settlingDuration(target: target, initialVelocity: initialVelocity, epsilon: epsilon)
     }
     
     /// The estimated duration required for the spring system to be considered at rest.
-    func settlingDuration<V: AnimatableProperty>(fromValue: V, toValue: V, initialVelocity: V, epsilon: Double = 0.001) -> Double {
+    public func settlingDuration<V: AnimatableProperty>(fromValue: V, toValue: V, initialVelocity: V, epsilon: Double = 0.001) -> Double {
         let fromValue = AnimatableProxy(fromValue)
         let toValue = AnimatableProxy(toValue)
         let initialVelocity = AnimatableProxy(initialVelocity)

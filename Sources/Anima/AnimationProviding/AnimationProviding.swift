@@ -9,13 +9,13 @@ import Foundation
 
 ///  A type that provides an animation.
 public protocol AnimationProviding {
-    /// A unique identifier for the animation.
+    /// An unique identifier for the animation.
     var id: UUID { get }
     
-    /// A unique identifier that associates the animation with an grouped animation block.
+    /// An unique identifier that associates the animation with an grouped animation block.
     var groupID: UUID? { get }
     
-    /// The relative priority of the animation.
+    /// The relative priority of the animation. The higher the number the higher the priority.
     var relativePriority: Int { get set }
     
     /// The current state of the animation.
@@ -24,7 +24,7 @@ public protocol AnimationProviding {
     /**
      The delay (in seconds) after which the animations begin.
      
-     The default value of this property is `0`. When the value is greater than `0`, the start of any animations is delayed by the specified amount of time.
+     The default value of this property is `0.0`. When the value is greater than `0`, the start of any animations is delayed by the specified amount of time.
      
      To set a value for this property, use the ``start(afterDelay:)`` method when starting your animations.
      */
@@ -48,15 +48,6 @@ public protocol AnimationProviding {
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
      */
     func stop(at position: AnimationPosition, immediately: Bool)
-    
-    /*
-    /**
-     Updates the progress of the animation with the specified delta time.
-
-     - parameter deltaTime: The delta time.
-     */
-    func updateAnimation(deltaTime: TimeInterval)
-     */
 }
 
 /// An internal extension to `AnimationProviding` used for configurating animations.

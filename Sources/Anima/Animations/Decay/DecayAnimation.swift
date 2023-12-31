@@ -35,36 +35,36 @@ There are two ways ways to create a decay animation:
  ```
 
  */
-public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
+open class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
     
     /// A unique identifier that associates the animation with an grouped animation block.
-    public internal(set) var groupID: UUID?
+    open internal(set) var groupID: UUID?
 
-    /// The relative priority of the animation.
-    public var relativePriority: Int = 0
+    /// The relative priority of the animation. The higher the number the higher the priority.
+    open var relativePriority: Int = 0
     
     /// The current state of the animation.
-    public internal(set) var state: AnimatingState = .inactive
+    open internal(set) var state: AnimatingState = .inactive
     
     /// The delay (in seconds) after which the animations begin.
-    public internal(set) var delay: TimeInterval = 0.0
+    open internal(set) var delay: TimeInterval = 0.0
     
     /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
-    public var integralizeValues: Bool = false
+    open var integralizeValues: Bool = false
     
     /// A Boolean value that indicates whether the animation automatically starts when the target changes or the ``velocity`` changes to a non `zero` value.
-    public var autoStarts: Bool = false
+    open var autoStarts: Bool = false
     
     /// A Boolean value indicating whether the animation repeats indefinitely.
-    public var repeats: Bool = false
+    open var repeats: Bool = false
     
     /// A Boolean value indicating whether the animation is running backwards and forwards (must be combined with ``repeats`` `true`).
-    public var autoreverse: Bool = false
+    open var autoreverse: Bool = false
         
     /// A Boolean value indicating whether the animation is running in the reverse direction.
-    public var isReversed: Bool = false
+    open var isReversed: Bool = false
     
     /// The rate at which the velocity decays over time.
     public var decelerationRate: Double {
@@ -84,7 +84,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
     /// The decay function used to calculate the animation.
     var decayFunction: DecayFunction
     
-     public var value: Value {
+    public var value: Value {
         get { Value(_value) }
         set { 
             guard newValue != value else { return }
@@ -173,10 +173,10 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
     }
         
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
-    public var valueChanged: ((_ currentValue: Value) -> Void)?
+    open var valueChanged: ((_ currentValue: Value) -> Void)?
 
     /// The completion block to call when the animation either finishes, or "re-targets" to a new target value.
-    public var completion: ((_ event: AnimationEvent<Value>) -> Void)?
+    open var completion: ((_ event: AnimationEvent<Value>) -> Void)?
     
     var duration: TimeInterval = 0.0
 
@@ -247,7 +247,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
 
      - parameter deltaTime: The delta time.
      */
-    public func updateAnimation(deltaTime: TimeInterval) {
+    open func updateAnimation(deltaTime: TimeInterval) {
         state = .running
         
         decayFunction.update(value: &_value, velocity: &_velocity, deltaTime: deltaTime)
@@ -274,7 +274,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
 
      - parameter delay: The amount of time (measured in seconds) to wait before starting the animation.
      */
-    public func start(afterDelay delay: TimeInterval = 0.0) {
+    open func start(afterDelay delay: TimeInterval = 0.0) {
         precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
         guard state != .running else { return }
         
@@ -298,7 +298,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
     }
     
     /// Pauses the animation at the current position.
-    public func pause() {
+    open func pause() {
         guard state == .running else { return }
         AnimationController.shared.stopAnimation(self)
         state = .inactive
@@ -313,7 +313,7 @@ public class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationPro
         - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
      */
-    public func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
+    open func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
         delayedStart?.cancel()
         delay = 0.0
         if immediately == false {
@@ -355,7 +355,7 @@ extension DecayAnimation: CustomStringConvertible {
             uuid: \(id)
             groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
-            state: \(state)
+            state: \(state.rawValue)
 
             value: \(value)
             velocity: \(velocity)
@@ -368,8 +368,8 @@ extension DecayAnimation: CustomStringConvertible {
             integralizeValues: \(integralizeValues)
             autoStarts: \(autoStarts)
 
-            callback: \(String(describing: valueChanged))
-            completion: \(String(describing: completion))
+            valueChanged: \(valueChanged != nil)
+            completion: \(completion != nil)
         )
         """
     }

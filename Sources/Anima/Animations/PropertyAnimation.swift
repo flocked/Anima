@@ -32,8 +32,7 @@ import Foundation
  
  Calling super in ``updateAnimation(deltaTime:)`` will send the current value to ``valueChanged`` and stops it if the value equals the target value.
  
-
-
+ When overwriting ``start(afterDelay:)``, ``pause()``, ``stop(at:immediately:)`` you should always call `super`. It will start, stop or pause the animation.
  */
 open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
     
@@ -43,7 +42,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     /// A unique identifier that associates an animation with an grouped animation block.
     open var groupID: UUID?
 
-    /// The relative priority of the animation.
+    /// The relative priority of the animation. The higher the number the higher the priority.
     open var relativePriority: Int = 0
     
     /// The current state of the animation (`inactive`, `running`, or `ended`).
@@ -53,7 +52,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     open var delay: TimeInterval = 0.0
     
     /// The _current_ value of the animation. This value will change as the animation executes.
-    open var value: Value {
+    public var value: Value {
         get { Value(_value) }
         set { _value = newValue.animatableData }
     }
@@ -70,12 +69,12 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
 
      You may modify this value while the animation is in-flight to "retarget" to a new target value.
      */
-    open var target: Value {
+    public var target: Value {
         get { Value(_target) }
         set {  _target = newValue.animatableData }
     }
     
-    internal var _target: Value.AnimatableData {
+    var _target: Value.AnimatableData {
         didSet {
             guard oldValue != _target else { return }
             if state == .running {
@@ -85,12 +84,12 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     }
             
     /// The start value of the animation.
-    open var startValue: Value {
+    public var startValue: Value {
         get { Value(_startValue) }
         set { _startValue = newValue.animatableData }
     }
     
-    open var _startValue: Value.AnimatableData
+    var _startValue: Value.AnimatableData
     
     var velocity: Value = .zero
     
@@ -98,7 +97,8 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     var startVelocity: Value = .zero
     
-    var integralizeValues: Bool = false
+    /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
+    open var integralizeValues: Bool = false
         
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
@@ -137,7 +137,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
                 
     /**
      Updates the progress of the animation with the specified delta time.
-
+     
      - parameter deltaTime: The delta time.
      */
     open func updateAnimation(deltaTime: TimeInterval) {
@@ -151,7 +151,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     /**
      Starts the animation from its current position with an optional delay.
-
+     
      - parameter delay: The amount of time (measured in seconds) to wait before starting the animation.
      */
     open func start(afterDelay delay: TimeInterval = 0.0) {
@@ -224,5 +224,27 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     /// Resets the animation.
     func reset() {
 
+    }
+}
+
+extension PropertyAnimation: CustomStringConvertible {
+    public var description: String {
+        """
+        SpringAnimation<\(Value.self)>(
+            uuid: \(id)
+            groupID: \(groupID?.description ?? "nil")
+            priority: \(relativePriority)
+            state: \(state.rawValue)
+            integralizeValues: \(integralizeValues)
+
+            value: \(value)
+            startValue: \(startValue)
+            target: \(target)
+            velocity: \(velocity)
+
+            valueChanged: \(valueChanged != nil)
+            completion: \(completion != nil)
+        )
+        """
     }
 }

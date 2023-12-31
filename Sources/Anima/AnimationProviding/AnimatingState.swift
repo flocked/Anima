@@ -7,7 +7,7 @@
 
 
 /// The current state of an ``AnimationProviding``.
-public enum AnimatingState: Int, Sendable {
+public enum AnimatingState: String, Sendable {
     /// The animation is not currently running, but is ready. It also maybe paused. This is the initial state of an animation.
     case inactive
 
