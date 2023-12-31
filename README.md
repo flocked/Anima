@@ -40,6 +40,7 @@ The properties can can be accessed via the object's `animator`. To animate them 
 Anima.animate(withSpring: .bouncy) {
     view.animator.frame = newFrame
     view.animator.backgroundColor = .systemBlue
+    textField.animator.fontSize = 20
 }
 ```
 To stop the animation of a property and to update it immediately, change it's value outside an animation block. For example:
