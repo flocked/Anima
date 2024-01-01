@@ -70,11 +70,6 @@ extension AnimatablePropertyProvider where Self: NSView {
  */
 public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
     
-    func test() {
-        self.border.color = .red
-        self.border.width = 30.0
-    }
-    
     // MARK: - Animatable Properties
     
     /// The bounds of the view.
@@ -105,6 +100,12 @@ public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
     public var center: CGPoint {
         get { frame.center }
         set { frame.center = newValue }
+    }
+    
+    /// The anchor point of the view.
+    public var anchorPoint: CGPoint {
+        get { object.optionalLayer?.animator.anchorPoint ?? .zero }
+        set { object.optionalLayer?.animator.anchorPoint = newValue }
     }
     
     /// The background color of the view.
@@ -307,12 +308,6 @@ extension AnimatablePropertyProvider where Self: UIView {
  
  */
 public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
-    
-    func test() {
-        self.border.color = .red
-        self.border.width = 30.0
-    }
-    
     // MARK: - Animatable Properties
     
     /// The bounds of the view.
@@ -345,12 +340,24 @@ public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
         set { frame.center = newValue }
     }
     
+    /// The anchor point of the view.
+    public var anchorPoint: CGPoint {
+        get { object.optionalLayer?.animator.anchorPoint ?? .zero }
+        set { object.optionalLayer?.animator.anchorPoint = newValue }
+    }
+    
     /// The background color of the view.
     public var backgroundColor: UIColor? {
         get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
         set {
             object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
         }
+    }
+    
+    /// The tint color of the view.
+    public var tintColor: UIColor {
+        get { self[\.tintColor] }
+        set { self[\.tintColor] = newValue }
     }
     
     /// The alpha value of the view.
@@ -796,6 +803,12 @@ extension ViewAnimator where View: UIView {
     public var directionalLayoutMargins: NSDirectionalEdgeInsets {
         get { self[\.directionalLayoutMargins] }
         set { self[\.directionalLayoutMargins] = newValue }
+    }
+    
+    /// The default spacing to use when laying out content in the view.
+    public var layoutMargins: UIEdgeInsets {
+        get { self[\.layoutMargins] }
+        set { self[\.layoutMargins] = newValue }
     }
 }
 

@@ -10,11 +10,12 @@
 
 ### Animatable properties
 
-- ``bounds``
 - ``frame``
+- ``bounds``
 - ``origin``
 - ``center``
 - ``size``
+- ``anchorPoint``
 - ``directionalLayoutMargins``
 - ``alpha``
 - ``backgroundColor``
