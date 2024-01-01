@@ -12,8 +12,8 @@ import Foundation
  
  ## Start and stop the animation
    
- To start your animation, use ``start(afterDelay:)``. It  changes the ``state`` to `running` and updates ``delay``. ``updateAnimation(deltaTime:)`` gets called until you stop the animation.
-  
+ To start your animation, use ``start(afterDelay:)``. It  changes the ``state`` to `running` and updates ``delay``.
+   
  To stop a running animation either use ``stop(at:immediately:)`` or change the `state` to `ended` or `inactive`.
  
  Calling ``pause()`` changes the `state` to `inactive`.
@@ -27,10 +27,10 @@ import Foundation
  ``startValue`` is value when the animation starts. Make sure to update it on start as it's used as value when the position of ``stop(at:immediately:)`` is `start`.
  
  ``target`` is the target value of the animation. Your animation should stop when it reaches the animation by calling ``stop(at:immediately:)``.
+  
+ ``value`` is the current value of the animation. 
  
- ``value`` is the current value of the animation. Update it's value in ``updateAnimation(deltaTime:)``.
- 
- Calling super in ``updateAnimation(deltaTime:)`` will send the current value to ``valueChanged`` and stops it if the value equals the target value. 
+ ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value. 
  */
 open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
     
