@@ -32,4 +32,5 @@
 - ``id``
 - ``groupID``
 - ``relativePriority``
+- ``integralizeValues``
 
