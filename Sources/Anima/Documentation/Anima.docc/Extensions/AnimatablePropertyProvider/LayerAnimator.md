@@ -10,28 +10,28 @@
 
 ### Animatable properties
 
+- ``bounds``
+- ``frame``
+- ``origin``
+- ``center``
+- ``size``
+- ``zPosition``
 - ``anchorPoint``
 - ``anchorPointZ``
-- ``backgroundColor``
-- ``borderColor``
-- ``borderWidth``
-- ``bounds``
-- ``center``
-- ``cornerRadius``
-- ``frame``
-- ``innerShadow``
-- ``mask``
 - ``opacity``
-- ``origin``
-- ``rotation``
-- ``scale``
+- ``backgroundColor``
+- ``cornerRadius``
 - ``shadow``
-- ``size``
-- ``sublayers``
-- ``superlayer``
+- ``innerShadow``
+- ``border``
 - ``transform``
 - ``translation``
-- ``zPosition``
+- ``scale``
+- ``rotation``
+- ``rotationInRadians``
+- ``skew``
+- ``perspective``
+
 
 ### CAShapeLayer
 

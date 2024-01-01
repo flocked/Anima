@@ -7,13 +7,16 @@
 - ``animate(withDecay:decelerationRate:delay:options:animations:completion:)``
 - ``animate(withEasing:duration:delay:options:animations:completion:)``
 - ``animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
-
-### Animation Options
-
-- ``preferredFrameRateRange``
-- ``Anima/AnimationOptions``
 - ``DecayAnimationMode``
 
-### Stop Animations
+### Stop animations
 
 - ``stopAllAnimations(immediately:)``
+
+### Changing animation framerate
+
+- ``preferredFrameRateRange``
+
+### Animation options
+
+- ``Anima/AnimationOptions``

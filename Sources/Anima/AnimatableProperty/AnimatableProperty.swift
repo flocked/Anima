@@ -54,7 +54,7 @@ public protocol AnimatableProperty: Equatable {
     /// Initializes the value with the specified animatable representation of the value.
     init(_ animatableData: AnimatableData)
     
-    /// The scaled integral representation of this value.
+    /// The scaled integral representation of this value. The default implementation returns the non-integral value.
     var scaledIntegral: Self { get }
     
     /// The zero value.

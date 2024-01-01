@@ -2,9 +2,12 @@
 
 ## Topics
 
-### Animating data
+### Creating with animatable data
 
 - ``init(_:)``
+
+### Accessing animatable data
+
 - ``animatableData``
 - ``AnimatableData``
 - ``scaledIntegral``

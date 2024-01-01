@@ -10,8 +10,9 @@
 
 ### Animatable properties
 
+- ``frame``
+- ``center``
+- ``origin``
+- ``size``
 - ``alphaValue``
 - ``backgroundColor``
-- ``center``
-- ``frame``
-- ``size``

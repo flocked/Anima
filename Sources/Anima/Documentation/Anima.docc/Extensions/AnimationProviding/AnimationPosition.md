@@ -4,6 +4,6 @@
 
 ### Constant
 
-- ``end``
 - ``start``
 - ``current``
+- ``end``

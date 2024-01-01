@@ -10,23 +10,25 @@
 
 ### Animatable properties
 
+- ``bounds``
+- ``frame``
+- ``origin``
+- ``center``
+- ``size``
+- ``directionalLayoutMargins``
 - ``alpha``
 - ``backgroundColor``
-- ``borderColor``
-- ``borderWidth``
-- ``bounds``
-- ``center``
 - ``cornerRadius``
-- ``directionalLayoutMargins``
-- ``frame``
-- ``innerShadow``
-- ``origin``
-- ``rotation``
-- ``scale``
 - ``shadow``
-- ``size``
+- ``innerShadow``
+- ``border-38379``
 - ``transform3D``
 - ``translation``
+- ``scale``
+- ``rotation``
+- ``rotationInRadians``
+- ``skew``
+- ``perspective``
 
 ### NSBox
 
@@ -37,7 +39,6 @@
 ### NSButton
 
 - ``contentTintColor-8zkdt``
-- ``tintColor``
 
 ### NSColorWell
 
