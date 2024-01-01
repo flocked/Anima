@@ -20,6 +20,16 @@ extension NSScrollView {
         get { return documentVisibleRect.origin }
         set {  documentView?.scroll(newValue) }
     }
+    
+    /**
+     The size of the document view, or `nil` if there isn't a document view.
+     
+     The value can be animated via `animator()`.
+     */
+    @objc dynamic var documentSize: CGSize {
+        get { documentView?.frame.size ?? NSSize.zero }
+        set { documentView?.setFrameSize(newValue) }
+    }
 
     /**
      Magnify the content by the given amount and optionally center the result on the given point.

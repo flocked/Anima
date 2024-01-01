@@ -488,6 +488,58 @@ public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
 
 #if os(macOS)
 
+extension ViewAnimator where View: NSDatePicker {
+    /// The text color of the date picker.
+    public var textColor: NSColor {
+        get { self[\.textColor] }
+        set { self[\.textColor] = newValue }
+    }
+}
+
+extension ViewAnimator where View: NSLevelIndicator {
+    /// The minimum value of the level indicator.
+    public var minValue: Double {
+        get { self[\.minValue] }
+        set { self[\.minValue] = newValue }
+    }
+    
+    /// The maximum value of the level indicator.
+    public var maxValue: Double {
+        get { self[\.maxValue] }
+        set { self[\.maxValue] = newValue }
+    }
+    
+    /// The warning value of the level indicator.
+    public var warningValue: Double {
+        get { self[\.warningValue] }
+        set { self[\.warningValue] = newValue }
+    }
+    
+    /// The critical value of the level indicator.
+    public var criticalValue: Double {
+        get { self[\.criticalValue] }
+        set { self[\.criticalValue] = newValue }
+    }
+    
+    /// The fill color of the level indicator.
+    public var fillColor: NSColor {
+        get { self[\.fillColor] }
+        set { self[\.fillColor] = newValue }
+    }
+    
+    /// The warning fill color of the level indicator.
+    public var warningFillColor: NSColor {
+        get { self[\.warningFillColor] }
+        set { self[\.warningFillColor] = newValue }
+    }
+    
+    /// The critical fill color of the level indicator.
+    public var criticalFillColor: NSColor {
+        get { self[\.criticalFillColor] }
+        set { self[\.criticalFillColor] = newValue }
+    }
+}
+
 extension ViewAnimator where View: NSTextField {
     /// The text color of the text field.
     public var textColor: NSColor? {
@@ -535,6 +587,12 @@ extension ViewAnimator where View: NSScrollView {
     public var documentOffset: CGPoint {
         get { self[\.contentOffset] }
         set { self[\.contentOffset] = newValue }
+    }
+    
+    /// The size of the document view.
+    public var documentSize: CGSize {
+        get { self[\.documentSize] }
+        set { self[\.documentSize] = newValue }
     }
     
     /// The amount by which the content is currently scaled.
@@ -704,18 +762,18 @@ extension ViewAnimator where View: UIScrollView {
         set { self[\.contentOffset] = newValue }
     }
     
+    /// The size of the content view.
+    public var contentSize: CGSize {
+        get { self[\.contentSize] }
+        set { self[\.contentSize] = newValue }
+    }
+    
     /// The scale factor applied to the scroll view’s content.
     public var zoomScale: CGFloat {
         get { self[\.zoomScaleCentered] }
         set {
             object.animationCenterPoint = nil
             self[\.zoomScaleCentered] = newValue }
-    }
-    
-    /// The size of the content view.
-    public var contentSize: CGSize {
-        get { self[\.contentSize] }
-        set { self[\.contentSize] = newValue }
     }
     
     /// The custom distance that the content view is inset from the safe area or scroll view edges.

@@ -21,7 +21,7 @@
 - ``cornerRadius``
 - ``shadow``
 - ``innerShadow``
-- ``border-38379``
+- ``border``
 - ``transform3D``
 - ``translation``
 - ``scale``
@@ -33,7 +33,7 @@
 ### NSBox
 
 - ``contentViewMargins``
-- ``fillColor``
+- ``fillColor-4s0sf``
 - ``titleFontSize``
 
 ### NSButton
@@ -49,12 +49,27 @@
 - ``doubleValue-1rd7u``
 - ``floatValue``
 
+### NSDatePicker
+
+- ``textColor-3klxp``
+
 ### NSImageView
 
 - ``contentTintColor-7tls5``
 
+### NSLevelIndicator
+
+- ``minValue-7b4b9``
+- ``maxValue-8rha2``
+- ``warningValue``
+- ``criticalValue``
+- ``fillColor-69nx4``
+- ``warningFillColor``
+- ``criticalFillColor``
+
 ### NSScrollView
 
+- ``documentSize``
 - ``documentOffset``
 - ``magnification``
 - ``setMagnification(_:centeredAt:)``
@@ -77,8 +92,8 @@
 ### NSProgressIndicator
 
 - ``doubleValue-1an93``
-- ``minValue``
-- ``maxValue``
+- ``minValue-108n9``
+- ``maxValue-4aawl``
 
 ### UIButton
 
