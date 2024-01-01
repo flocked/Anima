@@ -30,9 +30,7 @@ import Foundation
  
  ``value`` is the current value of the animation. Update it's value in ``updateAnimation(deltaTime:)``.
  
- Calling super in ``updateAnimation(deltaTime:)`` will send the current value to ``valueChanged`` and stops it if the value equals the target value.
- 
- When overwriting ``start(afterDelay:)``, ``pause()``, ``stop(at:immediately:)`` you should always call `super`. It will start, stop or pause the animation.
+ Calling super in ``updateAnimation(deltaTime:)`` will send the current value to ``valueChanged`` and stops it if the value equals the target value. 
  */
 open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
     
