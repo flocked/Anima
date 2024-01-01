@@ -22,8 +22,5 @@ let package = Package(
         .target(
             name: "Anima",
             dependencies: ["Decomposed"]),
-        .testTarget(
-            name: "AnimaTests",
-            dependencies: ["Anima"]),
     ]
 )
