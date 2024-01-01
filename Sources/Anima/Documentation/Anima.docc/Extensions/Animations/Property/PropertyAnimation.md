@@ -23,6 +23,7 @@
 
 - ``startValue``
 - ``value``
+- ``velocity``
 - ``target``
 - ``valueChanged``
 
