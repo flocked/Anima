@@ -27,12 +27,14 @@ import Foundation
  ``startValue`` is value when the animation starts. Make sure to update it on start as it's used as value when the position of ``stop(at:immediately:)`` is `start`.
  
  ``target`` is the target value of the animation. Your animation should stop when it reaches the animation by calling ``stop(at:immediately:)``.
+ 
+ ``velocity`` is the velocity of the animation. If your animation doesn't use any velocity you can ignore this value. It's default value is `zero`.
   
  ``value`` is the current value of the animation. 
  
- ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value. 
+ ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value.
  */
-open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
+open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
     
     /// A unique identifier for the animation.
     public let id = UUID()
@@ -89,7 +91,11 @@ open class PropertyAnimation<Value: AnimatableProperty>: ConfigurableAnimationPr
     
     var _startValue: Value.AnimatableData
     
-    var velocity: Value = .zero
+    /// The velocity of the animation.
+    public var velocity: Value {
+        get { Value(_velocity) }
+        set { _velocity = newValue.animatableData }
+    }
     
     var _velocity: Value.AnimatableData = .zero
     

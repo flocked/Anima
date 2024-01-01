@@ -24,7 +24,7 @@ import UIKit
  springAnimation.start()
  ```
  */
-open class SpringAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
+open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
     

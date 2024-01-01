@@ -35,7 +35,7 @@ There are two ways ways to create a decay animation:
  ```
 
  */
-open class DecayAnimation<Value: AnimatableProperty>: ConfigurableAnimationProviding {
+open class DecayAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
     
