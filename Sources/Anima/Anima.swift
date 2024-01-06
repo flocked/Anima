@@ -64,6 +64,8 @@ import UIKit
  ```swift
  Anima.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 45, preferred: 30)
  ```
+ 
+ - Note: To enable high frame-rate animations on ProMotion devices (i.e. 120 fps animation), you'll need to add a key/value pair in your Info.plist. Set the key `CADisableMinimumFrameDuration` to `true. Without this entry, animations will be capped at 60 fps.
 */
 public class Anima {
     /**
@@ -207,7 +209,11 @@ public class Anima {
         AnimationController.shared.stopAllAnimations(immediately: immediately)
     }
     
-    /// The preferred framerate of the animations. The default value is `default` which uses the default frame rate of the display.
+    /**
+     The preferred framerate of the animations. The default value is `default` which uses the default frame rate of the display.
+     
+     - Note: To enable high frame-rate animations on ProMotion devices (i.e. 120 fps animation), you'll need to add a key/value pair in your Info.plist. Set the key `CADisableMinimumFrameDuration` to `true. Without this entry, animations will be capped at 60 fps.
+     */
     @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
     public static var preferredFrameRateRange: CAFrameRateRange {
         get { AnimationController.shared.preferredFrameRateRange }

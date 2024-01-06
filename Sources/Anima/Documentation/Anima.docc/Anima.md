@@ -41,6 +41,17 @@ Updating a property outside an animation block, stops its animation and its valu
 
 *For more details about block-based animations take a look at <doc:Animating-Properties>.*
 
+**Preferred Framerate Range**
+
+
+You can change the preferred framerate range via ``Anima/preferredFrameRateRange``:
+
+```swift
+Anima.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 45, preferred: 30)
+```
+
+Note: To enable high frame-rate animations on ProMotion devices (i.e. 120 fps animation), you'll need to add a key/value pair in your Info.plist. Set the key `CADisableMinimumFrameDuration` to `true. Without this entry, animations will be capped at 60 fps.
+
 #### Property-Based Animation
 
 While the block-based API is often most convenient, you may want to animate something that the block-based API doesn’t yet support. Or, you may want the flexibility of getting the intermediate values of an animation.
@@ -70,7 +81,6 @@ animation.start()
 #### Creating your own animations
 
 Subclassing ``PropertyAnimation`` let's you create your own animations. Itself isn't animating and your have to provide your own animation implemention.
-
 
 ## Topics
 
