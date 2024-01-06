@@ -70,7 +70,7 @@ You can provide a gesture velocity for spring animations. This can be used to "i
 let velocity = panGestureRecognizer.velocity(in: view)
 
 Anima.animate(withSpring: .snappy, gestureVelocity: velocity) {
-    view.frame.origin = CGPoint(x: 200, y: 200)
+    view.animator.frame.origin = CGPoint(x: 200, y: 200)
 }
 ```
 
