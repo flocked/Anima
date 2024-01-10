@@ -86,17 +86,17 @@ extension DisplayLink {
     convenience init(view: NSView) {
         self.init(platformDisplayLink: PlatformDisplayLinkMac(view: view))
     }
-    
+
     /// Creates a display link for the specified window. It will automatically track the display the window is on, and will be automatically suspended if it isn’t on a display.
     convenience init(window: NSWindow) {
         self.init(platformDisplayLink: PlatformDisplayLinkMac(window: window))
     }
-    
+
     /// Creates a display link for the specified screen.
     convenience init(screen: NSScreen) {
         self.init(platformDisplayLink: PlatformDisplayLinkMac(screen: screen))
     }
-    
+
     /// Creates a display link for the main screen, optionally with the specified preferred frame rate range. Returns `nil` if there isn't a main screen.
     convenience init(preferredFrameRateRange: CAFrameRateRange? = nil) {
         if let preferredFrameRateRange = preferredFrameRateRange, let platformDisplayLink = PlatformDisplayLinkMac(preferredFrameRateRange: preferredFrameRateRange) {
@@ -158,19 +158,19 @@ fileprivate extension DisplayLink {
 
         /// The target for the CADisplayLink (because CADisplayLink retains its target).
         let target = DisplayLinkTarget()
-        
+
         /// The framesPerSecond of the displaylink.
         var framesPerSecond: CGFloat {
             1 / (displayLink.targetTimestamp - displayLink.timestamp)
         }
-        
+
         /// The preferred framerate range.
         @available(iOS 15.0, tvOS 15.0, *)
         var preferredFrameRateRange: CAFrameRateRange {
             get { displayLink.preferredFrameRateRange }
             set { displayLink.preferredFrameRateRange = newValue }
         }
-        
+
         @available(iOS 15.0, tvOS 15.0, *)
         convenience init(preferredFrameRateRange: CAFrameRateRange? = nil) {
             self.init()
@@ -182,14 +182,14 @@ fileprivate extension DisplayLink {
         /// Creates a new paused DisplayLink instance.
         init() {
             displayLink = CADisplayLink(target: target, selector: #selector(DisplayLinkTarget.frame(_:)))
-            
+
             if #available(iOS 15.0, tvOS 15.0, *) {
                  let maximumFramesPerSecond = Float(UIScreen.main.maximumFramesPerSecond)
                  let highFPSEnabled = maximumFramesPerSecond > 60
                 let minimumFPS: Float = Swift.min(highFPSEnabled ? 80 : 60, maximumFramesPerSecond)
                 displayLink.preferredFrameRateRange = .init(minimum: minimumFPS, maximum: maximumFramesPerSecond, preferred: maximumFramesPerSecond)
              }
-            
+
             displayLink.isPaused = true
             displayLink.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
             target.callback = { [unowned self] frame in
@@ -247,7 +247,7 @@ fileprivate extension DisplayLink {
             CVDisplayLinkCreateWithActiveCGDisplays(&dl)
             return dl!
         }()
-        
+
         /*
          /// The framesPerSecond of the displaylink.
          var framesPerSecond: CGFloat {
@@ -257,7 +257,7 @@ fileprivate extension DisplayLink {
 
         init() {
             CVDisplayLinkSetOutputHandler(displayLink) { [weak self] _, inNow, inOutputTime, _, _ -> CVReturn in
-                
+
                 let frame = Frame(
                     timestamp: inNow.pointee.timeInterval,
                     duration: inOutputTime.pointee.timeInterval - inNow.pointee.timeInterval
@@ -281,7 +281,7 @@ fileprivate extension DisplayLink {
             onFrame?(frame)
         }
     }
-    
+
     /// DisplayLink is used to hook into screen refreshes.
     @available(macOS 14.0, *)
     final class PlatformDisplayLinkMac: DisplayLinkProvider {
@@ -290,12 +290,12 @@ fileprivate extension DisplayLink {
 
         /// If the display link is paused or not.
         var isPaused: Bool {
-            get { 
+            get {
                return displayLink.isPaused }
             set {
                 displayLink.isPaused = newValue }
         }
-        
+
         /// The preferred framerate range.
         var preferredFrameRateRange: CAFrameRateRange {
             get { displayLink.preferredFrameRateRange }
@@ -307,27 +307,27 @@ fileprivate extension DisplayLink {
 
         /// The target for the CADisplayLink (because CADisplayLink retains its target).
         let target = DisplayLinkTarget()
-        
+
         /// The framesPerSecond of the displaylink.
         var framesPerSecond: CGFloat {
             1 / (displayLink.targetTimestamp - displayLink.timestamp)
         }
-        
+
         init(view: NSView) {
             self.displayLink = view.displayLink(target: target, selector: #selector(DisplayLinkTarget.frame(_:)))
             self.sharedInit(screen: view.window?.screen)
         }
-        
+
         init(window: NSWindow) {
             self.displayLink = window.displayLink(target: target, selector: #selector(DisplayLinkTarget.frame(_:)))
             self.sharedInit(screen: window.screen)
         }
-        
+
         init(screen: NSScreen) {
             self.displayLink = screen.displayLink(target: target, selector: #selector(DisplayLinkTarget.frame(_:)))
             self.sharedInit(screen: screen)
         }
-        
+
         /// Creates a new paused DisplayLink instance.
        convenience init?(preferredFrameRateRange: CAFrameRateRange? = nil) {
             guard let mainScreen = NSScreen.main else {
@@ -338,7 +338,7 @@ fileprivate extension DisplayLink {
                self.preferredFrameRateRange = preferredFrameRateRange
            }
         }
-        
+
         func sharedInit(screen: NSScreen?) {
             if let screen = screen {
                 let maximumFramesPerSecond = Float(screen.maximumFramesPerSecond)
@@ -374,6 +374,6 @@ fileprivate extension DisplayLink {
             }
         }
     }
-    
+
 }
 #endif

@@ -5,7 +5,6 @@
 //  Created by Florian Zand on 16.03.23.
 //
 
-
 #if os(macOS)
 import AppKit
 #elseif canImport(UIKit)

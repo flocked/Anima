@@ -14,7 +14,7 @@ import SwiftUI
 
 /// A configuration that specifies the appearance of a shadow.
 public struct ShadowConfiguration: Hashable {
-    
+
     // MARK: - Configurating the shadow
 
     #if os(macOS)
@@ -24,23 +24,23 @@ public struct ShadowConfiguration: Hashable {
     /// The color of the shadow.
     public var color: UIColor? = .black
     #endif
-    
+
     /// The opacity of the shadow.
     public var opacity: CGFloat = 0.3
-    
+
     /// The blur radius of the shadow.
     public var radius: CGFloat = 2.0
-    
+
     /// The offset of the shadow.
     public var offset: CGPoint = .init(x: 1.0, y: -1.5)
-    
+
     /// A Boolean value that indicates whether the shadow is invisible (when the color is `nil`, `clear` or the opacity `0`).
     var isInvisible: Bool {
         return (color?.alphaComponent == 0.0 || opacity == 0.0 || color == nil)
     }
-    
+
     // MARK: - Creating the shadow configuration
-    
+
     #if os(macOS)
     /**
      Creates a shadow configuration.
@@ -55,19 +55,18 @@ public struct ShadowConfiguration: Hashable {
         color: NSColor? = .black,
         opacity: CGFloat = 0.3,
         radius: CGFloat = 2.0,
-        offset: CGPoint = CGPoint(x: 1.0, y: -1.5))
-    {
+        offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) {
         self.color = color
         self.opacity = opacity
         self.radius = radius
         self.offset = offset
     }
-    
+
     /// A colored shadow.
     public static func color(_ color: NSColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
         return Self(color: color, opacity: opacity, radius: radius, offset: offset)
     }
-    
+
     /// A shadow with control accent color.
     public static func controlAccent(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .controlAccentColor, opacity: opacity, radius: radius, offset: offset) }
     #else
@@ -84,25 +83,24 @@ public struct ShadowConfiguration: Hashable {
         color: UIColor? = .black,
         opacity: CGFloat = 0.3,
         radius: CGFloat = 2.0,
-        offset: CGPoint = CGPoint(x: 1.0, y: -1.5))
-    {
+        offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) {
         self.color = color
         self.opacity = opacity
         self.radius = radius
         self.offset = offset
     }
-    
+
     /// A colored shadow.
     public static func color(_ color: UIColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
         return Self(color: color, opacity: opacity, radius: radius, offset: offset)
     }
     #endif
-    
+
     // MARK: - Built-in shadow configurations
 
     /// No shadow.
     public static var none: Self { Self(color: nil, opacity: 0.0) }
-    
+
     /// A black shadow.
     public static func black(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { return Self(color: .black, opacity: opacity, radius: radius, offset: offset) }
 }
@@ -111,11 +109,11 @@ extension ShadowConfiguration: AnimatableProperty, Animatable {
     public static var zero: ShadowConfiguration {
         .none
     }
-    
+
     public init(_ animatableData: AnimatableArray<Double>) {
         self.init(color: .init([animatableData[0], animatableData[1], animatableData[2], animatableData[3]]), opacity: animatableData[4], radius: animatableData[5], offset: .init(animatableData[6], animatableData[7]))
     }
-    
+
     public var animatableData: AnimatableArray<Double> {
         get { (self.color ?? .zero).animatableData + [opacity, radius, offset.x, offset.y] }
         set { self = .init(newValue) }
@@ -134,7 +132,7 @@ extension CALayer {
             shadowOffset = newValue.offset.size
         }
     }
-    
+
     /// The inner shadow of the layer.
     var innerShadow: ShadowConfiguration {
         get { innerShadowLayer?.configuration ?? .none }
@@ -152,7 +150,7 @@ extension CALayer {
             }
         }
     }
-    
+
     var innerShadowLayer: InnerShadowLayer? {
         firstSublayer(type: InnerShadowLayer.self)
     }

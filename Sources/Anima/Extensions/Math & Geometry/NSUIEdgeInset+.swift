@@ -26,9 +26,9 @@ extension NSEdgeInsets: Hashable {
         hasher.combine(left)
         hasher.combine(right)
     }
-    
+
     public static var zero = NSEdgeInsets(0)
-    
+
     /// Creates an edge insets structure with the specified value for top, bottom, left and right.
     init(_ value: CGFloat) {
         self.init(top: value, left: value, bottom: value, right: value)
@@ -46,17 +46,17 @@ extension UIEdgeInsets: Hashable {
         hasher.combine(left)
         hasher.combine(right)
     }
-    
+
     /// Creates an edge insets structure with the specified value for top, bottom, left and right.
     init(_ value: CGFloat) {
         self.init(top: value, left: value, bottom: value, right: value)
     }
 }
-#endif   
+#endif
 
 public extension NSDirectionalEdgeInsets {
     #if os(macOS)
-///A directional edge insets structure whose top, leading, bottom, and trailing fields all have a value of 0.
+/// A directional edge insets structure whose top, leading, bottom, and trailing fields all have a value of 0.
     static var zero = NSDirectionalEdgeInsets(0)
     #endif
 }
@@ -66,8 +66,7 @@ extension NSDirectionalEdgeInsets {
     init(_ value: CGFloat) {
         self.init(top: value, leading: value, bottom: value, trailing: value)
     }
-    
-    
+
     /// The width (leading + trailing) of the insets.
     var width: CGFloat {
         get { return leading + trailing }

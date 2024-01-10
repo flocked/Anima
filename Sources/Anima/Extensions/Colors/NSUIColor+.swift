@@ -30,7 +30,7 @@ extension NSUIColor {
         return (r, g, b, a)
       #endif
     }
-        
+
     /**
      Generates the resolved color for the specified view,.
      
@@ -44,7 +44,7 @@ extension NSUIColor {
         resolvedColor(with: view.traitCollection)
         #endif
     }
-    
+
     /// A Boolean value that indicates whether the color contains a different light and dark color variant.
     var isDynamic: Bool {
         let dyamic = dynamicColors
@@ -60,7 +60,7 @@ extension NSColor {
         let dark = resolvedColor(for: NSAppearance(named: .darkAqua)!)
         return (light, dark)
     }
-    
+
     /**
      Generates the resolved color for the specified appearance.
      
@@ -70,7 +70,7 @@ extension NSColor {
     func resolvedColor(for appearance: NSAppearance? = nil) -> NSColor {
         resolvedColor(for: appearance, colorSpace: nil) ?? self
     }
-    
+
     /**
      Generates the resolved color for the specified appearance and color space. If color space is `nil`, the color resolves to the first compatible color space.
      
@@ -80,7 +80,7 @@ extension NSColor {
      - Returns: A color for the appearance and color space.
      */
     func resolvedColor(for appearance: NSAppearance? = nil, colorSpace: NSColorSpace?) -> NSColor? {
-        var color: NSColor? = nil
+        var color: NSColor?
         if type == .catalog {
             if let colorSpace = colorSpace {
                 if #available(macOS 11.0, *) {
@@ -105,7 +105,7 @@ extension NSColor {
         }
         return color
     }
-    
+
     /// Supported color spaces for displaying a color.
     static let supportedColorSpaces: [NSColorSpace] = [.sRGB, .deviceRGB, .extendedSRGB, .genericRGB, .adobeRGB1998, .displayP3]
 }
@@ -117,7 +117,7 @@ extension UIColor {
         let dark = resolvedColor(with: .init(userInterfaceStyle: .dark))
         return (light, dark)
     }
-    
+
     /**
      Creates a new color object whose component values are a weighted sum of the current color object and the specified color object's.
      
@@ -138,7 +138,7 @@ extension UIColor {
         let a = (1 - progress) * fromComponents.alpha + progress * toComponents.alpha
         return NSUIColor(red: r, green: g, blue: b, alpha: a)
     }
-    
+
     /**
     The alpha component as CGFloat between 0.0 to 1.0.
     */

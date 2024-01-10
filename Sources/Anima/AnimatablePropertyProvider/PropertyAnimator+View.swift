@@ -69,45 +69,45 @@ extension AnimatablePropertyProvider where Self: NSView {
  
  */
 public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
-    
+
     // MARK: - Animatable Properties
-    
+
     /// The bounds of the view.
     public var bounds: CGRect {
         get { self[\.bounds] }
         set { self[\.bounds] = newValue }
     }
-    
+
     /// The frame of the view.
     public var frame: CGRect {
         get { self[\.frame] }
         set { self[\.frame] = newValue }
     }
-    
+
     /// The origin of the view.
     public var origin: CGPoint {
         get { frame.origin }
         set { frame.origin = newValue }
     }
-        
+
     /// The size of the view. Changing the value keeps the view centered. To change the size without centering use the view's frame size.
     public var size: CGSize {
         get { frame.size }
         set { frame.sizeCentered = newValue }
     }
-    
+
     /// The center of the view.
     public var center: CGPoint {
         get { frame.center }
         set { frame.center = newValue }
     }
-    
+
     /// The anchor point of the view.
     public var anchorPoint: CGPoint {
         get { object.optionalLayer?.animator.anchorPoint ?? .zero }
         set { object.optionalLayer?.animator.anchorPoint = newValue }
     }
-    
+
     /// The background color of the view.
     public var backgroundColor: NSColor? {
         get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
@@ -116,23 +116,23 @@ public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
             object.dynamicColors.background = newValue
         }
     }
-    
+
     /// The alpha value of the view.
     public var alpha: CGFloat {
         get { object.optionalLayer?.animator.opacity ?? 1.0 }
         set { object.optionalLayer?.animator.opacity = newValue }
     }
-    
+
     /// The corner radius of the view.
     public var cornerRadius: CGFloat {
         get { object.optionalLayer?.animator.cornerRadius ?? 0.0 }
         set { object.optionalLayer?.animator.cornerRadius = newValue }
     }
-    
+
     /// The border of the view.
     public var border: BorderConfiguration {
         get { object.optionalLayer?.animator.border ?? .zero }
-        set { 
+        set {
             object.dynamicColors.border = newValue.color
             var newValue = newValue
             newValue.color =  newValue.color?.resolvedColor(for: object)
@@ -157,17 +157,17 @@ public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
         set { object.optionalLayer?.animator.borderWidth = newValue }
     }
      */
-    
+
     /// The shadow of the view.
     public var shadow: ShadowConfiguration {
         get { object.optionalLayer?.animator.shadow ?? .none }
-        set { 
+        set {
             object.dynamicColors.shadow = newValue.color
             var newValue = newValue
             newValue.color = newValue.color?.resolvedColor(for: object)
             object.optionalLayer?.animator.shadow = newValue }
     }
-    
+
     /// The inner shadow of the view.
     public var innerShadow: ShadowConfiguration {
         get { object.optionalLayer?.animator.innerShadow ?? .none }
@@ -178,51 +178,51 @@ public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
             object.optionalLayer?.animator.innerShadow = newValue
         }
     }
-    
+
     /// The three-dimensional transform of the view.
     public var transform3D: CATransform3D {
         get { object.optionalLayer?.animator.transform ?? CATransform3DIdentity }
         set { object.optionalLayer?.animator.transform = newValue }
     }
-    
+
     /// The scale transform of the view.
     public var scale: CGPoint {
         get { object.optionalLayer?.animator.scale ?? CGPoint(1, 1) }
         set { object.optionalLayer?.animator.scale = newValue  }
     }
-    
+
     /// The translation transform of the view.
     public var translation: CGPoint {
         get { object.optionalLayer?.animator.translation ?? .zero }
         set { object.optionalLayer?.animator.translation = newValue }
     }
-        
+
     /// The rotation of the view as euler angles in degrees.
     public var rotation: CGVector3 {
         get { object.optionalLayer?.animator.rotation ?? .zero }
         set { object.optionalLayer?.animator.rotation = newValue }
     }
-    
+
     /// The rotation of the view as euler angles in radians.
     public var rotationInRadians: CGVector3 {
         get { object.optionalLayer?.animator.rotationInRadians ?? .zero }
         set { object.optionalLayer?.animator.rotationInRadians = newValue }
     }
-    
+
     /// The perspective of the view's transform (e.g. .m34).
     public var perspective: Perspective {
         get { object.optionalLayer?.animator.perspective ?? .zero }
         set { object.optionalLayer?.animator.perspective = newValue }
     }
-    
+
     /// The shearing of the view's transform.
     public var skew: Skew {
         get { object.optionalLayer?.animator.skew ?? .zero }
         set { object.optionalLayer?.animator.skew = newValue }
     }
-    
+
     // MARK: - Accessing animations
-    
+
     /**
      The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
 
@@ -237,7 +237,7 @@ public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
         }
         return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
     }
-    
+
     /**
      The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
 
@@ -309,43 +309,43 @@ extension AnimatablePropertyProvider where Self: UIView {
  */
 public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
     // MARK: - Animatable Properties
-    
+
     /// The bounds of the view.
     public var bounds: CGRect {
         get { self[\.bounds] }
         set { self[\.bounds] = newValue }
     }
-    
+
     /// The frame of the view.
     public var frame: CGRect {
         get { self[\.frame] }
         set { self[\.frame] = newValue }
     }
-    
+
     /// The origin of the view.
     public var origin: CGPoint {
         get { frame.origin }
         set { frame.origin = newValue }
     }
-        
+
     /// The size of the view. Changing the value keeps the view centered. To change the size without centering use the view's frame size.
     public var size: CGSize {
         get { frame.size }
         set { frame.sizeCentered = newValue }
     }
-    
+
     /// The center of the view.
     public var center: CGPoint {
         get { frame.center }
         set { frame.center = newValue }
     }
-    
+
     /// The anchor point of the view.
     public var anchorPoint: CGPoint {
         get { object.optionalLayer?.animator.anchorPoint ?? .zero }
         set { object.optionalLayer?.animator.anchorPoint = newValue }
     }
-    
+
     /// The background color of the view.
     public var backgroundColor: UIColor? {
         get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
@@ -353,25 +353,25 @@ public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
             object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
         }
     }
-    
+
     /// The tint color of the view.
     public var tintColor: UIColor {
         get { self[\.tintColor] }
         set { self[\.tintColor] = newValue }
     }
-    
+
     /// The alpha value of the view.
     public var alpha: CGFloat {
         get { object.optionalLayer?.animator.opacity ?? 1.0 }
         set { object.optionalLayer?.animator.opacity = newValue }
     }
-    
+
     /// The corner radius of the view.
     public var cornerRadius: CGFloat {
         get { object.optionalLayer?.animator.cornerRadius ?? 0.0 }
         set { object.optionalLayer?.animator.cornerRadius = newValue }
     }
-    
+
     /// The border of the view.
     public var border: BorderConfiguration {
         get { object.optionalLayer?.animator.border ?? .zero }
@@ -399,7 +399,7 @@ public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
         set { object.optionalLayer?.animator.borderWidth = newValue }
     }
      */
-    
+
     /// The shadow of the view.
     public var shadow: ShadowConfiguration {
         get { object.optionalLayer?.animator.shadow ?? .none }
@@ -408,7 +408,7 @@ public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
             newValue.color = newValue.color?.resolvedColor(for: object)
             object.optionalLayer?.animator.shadow = newValue }
     }
-    
+
     /// The inner shadow of the view.
     public var innerShadow: ShadowConfiguration {
         get { object.optionalLayer?.animator.innerShadow ?? .none }
@@ -418,51 +418,51 @@ public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
             object.optionalLayer?.animator.innerShadow = newValue
         }
     }
-    
+
     /// The three-dimensional transform of the view.
     public var transform3D: CATransform3D {
         get { object.optionalLayer?.animator.transform ?? CATransform3DIdentity }
         set { object.optionalLayer?.animator.transform = newValue }
     }
-    
+
     /// The scale transform of the view.
     public var scale: CGPoint {
         get { object.optionalLayer?.animator.scale ?? CGPoint(1, 1) }
         set { object.optionalLayer?.animator.scale = newValue  }
     }
-    
+
     /// The translation transform of the view.
     public var translation: CGPoint {
         get { object.optionalLayer?.animator.translation ?? .zero }
         set { object.optionalLayer?.animator.translation = newValue }
     }
-        
+
     /// The rotation of the view as euler angles in degrees.
     public var rotation: CGVector3 {
         get { object.optionalLayer?.animator.rotation ?? .zero }
         set { object.optionalLayer?.animator.rotation = newValue }
     }
-    
+
     /// The rotation of the view as euler angles in radians.
     public var rotationInRadians: CGVector3 {
         get { object.optionalLayer?.animator.rotationInRadians ?? .zero }
         set { object.optionalLayer?.animator.rotationInRadians = newValue }
     }
-    
+
     /// The perspective of the view's transform (e.g. .m34).
     public var perspective: Perspective {
         get { object.optionalLayer?.animator.perspective ?? .zero }
         set { object.optionalLayer?.animator.perspective = newValue }
     }
-    
+
     /// The shearing of the view's transform.
     public var skew: Skew {
         get { object.optionalLayer?.animator.skew ?? .zero }
         set { object.optionalLayer?.animator.skew = newValue }
     }
-    
+
     // MARK: - Accessing animations
-    
+
     /**
      The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
 
@@ -477,7 +477,7 @@ public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
         }
         return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
     }
-    
+
     /**
      The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
 
@@ -509,37 +509,37 @@ extension ViewAnimator where View: NSLevelIndicator {
         get { self[\.minValue] }
         set { self[\.minValue] = newValue }
     }
-    
+
     /// The maximum value of the level indicator.
     public var maxValue: Double {
         get { self[\.maxValue] }
         set { self[\.maxValue] = newValue }
     }
-    
+
     /// The warning value of the level indicator.
     public var warningValue: Double {
         get { self[\.warningValue] }
         set { self[\.warningValue] = newValue }
     }
-    
+
     /// The critical value of the level indicator.
     public var criticalValue: Double {
         get { self[\.criticalValue] }
         set { self[\.criticalValue] = newValue }
     }
-    
+
     /// The fill color of the level indicator.
     public var fillColor: NSColor {
         get { self[\.fillColor] }
         set { self[\.fillColor] = newValue }
     }
-    
+
     /// The warning fill color of the level indicator.
     public var warningFillColor: NSColor {
         get { self[\.warningFillColor] }
         set { self[\.warningFillColor] = newValue }
     }
-    
+
     /// The critical fill color of the level indicator.
     public var criticalFillColor: NSColor {
         get { self[\.criticalFillColor] }
@@ -553,7 +553,7 @@ extension ViewAnimator where View: NSTextField {
         get { self[\.textColor] }
         set { self[\.textColor] = newValue }
     }
-    
+
     /// The font size of the text field.
     public var fontSize: CGFloat {
         get { self[\.fontSize] }
@@ -567,7 +567,7 @@ extension ViewAnimator where View: NSTextView {
         get { self[\.fontSize] }
         set { self[\.fontSize] = newValue }
     }
-    
+
     /// The text color of the text view.
     public var textColor: NSColor? {
         get { self[\.textColor] }
@@ -581,7 +581,7 @@ extension ViewAnimator where View: NSStackView {
         get {  self[\.spacing] }
         set { self[\.spacing] = newValue }
     }
-    
+
     /// The geometric padding, in points, inside the stack view, surrounding its views.
     public var edgeInsets: NSEdgeInsets {
         get { self[\.edgeInsets] }
@@ -595,13 +595,13 @@ extension ViewAnimator where View: NSScrollView {
         get { self[\.contentOffset] }
         set { self[\.contentOffset] = newValue }
     }
-    
+
     /// The size of the document view.
     public var documentSize: CGSize {
         get { self[\.documentSize] }
         set { self[\.documentSize] = newValue }
     }
-    
+
     /// The amount by which the content is currently scaled.
     public var magnification: CGFloat {
         get {  self[\.magnificationCentered] }
@@ -609,7 +609,7 @@ extension ViewAnimator where View: NSScrollView {
             object.animationCenterPoint = nil
             self[\.magnificationCentered] = newValue }
     }
-    
+
     /// Magnify the content by the given amount and center the result on the given point.
     public func setMagnification(_ magnification: CGFloat, centeredAt point: CGPoint) {
         object.animationCenterPoint = point
@@ -633,14 +633,13 @@ extension ViewAnimator where View: NSButton {
     }
 }
 
-
 extension ViewAnimator where View: NSControl {
     /// The double value of the control.
     public var doubleValue: Double {
         get { self[\.doubleValue] }
         set { self[\.doubleValue] = newValue }
     }
-    
+
     /// The float value of the control.
     public var floatValue: Float {
         get { self[\.floatValue] }
@@ -662,13 +661,13 @@ extension ViewAnimator where View: NSBox {
         get { self[\.fillColor] }
         set { self[\.fillColor] = newValue }
     }
-    
+
     /// The distances between the border and the content view.
     public var contentViewMargins: CGSize {
         get { self[\.contentViewMargins] }
         set { self[\.contentViewMargins] = newValue }
     }
-    
+
     /// The font size of the title.
     public var titleFontSize: CGFloat {
         get {  self[\.titleFontSize] }
@@ -682,13 +681,13 @@ extension ViewAnimator where View: NSProgressIndicator {
         get {  self[\.doubleValue] }
         set { self[\.doubleValue] = newValue }
     }
-    
+
     /// The minimum value for the progress indicator.
     public var minValue: Double {
         get {  self[\.minValue] }
         set { self[\.minValue] = newValue }
     }
-    
+
     /// The maximum value for the progress indicator.
     public var maxValue: Double {
         get {  self[\.maxValue] }
@@ -701,7 +700,7 @@ extension NSView {
         guard subviews.contains(siblingSubview) else { return }
         addSubview(view, positioned: .above, relativeTo: siblingSubview)
     }
-    
+
     func insertSubview(_ view: NSUIView, belowSubview siblingSubview: NSUIView) {
         guard subviews.contains(siblingSubview) else { return }
         addSubview(view, positioned: .below, relativeTo: siblingSubview)
@@ -719,7 +718,7 @@ extension NSUIScrollView {
             }
         }
     }
-    
+
     var animationCenterPoint: CGPoint? {
         get { getAssociatedValue(key: "animationCenterPoint", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "animationCenterPoint", object: self) }
@@ -740,7 +739,7 @@ extension ViewAnimator where View: UITextField {
         get { self[\.textColor] }
         set { self[\.textColor] = newValue }
     }
-    
+
     /// The font size of the text field.
     public var fontSize: CGFloat {
         get { self[\.fontSize] }
@@ -754,7 +753,7 @@ extension ViewAnimator where View: UITextView {
         get { self[\.fontSize] }
         set { self[\.fontSize] = newValue }
     }
-    
+
     /// The text color of the text view.
     public var textColor: UIColor? {
         get { self[\.textColor] }
@@ -768,13 +767,13 @@ extension ViewAnimator where View: UIScrollView {
         get { self[\.contentOffset] }
         set { self[\.contentOffset] = newValue }
     }
-    
+
     /// The size of the content view.
     public var contentSize: CGSize {
         get { self[\.contentSize] }
         set { self[\.contentSize] = newValue }
     }
-    
+
     /// The scale factor applied to the scroll view’s content.
     public var zoomScale: CGFloat {
         get { self[\.zoomScaleCentered] }
@@ -782,7 +781,7 @@ extension ViewAnimator where View: UIScrollView {
             object.animationCenterPoint = nil
             self[\.zoomScaleCentered] = newValue }
     }
-    
+
     /// The custom distance that the content view is inset from the safe area or scroll view edges.
     public var contentInset: UIEdgeInsets {
         get { self[\.contentInset] }
@@ -804,7 +803,7 @@ extension ViewAnimator where View: UIView {
         get { self[\.directionalLayoutMargins] }
         set { self[\.directionalLayoutMargins] = newValue }
     }
-    
+
     /// The default spacing to use when laying out content in the view.
     public var layoutMargins: UIEdgeInsets {
         get { self[\.layoutMargins] }
@@ -817,7 +816,7 @@ extension PropertyAnimator<UIView> {
         get { getAssociatedValue(key: "preventsUserInteractions", object: self, initialValue: false) }
         set { set(associatedValue: newValue, key: "preventsUserInteractions", object: self) }
     }
-    
+
     /// Collects the animations that are configurated to prevent user interactions. If the set isn't empty the user interactions get disabled. When all animations finishes and the collection is empty, user interaction gets enabled again.
     var preventingUserInteractionAnimations: Set<UUID> {
         get { getAssociatedValue(key: "preventingAnimations", object: self, initialValue: []) }
@@ -855,7 +854,7 @@ extension ViewAnimator where View: UILabel {
         get { self[\.textColor] }
         set { self[\.textColor] = newValue }
     }
-    
+
     /// The font size of the label.
     public var fontSize: CGFloat {
         get { self[\.fontSize] }
@@ -893,30 +892,30 @@ extension UIScrollView {
             }
         }
     }
-    
+
     var animationCenterPoint: CGPoint? {
         get { getAssociatedValue(key: "animationCenterPoint", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "animationCenterPoint", object: self) }
     }
-    
+
     func setZoomScale(_ scale: CGFloat, centeredAt point: CGPoint) {
         var scale = CGFloat.minimum(scale, maximumZoomScale)
         scale = CGFloat.maximum(scale, self.minimumZoomScale)
-        var translatedZoomPoint : CGPoint = .zero
+        var translatedZoomPoint: CGPoint = .zero
         translatedZoomPoint.x = point.x + contentOffset.x
         translatedZoomPoint.y = point.y + contentOffset.y
-        
+
         let zoomFactor = 1.0 / zoomScale
-        
+
         translatedZoomPoint.x *= zoomFactor
         translatedZoomPoint.y *= zoomFactor
-        
-        var destinationRect : CGRect = .zero
+
+        var destinationRect: CGRect = .zero
         destinationRect.size.width = frame.width / scale
         destinationRect.size.height = frame.height / scale
         destinationRect.origin.x = translatedZoomPoint.x - destinationRect.width * 0.5
         destinationRect.origin.y = translatedZoomPoint.y - destinationRect.height * 0.5
-        
+
         zoom(to: destinationRect, animated: false)
     }
 }

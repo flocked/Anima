@@ -19,20 +19,20 @@ extension NSValue {
         var insets = directionalEdgeInsets
         self.init(bytes: &insets, objCType: _getObjCTypeEncoding(NSDirectionalEdgeInsets.self))
     }
-    
+
     /// Returns the directional edge insets structure representation of the value.
     var directionalEdgeInsetsValue: NSDirectionalEdgeInsets {
         var insets = NSDirectionalEdgeInsets()
         getValue(&insets)
         return insets
     }
-    
+
     /// Creates a new value object containing the specified CoreGraphics affine transform structure.
     convenience init(cgAffineTransform: CGAffineTransform) {
         var transform = cgAffineTransform
         self.init(bytes: &transform, objCType: _getObjCTypeEncoding(CGAffineTransform.self))
     }
-    
+
     /// Returns the CoreGraphics affine transform representation of the value.
     var cgAffineTransformValue: CGAffineTransform {
         var transform = CGAffineTransform.identity

@@ -29,7 +29,7 @@ import SwiftUI
  layer.add(keyFrameAnimation, forKey: "animation")
  ```
  */
-public protocol CAKeyframeAnimationEmittable  {
+public protocol CAKeyframeAnimationEmittable {
     /**
      Generates a `CAKeyframeAnimation` based on the animation's current value and target.
 
@@ -66,7 +66,7 @@ extension CAKeyframeAnimationEmittable {
     public func keyframeAnimation() -> CAKeyframeAnimation {
         keyframeAnimation(forFramerate: nil)
     }
-    
+
     public func keyframeAnimation(forFramerate framerate: Int?) -> CAKeyframeAnimation {
         let deltaTime: TimeInterval
         if let framerate = framerate {
@@ -87,7 +87,7 @@ extension CAKeyframeAnimationEmittable {
         keyframeAnimation.duration = duration
         return keyframeAnimation
     }
-    
+
     #if os(macOS)
     /**
      Generates a `CAKeyframeAnimation` based on the animation's current value and target.
@@ -146,7 +146,7 @@ extension EasingAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeA
             keyTimes.append(runningTime as NSNumber)
             runningTime += deltaTime
         }
-        
+
         values.append(isReversed ? startValue.toKeyframeValue() : target.toKeyframeValue())
         keyTimes.append(duration as NSNumber)
         return runningTime
@@ -162,16 +162,16 @@ extension SpringAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeA
         var hasResolved = false
         while !hasResolved {
             spring.update(value: &value, velocity: &velocity, target: target, deltaTime: deltaTime)
-            
+
             values.append(value.toKeyframeValue())
             keyTimes.append(t as NSNumber)
 
             t += deltaTime
-            
+
             let isAnimated = spring.response > .zero
             hasResolved = (t >= settlingTime) || !isAnimated
         }
-        
+
         values.append(target.toKeyframeValue())
         keyTimes.append(t as NSNumber)
 
@@ -187,7 +187,7 @@ fileprivate extension NSScreen {
         guard fps > 0 else { return 60 }
         return fps
     }
-    
+
     static var current: NSScreen? {
         NSScreen.main
     }
@@ -197,7 +197,7 @@ fileprivate extension UIScreen {
     static var current: UIScreen? {
         UIWindow.current?.screen
     }
-    
+
     var preferredFramesPerSecond: Int {
         let fps = maximumFramesPerSecond
         guard fps > 0 else { return 60 }

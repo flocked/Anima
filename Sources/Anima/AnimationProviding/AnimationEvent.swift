@@ -20,7 +20,7 @@ public enum AnimationEvent<Value> {
         - to: The new `target` value of the animation.
      */
     case retargeted(from: Value, to: Value)
-    
+
     /// A Boolean value that indicates whether the animation is finished.
     public var isFinished: Bool {
         switch self {
@@ -28,7 +28,7 @@ public enum AnimationEvent<Value> {
         case .retargeted: return false
         }
     }
-    
+
     /// A Boolean value that indicates whether the animation is retargeted.
     public var isRetargeted: Bool {
         switch self {

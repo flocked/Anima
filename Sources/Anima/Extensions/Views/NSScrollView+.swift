@@ -20,7 +20,7 @@ extension NSScrollView {
         get { return documentVisibleRect.origin }
         set {  documentView?.scroll(newValue) }
     }
-    
+
     /**
      The size of the document view, or `nil` if there isn't a document view.
      

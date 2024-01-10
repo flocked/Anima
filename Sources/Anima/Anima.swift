@@ -13,7 +13,6 @@ import AppKit
 import UIKit
 #endif
 
-
 /**
  Performs animations on animatable properties of objects conforming to ``AnimatablePropertyProvider``.
  
@@ -104,10 +103,10 @@ public class Anima {
             options: options,
             completion: completion
         )
-        
+
         AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
     }
-    
+
     /**
      Performs easing animations based on the specified ``TimingFunction``.
      
@@ -144,10 +143,10 @@ public class Anima {
             options: options,
             completion: completion
         )
-        
+
         AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
     }
-    
+
     /**
      Performs animations with a decaying acceleration.
      
@@ -196,10 +195,10 @@ public class Anima {
             options: options,
             completion: completion
         )
-        
+
         AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
     }
-    
+
     /**
      Stops all animations.
      
@@ -208,7 +207,7 @@ public class Anima {
     public static func stopAllAnimations(immediately: Bool = true) {
         AnimationController.shared.stopAllAnimations(immediately: immediately)
     }
-    
+
     /**
      The preferred framerate of the animations. The default value is `default` which uses the default frame rate of the display.
      
@@ -219,7 +218,7 @@ public class Anima {
         get { AnimationController.shared.preferredFrameRateRange }
         set { AnimationController.shared.preferredFrameRateRange = newValue }
     }
-    
+
     /**
      Updates the animation velocities for decay and spring animations.
 
@@ -239,10 +238,10 @@ public class Anima {
             groupID: UUID(),
             configuration: .velocityUpdate
         )
-        
+
         AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
     }
-    
+
     /**
      Performs the specified changes non animated.
      
@@ -266,7 +265,7 @@ public class Anima {
             groupID: UUID(),
             configuration: .nonAnimated
         )
-        
+
         AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
     }
 }

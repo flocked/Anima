@@ -11,28 +11,28 @@ extension Anima {
     /// Options for animations.
     public struct AnimationOptions: OptionSet, Sendable, Hashable {
         public let rawValue: UInt
-        
+
         /// When the animation finishes the value will be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
         public static let integralizeValues = AnimationOptions(rawValue: 1 << 0)
-        
+
         /// The animation repeats indefinitely.
         public static let repeats = AnimationOptions(rawValue: 1 << 1)
-        
+
         /// The animation runs backwards and forwards (must be combined with the ``repeats`` option).
         public static let autoreverse = AnimationOptions(rawValue: 1 << 2)
-        
+
         /**
          The velocity of spring animated properties will be reset.
          
          Usually the animation velocity is perserved when you spring animate it to another value. This option will reset the velocity for any new spring animation.
          */
         public static let resetSpringVelocity = AnimationOptions(rawValue: 1 << 3)
-        
+
         #if os(iOS) || os(tvOS)
         /// Prevents the user to interact with views while they are being animated.
         public static let preventUserInteraction = AnimationOptions(rawValue: 1 << 4)
         #endif
-        
+
         /// Creates a structure that represents animation options.
         public init(rawValue: UInt) {
             self.rawValue = rawValue

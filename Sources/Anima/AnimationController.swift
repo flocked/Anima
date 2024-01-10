@@ -21,24 +21,24 @@ class AnimationController {
 
     private var animations: [UUID: any ConfigurableAnimationProviding] = [:]
     private var animationSettingsStack = SettingsStack()
-    
+
     typealias CompletionBlock = (_ finished: Bool, _ retargeted: Bool) -> Void
     var groupAnimationCompletionBlocks: [UUID: CompletionBlock] = [:]
 
     var currentAnimationParameters: AnimationParameters? {
         animationSettingsStack.currentSettings
     }
-    
+
     /// The preferred rame rate of the animations.
     @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
     public var preferredFrameRateRange: CAFrameRateRange {
         get { (_preferredFrameRateRange as? CAFrameRateRange) ?? .default }
-        set { 
+        set {
             guard newValue != preferredFrameRateRange else { return }
             _preferredFrameRateRange = newValue }
     }
-        
-    private var _preferredFrameRateRange: Any? = nil {
+
+    private var _preferredFrameRateRange: Any? {
         didSet {
             if #available(macOS 14.0, iOS 15.0, tvOS 15.0, *) {
                 restartDisplayLink()
@@ -70,11 +70,11 @@ class AnimationController {
 
         animation.updateAnimation(deltaTime: .zero)
     }
-    
+
     public func stopAnimation(_ animation: AnimationProviding) {
         animations[animation.id] = nil
     }
-    
+
     public func stopAllAnimations(immediately: Bool) {
         animations.values.forEach({$0.stop(at: .current, immediately: immediately)})
     }
@@ -92,7 +92,7 @@ class AnimationController {
         #else
         let deltaTime = frame.duration
         #endif
-        
+
         let sortedAnimations = animations.values.sorted(by: \.relativePriority, .descending)
 
         for animation in sortedAnimations {
@@ -127,22 +127,22 @@ class AnimationController {
         displayLink?.cancel()
         displayLink = nil
     }
-    
+
     private func restartDisplayLink() {
         guard displayLinkIsRunning else { return }
         stopDisplayLink()
         startDisplayLink()
     }
-    
+
     private var displayLinkIsRunning: Bool {
         displayLink != nil
     }
-    
+
     func executeHandler(uuid: UUID?, finished: Bool, retargeted: Bool) {
         guard let uuid = uuid, let block = groupAnimationCompletionBlocks[uuid] else {
             return
         }
-        
+
         block(finished, retargeted)
 
         if retargeted == false, finished {
@@ -158,7 +158,7 @@ extension AnimationController {
         let configuration: AnimationConfiguration
         let options: Anima.AnimationOptions
         let completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)?
-        
+
         init(groupID: UUID, delay: CGFloat = 0.0, configuration: AnimationConfiguration, options: Anima.AnimationOptions = [], completion: ( (_: Bool, _: Bool) -> Void)? = nil) {
             self.groupID = groupID
             self.delay = delay
@@ -170,46 +170,46 @@ extension AnimationController {
         var repeats: Bool {
             options.contains(.repeats)
         }
-        
+
         var integralizeValues: Bool {
             options.contains(.integralizeValues)
         }
-        
+
         var autoreverse: Bool {
             options.contains(.autoreverse)
         }
-        
+
         var isAnimation: Bool {
             !configuration.isNonAnimated
         }
-        
+
         var resetSpringVelocity: Bool {
             options.contains(.resetSpringVelocity)
         }
-                
+
         #if os(iOS) || os(tvOS)
         var preventUserInteraction: Bool {
             options.contains(.preventUserInteraction)
         }
         #endif
-        
+
         var animationType: AnimationType? {
             configuration.type
         }
-        
+
         enum AnimationType {
             case spring
             case easing
             case decay
         }
-        
+
         enum AnimationConfiguration {
             case spring(spring: Spring, gestureVelocity: (any AnimatableProperty)?)
             case easing(timingFunction: TimingFunction, duration: TimeInterval)
             case decay(mode: Anima.DecayAnimationMode, decelerationRate: Double)
             case nonAnimated
             case velocityUpdate
-            
+
             var type: AnimationType? {
                 switch self {
                 case .spring: return .spring
@@ -218,63 +218,63 @@ extension AnimationController {
                 default: return nil
                 }
             }
-            
+
             var isDecayVelocity: Bool {
                 switch self {
                 case .decay(let mode, _): return mode == .velocity
                 default: return false
                 }
             }
-            
+
             var isVelocityUpdate: Bool {
                 switch self {
                 case .velocityUpdate: return true
                 default: return false
                 }
             }
-            
+
             var isAnyVelocity: Bool {
                 switch self {
-                case .velocityUpdate, .decay(_, _): return true
+                case .velocityUpdate, .decay: return true
                 default: return false
                 }
             }
-            
+
             var isNonAnimated: Bool {
                 switch self {
                 case .nonAnimated: return true
                 default: return false
                 }
             }
-            
+
             var decelerationRate: Double? {
                 switch self {
                 case .decay(_, let decelerationRate): return decelerationRate
                 default: return nil
                 }
             }
-            
+
             var spring: Spring? {
                 switch self {
-                case.spring(let spring,_):  return spring
+                case.spring(let spring, _):  return spring
                 default: return nil
                 }
             }
-            
+
             var timingFunction: TimingFunction? {
                 switch self {
-                case.easing(let timingFunction,_): return timingFunction
+                case.easing(let timingFunction, _): return timingFunction
                 default: return nil
                 }
             }
-            
+
             var duration: TimeInterval? {
                 switch self {
                 case.easing(_, let duration): return duration
                 default: return nil
                 }
             }
-            
+
             var gestureVelocity: (any AnimatableProperty)? {
                 switch self {
                 case .spring(_, let gestureVelocity): return gestureVelocity

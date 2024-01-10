@@ -27,39 +27,39 @@ import UIKit
 open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
-    
+
     /// A unique identifier that associates the animation with an grouped animation block.
     open internal(set) var groupID: UUID?
-    
+
     /// The relative priority of the animation. The higher the number the higher the priority.
     open var relativePriority: Int = 0
-    
+
     /// The current state of the animation.
     open internal(set) var state: AnimatingState = .inactive
-    
+
     /// The delay (in seconds) after which the animations begin.
     open internal(set) var delay: TimeInterval = 0.0
 
     /// The spring model that determines the animation's motion.
     open var spring: Spring
-    
+
     /// The estimated duration required for the animation to complete, based off its `spring` property.
     open var settlingTime: TimeInterval {
         spring.settlingDuration
     }
-    
+
     /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
     open var integralizeValues: Bool = false
-    
+
     /// A Boolean value that indicates whether the animation automatically starts when the ``target`` value changes.
     open var autoStarts: Bool = false
-    
+
     /// A Boolean value indicating whether the animation repeats indefinitely.
     open var repeats: Bool = false
-    
+
     /// A Boolean value indicating whether the animation is running backwards and forwards (must be combined with ``repeats`` `true`).
     open var autoreverse: Bool = false
-        
+
     /// A Boolean value indicating whether the animation is running in the reverse direction.
     open var isReversed: Bool = false
 
@@ -68,7 +68,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         get { Value(_value) }
         set { _value = newValue.animatableData }
     }
-    
+
     var _value: Value.AnimatableData {
         didSet {
             guard state != .running else { return }
@@ -85,7 +85,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         get { Value(_target) }
         set { _target = newValue.animatableData }
     }
-    
+
     var _target: Value.AnimatableData {
         didSet {
             guard oldValue != _target else { return }
@@ -107,7 +107,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         get { Value(_velocity) }
         set { _velocity = newValue.animatableData }
     }
-    
+
     var _velocity: Value.AnimatableData {
         didSet {
             guard state != .running else { return }
@@ -119,22 +119,22 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         get { Value(_startValue) }
         set { _startValue = newValue.animatableData }
     }
-    
+
     var _startValue: Value.AnimatableData
-    
+
     var startVelocity: Value {
         get { Value(_startVelocity) }
         set { _startVelocity = newValue.animatableData }
     }
-    
+
     var _startVelocity: Value.AnimatableData
-    
+
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
 
     /// The completion block to call when the animation either finishes, or "re-targets" to a new target value.
     open var completion: ((_ event: AnimationEvent<Value>) -> Void)?
-    
+
     /// The total running time of the animation.
     var runningTime: TimeInterval = 0.0
 
@@ -155,15 +155,15 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         self._startValue = _value
         self._startVelocity = _velocity
     }
-    
+
     deinit {
         delayedStart?.cancel()
         AnimationController.shared.stopAnimation(self)
     }
-    
+
     /// The item that starts the animation delayed.
-    var delayedStart: DispatchWorkItem? = nil
-    
+    var delayedStart: DispatchWorkItem?
+
     /// The animation type.
     let animationType: AnimationController.AnimationParameters.AnimationType = .spring
 
@@ -174,7 +174,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         autoreverse = settings.autoreverse
         integralizeValues = settings.integralizeValues
         spring = settings.configuration.spring ?? spring
-        
+
         if settings.resetSpringVelocity {
            _velocity = .zero
         }
@@ -197,7 +197,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             }
         }
     }
-        
+
     /**
      Updates the progress of the animation with the specified delta time.
 
@@ -214,11 +214,11 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             _value = _target
             velocity = Value.zero
         }
-                
+
         runningTime = runningTime + deltaTime
 
         let animationFinished = (runningTime >= settlingTime) || !isAnimated
-        
+
         if animationFinished {
             if repeats, isAnimated {
                 if autoreverse {
@@ -239,7 +239,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             stop(at: .current)
         }
     }
-    
+
     /**
      Starts the animation from its current position with an optional delay.
 
@@ -248,12 +248,12 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
     open func start(afterDelay delay: TimeInterval = 0.0) {
         precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
         guard state != .running else { return }
-        
+
         let start = {
             self.state = .running
             AnimationController.shared.runAnimation(self)
         }
-        
+
         delayedStart?.cancel()
         self.delay = delay
 
@@ -267,7 +267,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
         }
     }
-    
+
     /// Pauses the animation at the current position.
     open func pause() {
         guard state == .running else { return }
@@ -276,7 +276,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         delayedStart?.cancel()
         delay = 0.0
     }
-    
+
     /**
      Stops the animation at the specified position.
      
@@ -312,7 +312,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             completion?(.finished(at: value))
         }
     }
-    
+
     func reset() {
         runningTime = 0.0
         delayedStart?.cancel()

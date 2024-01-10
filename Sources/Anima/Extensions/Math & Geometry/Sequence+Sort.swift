@@ -15,27 +15,27 @@ enum SequenceSortOrder: Int, Hashable {
     case descending
 }
 
-extension Sequence {    
+extension Sequence {
     /**
     An array of the elements sorted by the given keypath.
      
      - Parameter keyPath: The keypath to compare the elements.
      - Parameter order: The order of the sorting.
      */
-    func sorted<Value>(by keyPath: KeyPath<Element, Value>, _ order : SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
+    func sorted<Value>(by keyPath: KeyPath<Element, Value>, _ order: SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
         return order == .ascending ? sorted(by: keyPath, using: <) : sorted(by: keyPath, using: >)
     }
-    
+
     /**
     An array of the elements sorted by the given keypath.
      
      - Parameter compare: The keypath to compare the elements.
      - Parameter order: The order of the sorting.
      */
-    func sorted<Value>(by keyPath: KeyPath<Element, Value?>, _ order : SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
+    func sorted<Value>(by keyPath: KeyPath<Element, Value?>, _ order: SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
         return order == .ascending ? sorted(by: keyPath, using: <) : sorted(by: keyPath, using: >)
     }
-    
+
     private func sorted<Value>(by compare: (Element) -> Value?, using comparator: (Value, Value) -> Bool) -> [Element] where Value: Comparable {
         sorted { a, b in
             guard let b = compare(b) else { return true }
@@ -43,13 +43,13 @@ extension Sequence {
             return comparator(a, b)
         }
     }
-    
+
     private func sorted<Value>(by keyPath: KeyPath<Element, Value>, using comparator: (Value, Value) -> Bool) -> [Element] where Value: Comparable {
         sorted { a, b in
             return comparator(a[keyPath: keyPath], b[keyPath: keyPath])
         }
     }
-    
+
     private func sorted<Value>(by keyPath: KeyPath<Element, Value?>, using comparator: (Value, Value) -> Bool) -> [Element] where Value: Comparable {
         sorted { a, b in
             guard let b = b[keyPath: keyPath] else { return true }

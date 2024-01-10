@@ -29,7 +29,7 @@ extension Comparable where Self: ExpressibleByIntegerLiteral {
     func clamped(min minValue: Self) -> Self {
         max(minValue, self)
     }
-    
+
     /**
      Clamps the value to a maximum value. It uses 0 as minimum value.
      

@@ -29,59 +29,59 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
 
     /// The relative priority of the animation. The higher the number the higher the priority.
     open var relativePriority: Int = 0
-    
+
     /// The current state of the animation.
     open internal(set) var state: AnimatingState = .inactive
-    
+
     /// The delay (in seconds) after which the animations begin.
     open internal(set) var delay: TimeInterval = 0.0
-    
+
     /// The timing function of the animation.
     open var timingFunction: TimingFunction = .easeInEaseOut
-    
+
     /// The total duration (in seconds) of the animation.
     open var duration: CGFloat = 0.0
-    
+
     /// A Boolean value indicating whether the animation repeats indefinitely.
     open var repeats: Bool = false
-    
+
     /// A Boolean value indicating whether the animation is running backwards and forwards (must be combined with ``repeats`` `true`).
     public var autoreverse: Bool = false
-        
+
     /// A Boolean value indicating whether the animation is running in the reverse direction.
     open var isReversed: Bool = false
-        
+
     /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
     open var integralizeValues: Bool = false
-    
+
     /// A Boolean value that indicates whether the animation automatically starts when the ``target`` value changes.
     open var autoStarts: Bool = false
-    
+
     /// The completion percentage of the animation.
     open var fractionComplete: CGFloat = 0.0 {
         didSet {
             fractionComplete = fractionComplete.clamped(max: 1.0)
         }
     }
-    
+
     /// The resolved fraction complete using the timing function.
     var resolvedFractionComplete: CGFloat {
         return timingFunction.solve(at: fractionComplete, duration: duration)
     }
-    
+
     /// The _current_ value of the animation. This value will change as the animation executes.
     public var value: Value {
         get { Value(_value) }
         set { _value = newValue.animatableData }
     }
-    
+
     var _value: Value.AnimatableData {
         didSet {
             guard state != .running else { return }
             _startValue = _value
         }
     }
-    
+
     /**
      Thex target value of the animation.
 
@@ -91,7 +91,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         get { Value(_target) }
         set { _target = newValue.animatableData }
     }
-    
+
     var _target: Value.AnimatableData {
         didSet {
             guard oldValue != _target else { return }
@@ -109,28 +109,28 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         get { Value(_startValue) }
         set { _startValue = newValue.animatableData }
     }
-    
+
     var _startValue: Value.AnimatableData
-    
+
     /// The current velocity of the animation.
     public internal(set) var velocity: Value {
         get { Value(_velocity) }
         set { _velocity = newValue.animatableData }
     }
-    
+
     var _velocity: Value.AnimatableData = .zero
-    
+
     var startVelocity: Value {
         get { .zero }
         set {  }
     }
-    
+
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
 
     /// The completion block to call when the animation either finishes, or "re-targets" to a new target value.
     open var completion: ((_ event: AnimationEvent<Value>) -> Void)?
-    
+
     /**
      Creates a new animation with the specified timing curve and duration, and optionally, an initial and target value.
 
@@ -147,30 +147,29 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         self.duration = duration
         self.timingFunction = timingFunction
     }
-    
+
     deinit {
         delayedStart?.cancel()
         AnimationController.shared.stopAnimation(self)
     }
-    
+
     /// The item that starts the animation delayed.
-    var delayedStart: DispatchWorkItem? = nil
-    
+    var delayedStart: DispatchWorkItem?
+
     /// The animation type.
     let animationType: AnimationController.AnimationParameters.AnimationType = .easing
 
-    
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
         groupID = settings.groupID
         repeats = settings.repeats
         autoreverse = settings.autoreverse
         integralizeValues = settings.integralizeValues
-        
+
         timingFunction = settings.configuration.timingFunction ?? timingFunction
         duration = settings.configuration.duration ?? duration
     }
-            
+
     /**
      Updates the progress of the animation with the specified delta time.
 
@@ -178,11 +177,11 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
      */
     open func updateAnimation(deltaTime: TimeInterval) {
         state = .running
-                
+
         let isAnimated = duration > .zero
-        
+
         guard deltaTime > 0.0 else { return }
-                
+
         let previousValue = _value
 
         if isAnimated {
@@ -193,11 +192,11 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             fractionComplete = isReversed ? 0.0 : 1.0
             _value = isReversed ? _startValue : _target
         }
-        
+
         _velocity = (_value - previousValue).scaled(by: 1.0/deltaTime)
-        
+
         let animationFinished = (isReversed ? fractionComplete <= 0.0 : fractionComplete >= 1.0) || !isAnimated
-        
+
         if animationFinished {
             if repeats, isAnimated {
                 if autoreverse {
@@ -209,7 +208,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
                 _value = isReversed ? _startValue : _target
             }
         }
-        
+
         let callbackValue = integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
 
@@ -217,7 +216,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             stop(at: .current)
         }
     }
-    
+
     /**
      Starts the animation from its current position with an optional delay.
 
@@ -226,12 +225,12 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
     open func start(afterDelay delay: TimeInterval = 0.0) {
         precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
         guard state != .running else { return }
-        
+
         let start = {
             self.state = .running
             AnimationController.shared.runAnimation(self)
         }
-        
+
         delayedStart?.cancel()
         self.delay = delay
 
@@ -245,7 +244,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
         }
     }
-    
+
     /// Pauses the animation at the current position.
     open func pause() {
         guard state == .running else { return }
@@ -254,7 +253,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         delayedStart?.cancel()
         delay = 0.0
     }
-    
+
     /**
      Stops the animation at the specified position.
      
@@ -289,7 +288,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             completion?(.finished(at: value))
         }
     }
-    
+
     /// Resets the animation.
     func reset() {
         delayedStart?.cancel()
@@ -306,7 +305,7 @@ extension EasingAnimation: CustomStringConvertible {
             groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
             state: \(state.rawValue)
-        
+
             value: \(value)
             target: \(target)
             startValue: \(startValue)
@@ -327,7 +326,6 @@ extension EasingAnimation: CustomStringConvertible {
         """
     }
 }
-
 
 /*
 /**

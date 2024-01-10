@@ -20,7 +20,7 @@ extension CALayer {
         removeFromSuperlayer()
         superlayer.addSublayer(self)
     }
-    
+
     var _transform: CATransform3D {
         get { transform }
         set {
@@ -29,20 +29,19 @@ extension CALayer {
             }
         }
     }
-    
+
     /// Sends the layer to the back of it's superlayer.
     func sendToBack() {
         guard let superlayer = superlayer else { return }
         removeFromSuperlayer()
         superlayer.insertSublayer(self, at: 0)
     }
-    
-    
+
     /// Returns the first sublayer of a specific type.
     func firstSublayer<V>(type _: V.Type) -> V? {
         sublayers?.first(where: { $0 is V }) as? V
     }
-    
+
     /**
      Adds the specified sublayer and constraints it to the layer.
      
@@ -56,7 +55,7 @@ extension CALayer {
         addSublayer(layer)
         layer.constraintTo(layer: self, insets: insets)
     }
-    
+
     /**
      Inserts the specified layer at the specified index and constraints it to the layer.
      
@@ -71,7 +70,7 @@ extension CALayer {
         insertSublayer(layer, at: index)
         layer.constraintTo(layer: self, insets: insets)
     }
-    
+
     /**
      Constraints the layer to the specified layer.
      
@@ -82,7 +81,7 @@ extension CALayer {
         - insets: Insets from the layer's border to the specified other layer.
      */
     func constraintTo(layer: CALayer, insets: NSDirectionalEdgeInsets = .zero) {
-        let layerBoundsUpdate: (()->()) = { [weak self] in
+        let layerBoundsUpdate: (() -> Void) = { [weak self] in
             guard let self = self else { return }
             let frameSize = layer.frame.size
             var shapeRect = CGRect(origin: .zero, size: frameSize)
@@ -93,33 +92,33 @@ extension CALayer {
             bounds = shapeRect
             self.position = position
         }
-        
-        let layerUpdate: (()->()) = { [weak self] in
+
+        let layerUpdate: (() -> Void) = { [weak self] in
             guard let self = self else { return }
             cornerRadius = layer.cornerRadius
             maskedCorners = layer.maskedCorners
             cornerCurve = layer.cornerCurve
         }
-        
+
         if layerObserver?.observedObject != layer {
             layerObserver = KeyValueObserver(layer)
         }
-        
+
         layerObserver?[\.cornerRadius] = { old, new in
             guard old != new else { return }
             layerUpdate()
         }
-        
+
         layerObserver?[\.cornerCurve] = { old, new in
             guard old != new else { return }
             layerUpdate()
         }
-        
+
         layerObserver?[\.maskedCorners] = { old, new in
             guard old != new else { return }
             layerUpdate()
         }
-        
+
         layerObserver?[\.bounds] = { old, new in
             guard old != new else { return }
             layerBoundsUpdate()
@@ -127,17 +126,17 @@ extension CALayer {
         layerBoundsUpdate()
         layerUpdate()
     }
-    
+
     /// Removes the layer constraints.
     func removeConstraints() {
         layerObserver = nil
     }
-    
+
      var layerObserver: KeyValueObserver<CALayer>? {
         get { getAssociatedValue(key: "CALayer.boundsObserver", object: self, initialValue: nil) }
         set { set(associatedValue: newValue, key: "CALayer.boundsObserver", object: self) }
     }
-    
+
     /// The associated view using the layer.
     var parentView: NSUIView? {
         if let view = delegate as? NSUIView {

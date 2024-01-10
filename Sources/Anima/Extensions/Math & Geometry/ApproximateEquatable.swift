@@ -55,7 +55,7 @@ extension Set: ApproximateEquatable where Element: FloatingPointInitializable {
     public func isApproximatelyEqual(to other: Self, epsilon: Element) -> Bool {
         let check = Array(self)
         let other = Array(other)
-        
+
         for i in 0..<indices.count {
             if !check[i].isApproximatelyEqual(to: other[i], absoluteTolerance: epsilon) {
                 return false
@@ -83,7 +83,7 @@ extension Numeric where Magnitude: FloatingPoint {
     func isApproximatelyEqual(to other: Self, relativeTolerance: Magnitude = Magnitude.ulpOfOne.squareRoot(), norm: (Self) -> Magnitude = \.magnitude) -> Bool {
         return isApproximatelyEqual(to: other, absoluteTolerance: relativeTolerance * Magnitude.leastNormalMagnitude, relativeTolerance: relativeTolerance, norm: norm)
     }
-    
+
     /**
      A Boolean value that indicates whether the value and the specified `other` value are approximately equal.
      

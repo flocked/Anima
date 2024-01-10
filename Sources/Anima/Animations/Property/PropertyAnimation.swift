@@ -35,35 +35,35 @@ import Foundation
  ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value.
  */
 open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
-    
+
     /// A unique identifier for the animation.
     public let id = UUID()
-    
+
     /// A unique identifier that associates an animation with an grouped animation block.
     open var groupID: UUID?
 
     /// The relative priority of the animation. The higher the number the higher the priority.
     open var relativePriority: Int = 0
-    
+
     /// The current state of the animation (`inactive`, `running`, or `ended`).
     open var state: AnimatingState = .inactive
-    
+
     /// The delay (in seconds) after which the animations begin.
     open var delay: TimeInterval = 0.0
-    
+
     /// The _current_ value of the animation. This value will change as the animation executes.
     public var value: Value {
         get { Value(_value) }
         set { _value = newValue.animatableData }
     }
-    
+
     var _value: Value.AnimatableData {
         didSet {
             guard state != .running else { return }
             _startValue = _value
         }
     }
-    
+
     /**
      The target value of the animation.
 
@@ -73,7 +73,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
         get { Value(_target) }
         set {  _target = newValue.animatableData }
     }
-    
+
     var _target: Value.AnimatableData {
         didSet {
             guard oldValue != _target else { return }
@@ -82,34 +82,34 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
             }
         }
     }
-            
+
     /// The start value of the animation.
     public var startValue: Value {
         get { Value(_startValue) }
         set { _startValue = newValue.animatableData }
     }
-    
+
     var _startValue: Value.AnimatableData
-    
+
     /// The velocity of the animation.
     public var velocity: Value {
         get { Value(_velocity) }
         set { _velocity = newValue.animatableData }
     }
-    
+
     var _velocity: Value.AnimatableData = .zero
-    
+
     var startVelocity: Value = .zero
-    
+
     /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
     open var integralizeValues: Bool = false
-        
+
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
 
     /// The completion block to call when the animation either finishes, or "re-targets" to a new target value.
     open var completion: ((_ event: AnimationEvent<Value>) -> Void)?
-    
+
     /**
      Creates a new animation with the specified initial and target value.
 
@@ -122,23 +122,23 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
         self._startValue = _value
         self._target = target.animatableData
     }
-    
+
     deinit {
         delayedStart?.cancel()
         AnimationController.shared.stopAnimation(self)
     }
-    
+
     /// The item that starts the animation delayed.
-    var delayedStart: DispatchWorkItem? = nil
-    
+    var delayedStart: DispatchWorkItem?
+
     /// The animation type.
     let animationType: AnimationController.AnimationParameters.AnimationType = .easing
-    
+
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationController.AnimationParameters) {
         groupID = settings.groupID
     }
-                
+
     /**
      Updates the progress of the animation with the specified delta time.
      
@@ -152,7 +152,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
             stop(at: .end)
         }
     }
-    
+
     /**
      Starts the animation from its current position with an optional delay.
      
@@ -161,12 +161,12 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
     open func start(afterDelay delay: TimeInterval = 0.0) {
         precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
         guard state != .running else { return }
-        
+
         let start = {
             self.state = .running
             AnimationController.shared.runAnimation(self)
         }
-        
+
         delayedStart?.cancel()
         self.delay = delay
 
@@ -180,7 +180,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
         }
     }
-    
+
     /// Pauses the animation at the current position.
     open func pause() {
         guard state == .running else { return }
@@ -189,7 +189,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
         delayedStart?.cancel()
         delay = 0.0
     }
-    
+
     /**
      Stops the animation at the specified position.
      
@@ -224,7 +224,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
             completion?(.finished(at: value))
         }
     }
-    
+
     /// Resets the animation.
     func reset() {
 

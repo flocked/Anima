@@ -27,11 +27,11 @@ extension NSBezierPath {
      - Returns: A new path object with the rounded rectangular path.
      */
     convenience init(roundedRect rect: CGRect, byRoundingCorners corners: NSRectCorner, cornerRadius radius: CGFloat) {
-        
+
         self.init()
-        
+
         let radius = radius.clamped(to: 0...(min(rect.width, rect.height) / 2))
-        
+
         let topLeft = NSPoint(x: rect.minX, y: rect.minY)
         let topRight = NSPoint(x: rect.maxX, y: rect.minY)
         let bottomRight = NSPoint(x: rect.maxX, y: rect.maxY)
@@ -43,7 +43,7 @@ extension NSBezierPath {
         self.appendArc(from: bottomLeft, to: topLeft, radius: corners.contains(.bottomLeft) ? radius : 0)
         self.close()
     }
-    
+
     /**
      Creates and returns a new Bézier path object with a rounded rectangular path.
      
@@ -58,7 +58,7 @@ extension NSBezierPath {
     convenience init(roundedRect rect: CGRect, cornerRadius: CGFloat) {
         self.init(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadius: cornerRadius)
     }
-    
+
     /**
      The Core Graphics representation of the path.
      

@@ -11,7 +11,7 @@ import Foundation
 public protocol FloatingPointInitializable: FloatingPoint & ExpressibleByFloatLiteral & Comparable & Equatable {
     /// Creates a new value from a `Float`.
     init(_ value: Float)
-    
+
     /// Creates a new value from a `Double`.
     init(_ value: Double)
 }
@@ -25,7 +25,7 @@ extension BinaryFloatingPoint {
     var degreesToRadians: Self {
         return Self.pi * self / 180.0
     }
-    
+
     /// Converts the value from radians to degress.
     var radiansToDegrees: Self {
         return self * 180 / Self.pi

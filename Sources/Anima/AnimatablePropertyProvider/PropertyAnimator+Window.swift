@@ -67,13 +67,13 @@ public class WindowAnimator: PropertyAnimator<NSWindow> {
         get { self[\._frame] }
         set { self[\._frame] = newValue }
     }
-    
+
     /// The origin of the window.
     public var origin: CGPoint {
         get { frame.origin }
         set { frame.origin = newValue }
     }
-    
+
     /// The size of the window. Changing the value keeps the window centered. To change the size without centering use the window's frame size.
     public var size: CGSize {
         get { frame.size }
@@ -82,19 +82,19 @@ public class WindowAnimator: PropertyAnimator<NSWindow> {
             frame.sizeCentered = newValue
         }
     }
-    
+
     /// The center of the window.
     public var center: CGPoint {
         get { frame.center }
         set { frame.center = newValue }
     }
-    
+
     /// The background color of the window.
     public var backgroundColor: NSColor {
         get { self[\.backgroundColor] }
         set { self[\.backgroundColor] = newValue }
     }
-    
+
     /// The alpha value of the window.
     public var alphaValue: CGFloat {
         get { self[\.alphaValue] }
@@ -120,7 +120,7 @@ extension WindowAnimator {
         _ = self[keyPath: keyPath]
         return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
     }
-    
+
     /**
      The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
 
@@ -134,6 +134,5 @@ extension WindowAnimator {
         return velocity
     }
 }
-
 
 #endif

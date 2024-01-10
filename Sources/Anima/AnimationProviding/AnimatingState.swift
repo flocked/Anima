@@ -5,7 +5,6 @@
 //  Created by Florian Zand on 15.11.23.
 //
 
-
 /// The current state of an ``AnimationProviding``.
 public enum AnimatingState: String, Sendable {
     /// The animation is not currently running, but is ready. It also maybe paused. This is the initial state of an animation.

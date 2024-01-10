@@ -79,7 +79,7 @@ extension LayoutAnimator {
         _ = self[keyPath: keyPath]
         return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
     }
-    
+
     /**
      The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
 

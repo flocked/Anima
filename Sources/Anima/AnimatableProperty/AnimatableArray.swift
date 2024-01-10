@@ -30,7 +30,7 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
     public init(arrayLiteral elements: Element...) {
         self.elements = elements
     }
-    
+
     /**
      Creates a new array containing the elements of a sequence.
      
@@ -50,7 +50,7 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
     public init(repeating repeatedValue: Element, count: Int) {
         elements = .init(repeating: repeatedValue, count: count)
     }
-    
+
     /**
      Accesses the element at the specified position.
      
@@ -60,7 +60,7 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
         get {  return elements[index] }
         set {  elements[index] = newValue }
     }
-    
+
     /**
      Accesses the element at the specified position safety. Returns `nil` If the index is larger than the array,
      
@@ -76,7 +76,7 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
             self[index] = newValue
         }
     }
-    
+
     /**
      Accesses a contiguous subrange of the array’s elements.
      
@@ -86,7 +86,7 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
         get { return elements[bounds] }
         set { elements[bounds] = newValue }
     }
-    
+
     /// The position of the first element in a nonempty array.
     public var startIndex: Int {
         return elements.startIndex
@@ -101,22 +101,22 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
     public var count: Int {
         return elements.count
     }
-    
+
     /// A Boolean value indicating whether the collection is empty.
     public var isEmpty: Bool {
         return elements.isEmpty
     }
-    
+
     /// The first element of the collection.
     public var first: Element? {
         return elements.first
     }
-    
+
     /// The last element of the collection.
     public var last: Element? {
         return elements.last
     }
-    
+
     /**
      Replaces the specified subrange of elements with the given collection.
      
@@ -168,11 +168,11 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
         }
         return lhs
     }
-    
+
     public static func += (lhs: inout AnimatableArray, rhs: AnimatableArray) {
         lhs = lhs + rhs
     }
-    
+
     public static func - (lhs: AnimatableArray, rhs: AnimatableArray) -> AnimatableArray {
         let count = Swift.min(lhs.count, rhs.count)
         if let lhs = lhs as? AnimatableArray<Double>, let rhs = rhs as? AnimatableArray<Double> {
@@ -184,11 +184,11 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
         }
         return lhs
     }
-    
+
     public static func -= (lhs: inout Self, rhs: Self) {
         lhs = lhs - rhs
     }
-    
+
     public mutating func scale(by rhs: Double) {
         if let self = self as? AnimatableArray<Double> {
             elements = vDSP.multiply(rhs, self.elements) as! [Element]
@@ -198,7 +198,7 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
             }
         }
     }
-    
+
     public var magnitudeSquared: Double {
         if let self = self as? AnimatableArray<Double> {
             return vDSP.sum(vDSP.multiply(self.elements, self.elements))

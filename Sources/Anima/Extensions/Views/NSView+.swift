@@ -20,7 +20,7 @@ extension NSView {
             layer?.mask = newValue?.layer
         }
     }
-    
+
     /// The anchor point of the view’s bounds rectangle.
     @objc dynamic var anchorPoint: CGPoint {
         get { layer?.anchorPoint ?? .zero }
@@ -29,7 +29,7 @@ extension NSView {
             setAnchorPoint(newValue)
         }
     }
-    
+
     /// Sets the anchor point of the view’s bounds rectangle while retaining the position.
     func setAnchorPoint(_ anchorPoint: CGPoint) {
         guard let layer = layer else { return }
@@ -50,7 +50,7 @@ extension NSView {
         layer.position = position
         layer.anchorPoint = anchorPoint
     }
-    
+
     var alpha: CGFloat {
         get { guard let cgValue = layer?.opacity else { return 1.0 }
             return CGFloat(cgValue)
@@ -65,19 +65,19 @@ extension NSView {
 extension NSView {
     // Saves dynamics colors that provide both a light and dark color variant and updates them inside the view if the appearance changes from light to dark or vice versa.
     struct DynamicColors {
-        var shadow: NSColor? = nil {
+        var shadow: NSColor? {
             didSet { if shadow?.isDynamic == false { shadow = nil } } }
-        var innerShadow: NSColor? = nil {
+        var innerShadow: NSColor? {
             didSet { if innerShadow?.isDynamic == false { innerShadow = nil } } }
-        var border: NSColor? = nil {
+        var border: NSColor? {
             didSet { if border?.isDynamic == false { border = nil } } }
-        var background: NSColor? = nil {
+        var background: NSColor? {
             didSet { if background?.isDynamic == false { background = nil } } }
-        
+
         var needsAppearanceObserver: Bool {
             background != nil || border != nil || shadow != nil || innerShadow != nil
         }
-        
+
         mutating func update(_ keyPath: WritableKeyPath<Self, NSColor?>, cgColor: CGColor?) {
             guard let dynamics = self[keyPath: keyPath]?.dynamicColors else { return }
             if  cgColor != dynamics.light.cgColor && cgColor != dynamics.dark.cgColor {
@@ -85,14 +85,14 @@ extension NSView {
             }
         }
     }
-    
+
     var dynamicColors: DynamicColors {
         get { getAssociatedValue(key: "dynamicColors", object: self, initialValue: DynamicColors() ) }
         set { set(associatedValue: newValue, key: "dynamicColors", object: self)
             setupEffectiveAppearanceObserver()
         }
     }
-    
+
     var _effectiveAppearanceKVO: NSKeyValueObservation? {
         get { getAssociatedValue(key: "_viewEffectiveAppearanceKVO", object: self) }
         set { set(associatedValue: newValue, key: "_viewEffectiveAppearanceKVO", object: self) }
@@ -110,13 +110,13 @@ extension NSView {
             _effectiveAppearanceKVO = nil
         }
     }
-    
+
     func updateEffectiveColors() {
         dynamicColors.update(\.shadow, cgColor: layer?.shadowColor)
         dynamicColors.update(\.background, cgColor: layer?.backgroundColor)
         dynamicColors.update(\.border, cgColor: layer?.borderColor)
         dynamicColors.update(\.innerShadow, cgColor: layer?.innerShadowLayer?.shadowColor)
-        
+
         if let color = dynamicColors.shadow?.resolvedColor(for: self).cgColor {
             layer?.shadowColor = color
         }

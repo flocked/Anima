@@ -25,12 +25,12 @@ public extension CALayer {
             assertionFailure("The keyPath must not be nil.")
             return
         }
-        
+
         let keyframeAnimation = animation.keyframeAnimation(forFramerate: nil)
         keyframeAnimation.keyPath = keyPath
         add(keyframeAnimation, forKey: key)
     }
-        
+
     /**
      Adds a decay animation to the layer.
 
@@ -46,7 +46,7 @@ public extension CALayer {
         keyframeAnimation.keyPath = keyPath.stringValue
         add(keyframeAnimation, forKey: key)
     }
-    
+
     /**
      Adds an easing animation to the layer.
 
@@ -62,7 +62,7 @@ public extension CALayer {
         keyframeAnimation.keyPath = keyPath.stringValue
         add(keyframeAnimation, forKey: key ?? keyPath.stringValue)
     }
-        
+
     /**
      Adds a spring animation to the layer.
 

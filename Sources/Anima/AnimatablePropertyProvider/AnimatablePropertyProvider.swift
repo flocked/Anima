@@ -11,7 +11,7 @@ import Foundation
 public protocol AnimatablePropertyProvider: AnyObject {
     /// The object that provides animatable properties.
     associatedtype Provider: AnimatablePropertyProvider = Self
-    
+
     /**
      Provides animatable properties of the object.
      
