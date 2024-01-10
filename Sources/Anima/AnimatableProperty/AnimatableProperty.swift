@@ -361,7 +361,7 @@ extension Array: AnimatableProperty where Element: AnimatableProperty {
         self.init(animatableData.elements.compactMap { Element($0) })
     }
 
-    public var animatableData: AnimatableArray<Element.AnimatableData> { AnimatableArray<Element.AnimatableData>(compactMap(\.animatableData)) }
+    public var animatableData: AnimatableArray<Element.AnimatableData> { AnimatableArray<Element.AnimatableData>(compactMap({$0.animatableData})) }
 
     public static var zero: [Element] {
         Self()

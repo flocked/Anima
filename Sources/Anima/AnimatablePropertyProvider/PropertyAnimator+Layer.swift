@@ -415,14 +415,14 @@ public extension LayerAnimator where Layer: CAEmitterLayer {
 
 extension CAGradientLayer {
     var _locations: [CGFloat] {
-        get { locations?.compactMap(\.doubleValue) ?? [] }
+        get { locations?.compactMap({$0.doubleValue}) ?? [] }
         set { locations = newValue as [NSNumber] }
     }
 }
 
 private extension CAShapeLayer {
     var _lineDashPattern: [Double] {
-        get { lineDashPattern?.compactMap(\.doubleValue) ?? [] }
+        get { lineDashPattern?.compactMap({$0.doubleValue}) ?? [] }
         set { lineDashPattern = newValue as [NSNumber] }
     }
 }
