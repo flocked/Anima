@@ -11,6 +11,6 @@ import Foundation
 extension CVTimeStamp {
     /// The time interval represented by the time stamp.
     var timeInterval: TimeInterval {
-        return TimeInterval(videoTime) / TimeInterval(videoTimeScale)
+        TimeInterval(videoTime) / TimeInterval(videoTimeScale)
     }
 }

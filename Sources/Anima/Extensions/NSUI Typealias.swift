@@ -8,21 +8,21 @@
 import SwiftUI
 
 #if os(macOS)
-import AppKit
-typealias NSUIView = NSView
-typealias NSUIColor = NSColor
-typealias NSUIBezierPath = NSBezierPath
-typealias NSUIScrollView = NSScrollView
-typealias NSUIScreen = NSScreen
-typealias NSUITextField = NSTextField
-typealias NSUITextView = NSTextView
+    import AppKit
+    typealias NSUIView = NSView
+    typealias NSUIColor = NSColor
+    typealias NSUIBezierPath = NSBezierPath
+    typealias NSUIScrollView = NSScrollView
+    typealias NSUIScreen = NSScreen
+    typealias NSUITextField = NSTextField
+    typealias NSUITextView = NSTextView
 #elseif canImport(UIKit)
-import UIKit
-typealias NSUIView = UIView
-typealias NSUIColor = UIColor
-typealias NSUIBezierPath = UIBezierPath
-typealias NSUIScrollView = UIScrollView
-typealias NSUIScreen = UIScreen
-typealias NSUITextField = UITextField
-typealias NSUITextView = UITextView
+    import UIKit
+    typealias NSUIView = UIView
+    typealias NSUIColor = UIColor
+    typealias NSUIBezierPath = UIBezierPath
+    typealias NSUIScrollView = UIScrollView
+    typealias NSUIScreen = UIScreen
+    typealias NSUITextField = UITextField
+    typealias NSUITextView = UITextView
 #endif

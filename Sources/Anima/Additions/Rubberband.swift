@@ -9,7 +9,7 @@ import Foundation
 import QuartzCore
 
 /// Calculates the rubberbanding of a value.
-public struct Rubberband {
+public enum Rubberband {
     /// The default rubberbanding constant for a scroll view.
     public static let ScrollViewRubberBandingConstant = 0.55
 

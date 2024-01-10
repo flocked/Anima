@@ -1,25 +1,24 @@
 //
 //  BorderConfiguration.swift
-//  
+//
 //
 //  Created by Florian Zand on 15.12.23.
 //
 
 #if os(macOS)
-import AppKit
+    import AppKit
 #elseif canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 import SwiftUI
 
 /// A configuration that specifies the appearance of a border.
 public struct BorderConfiguration: Hashable {
-
     #if os(macOS)
-    /// The color of the border.
-    public var color: NSColor? = .black
+        /// The color of the border.
+        public var color: NSColor? = .black
     #else
-    public var color: UIColor? = .black
+        public var color: UIColor? = .black
     #endif
 
     /// The width of the border.
@@ -34,44 +33,44 @@ public struct BorderConfiguration: Hashable {
     }
 
     #if os(macOS)
-    /// A colored border.
-    public static func color(_ color: NSColor, width: CGFloat) -> Self {
-        Self(color: color, width: width)
-    }
+        /// A colored border.
+        public static func color(_ color: NSColor, width: CGFloat) -> Self {
+            Self(color: color, width: width)
+        }
 
-    /**
-     Creates a border configuration.
-     
-     - Parameters:
-        - color: The border color. The default value is `black`.
-        - width: The border width. The default value is `2.0`.
-     */
-    public init(color: NSColor? = .black, width: CGFloat = 2.0) {
-        self.color = color
-        self.width = width
-    }
+        /**
+         Creates a border configuration.
 
-    /// A  border with control accent color.
-    public static func controlAccent(width: CGFloat = 2.0) -> Self {
-        Self(color: .controlAccentColor, width: width)
-    }
+         - Parameters:
+            - color: The border color. The default value is `black`.
+            - width: The border width. The default value is `2.0`.
+         */
+        public init(color: NSColor? = .black, width: CGFloat = 2.0) {
+            self.color = color
+            self.width = width
+        }
+
+        /// A  border with control accent color.
+        public static func controlAccent(width: CGFloat = 2.0) -> Self {
+            Self(color: .controlAccentColor, width: width)
+        }
     #else
-    /**
-     Creates a border configuration.
-     
-     - Parameters:
-        - color: The border color. The default value is `black`.
-        - width: The border width. The default value is `2.0`.
-     */
-    public init(color: UIColor? = .black, width: CGFloat = 2.0) {
-        self.color = color
-        self.width = width
-    }
+        /**
+         Creates a border configuration.
 
-    /// A colored border.
-    public static func color(_ color: UIColor, width: CGFloat) -> Self {
-        Self(color: color, width: width)
-    }
+         - Parameters:
+            - color: The border color. The default value is `black`.
+            - width: The border width. The default value is `2.0`.
+         */
+        public init(color: UIColor? = .black, width: CGFloat = 2.0) {
+            self.color = color
+            self.width = width
+        }
+
+        /// A colored border.
+        public static func color(_ color: UIColor, width: CGFloat) -> Self {
+            Self(color: color, width: width)
+        }
     #endif
 }
 
@@ -95,7 +94,7 @@ extension BorderConfiguration: AnimatableProperty, Animatable {
     }
 
     public var animatableData: AnimatableArray<Double> {
-        get { (self.color ?? .zero).animatableData + [width] }
+        get { (color ?? .zero).animatableData + [width] }
         set { self = .init(newValue) }
     }
 }

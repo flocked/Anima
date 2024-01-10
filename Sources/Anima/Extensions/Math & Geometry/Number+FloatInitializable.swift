@@ -16,19 +16,19 @@ public protocol FloatingPointInitializable: FloatingPoint & ExpressibleByFloatLi
     init(_ value: Double)
 }
 
-extension Float: FloatingPointInitializable { }
-extension Double: FloatingPointInitializable { }
-extension CGFloat: FloatingPointInitializable { }
+extension Float: FloatingPointInitializable {}
+extension Double: FloatingPointInitializable {}
+extension CGFloat: FloatingPointInitializable {}
 
 extension BinaryFloatingPoint {
     /// Converts the value from degrees to radians.
     var degreesToRadians: Self {
-        return Self.pi * self / 180.0
+        Self.pi * self / 180.0
     }
 
     /// Converts the value from radians to degress.
     var radiansToDegrees: Self {
-        return self * 180 / Self.pi
+        self * 180 / Self.pi
     }
 }
 

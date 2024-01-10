@@ -6,9 +6,9 @@
 //
 
 #if os(macOS)
-import AppKit
+    import AppKit
 #elseif canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 import SwiftUI
 
@@ -34,15 +34,15 @@ extension CGColor {
     }
 
     var nsUIColor: NSUIColor? {
-        return NSUIColor(cgColor: self)
+        NSUIColor(cgColor: self)
     }
 }
 
 #if canImport(UIKit)
-extension CGColor {
-    /// The clear color in the Generic gray color space.
-    static var clear: CGColor {
-        CGColor(gray: 0, alpha: 0)
+    extension CGColor {
+        /// The clear color in the Generic gray color space.
+        static var clear: CGColor {
+            CGColor(gray: 0, alpha: 0)
+        }
     }
-}
 #endif

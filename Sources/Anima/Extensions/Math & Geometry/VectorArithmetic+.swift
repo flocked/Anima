@@ -14,7 +14,7 @@ extension VectorArithmetic {
     }
 
     static func * (lhs: Self, rhs: Double) -> Self {
-        return lhs.scaled(by: rhs)
+        lhs.scaled(by: rhs)
     }
 
     static func / (lhs: inout Self, rhs: Double) {
@@ -22,7 +22,7 @@ extension VectorArithmetic {
     }
 
     static func / (lhs: Self, rhs: Double) -> Self {
-        return lhs.scaled(by: 1.0 / rhs)
+        lhs.scaled(by: 1.0 / rhs)
     }
 
     static prefix func - (lhs: Self) -> Self {

@@ -8,40 +8,40 @@
 import CoreGraphics
 import Foundation
 #if os(macOS)
-import AppKit
+    import AppKit
 #else
-import UIKit
+    import UIKit
 #endif
 
 /**
  Performs animations on animatable properties of objects conforming to ``AnimatablePropertyProvider``.
- 
+
  Many objects provide animatable properties.
  - macOS: `NSView`, `NSWindow`, `NSTextField`, `NSImageView`, `NSLayoutConstraint`, `CALayer` and many more.
  - iOS: `UIView`, `UILabel`, `UIImageView`, `NSLayoutConstraint`, `CALayer`  and many more.
- 
+
  To animate values, you must set the values on the object's ``AnimatablePropertyProvider/animator`` inside an Anima animation block. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0`.
- 
+
  ## Animations
- 
+
  There are three different types of animations :
  - **Decay:** ``animate(withDecay:decelerationRate:delay:options:animations:completion:)``
  - **Easing:** ``animate(withEasing:duration:delay:options:animations:completion:)``
  - **Spring:** ``animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
- 
+
  Example usage with a spring animation:
- 
+
  ```swift
  Anima.animate(withSpring: .bouncy) {
     myView.animator.center = newCenterPoint
     myView.animator.backgroundColor = .systemBlue
  }
  ```
- 
+
  - Note: All animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.
 
  ### Stop Animations
- 
+
  Changing an `animator` property outside an animation block stops its animation and changes its value immediately.
 
  ```swift
@@ -49,27 +49,27 @@ import UIKit
  myView.animator.center = newCenterPoint
  myView.animator.backgroundColor = .black
  ```
- 
+
  To stop all animations use ``stopAllAnimations(immediately:)``.
- 
+
  ```swift
  Anima.stopAllAnimations()
  ```
- 
+
  ### Preferred Framerate Range
- 
+
  You can change the preferred framerate range via ``preferredFrameRateRange``:
- 
+
  ```swift
  Anima.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 45, preferred: 30)
  ```
- 
+
  - Note: To enable high frame-rate animations on ProMotion devices (i.e. 120 fps animation), you'll need to add a key/value pair in your Info.plist. Set the key `CADisableMinimumFrameDuration` to `true. Without this entry, animations will be capped at 60 fps.
-*/
-public class Anima {
+ */
+public enum Anima {
     /**
      Performs spring animations based on a ``Spring`` configuration.
-     
+
      Example usage:
      ```swift
      Anima.animate(withSpring: .bouncy) {
@@ -77,7 +77,7 @@ public class Anima {
         myView.animator.backgroundColor = .systemBlue
      }
      ```
-     
+
      - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
 
      - Parameters:
@@ -109,7 +109,7 @@ public class Anima {
 
     /**
      Performs easing animations based on the specified ``TimingFunction``.
-     
+
      Example usage:
      ```swift
      Anima.animate(withEasing: .easeInEaseOut), duration: 3.0) {
@@ -117,7 +117,7 @@ public class Anima {
         myView.animator.backgroundColor = .systemBlue
      }
      ```
-     
+
      - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
 
      - Parameters:
@@ -149,7 +149,7 @@ public class Anima {
 
     /**
      Performs animations with a decaying acceleration.
-     
+
      Value based example usage:
 
      ```swift
@@ -158,16 +158,16 @@ public class Anima {
         view.animator.frame.origin = CGPoint(x: 50, y: 50)
      })
      ```
-     
+
      Velocity based example usage:
-     
+
      ```swift
      Anima.animate(withDecay: .velocity, animations: {
         // Increaes the view's origin velocity.
         view.animator.frame.origin.x = CGPoint(x: 50, y: 50)
      })
      ```
-     
+
      - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
 
      - Parameters:
@@ -201,7 +201,7 @@ public class Anima {
 
     /**
      Stops all animations.
-     
+
      - Parameter immediately: A Boolean value indicating whether the animations should stop immediately at their values. The default value is `false`.
      */
     public static func stopAllAnimations(immediately: Bool = true) {
@@ -210,7 +210,7 @@ public class Anima {
 
     /**
      The preferred framerate of the animations. The default value is `default` which uses the default frame rate of the display.
-     
+
      - Note: To enable high frame-rate animations on ProMotion devices (i.e. 120 fps animation), you'll need to add a key/value pair in your Info.plist. Set the key `CADisableMinimumFrameDuration` to `true. Without this entry, animations will be capped at 60 fps.
      */
     @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
@@ -228,9 +228,9 @@ public class Anima {
         myView.animator.frame.origin.y += 1000
      }
      ```
-     
+
      - Parameter changes: A block containing the updated velocities.
-     
+
      - Note: For a list of all objects that provide animatable properties check ``Anima``.
      */
     static func updateVelocity(changes: () -> Void) {
@@ -244,20 +244,20 @@ public class Anima {
 
     /**
      Performs the specified changes non animated.
-     
+
      Use it to immediately update values of properties. For properties that are currently animated, the animations stop. You can also update values non animated by using the ``AnimatablePropertyProvider/animator-54mpy`` outside of any ``Anima`` animation block.
-     
+
      ```swift
      Anima.nonAnimate() {
         myView.animator.center = newCenterPoint
      }
-     
+
      // or outside an animation block
      myView.animator.center = newCenterPoint
      ```
-     
+
      - Note: For a list of all objects that provide animatable properties check ``Anima``.
-     
+
      - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
      */
     static func nonAnimate(changes: () -> Void) {

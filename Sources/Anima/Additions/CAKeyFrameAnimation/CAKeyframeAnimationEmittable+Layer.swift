@@ -1,6 +1,6 @@
 //
 //  CAKeyframeAnimationEmittable+Layer.swift
-//  
+//
 //  Copyright (c) 2020, Adam Bell
 //  Modifed:
 //  Florian Zand on 02.11.23.

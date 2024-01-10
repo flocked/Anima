@@ -7,14 +7,14 @@
 
 import Foundation
 #if os(macOS)
-import AppKit
+    import AppKit
 #elseif canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 /**
  An animation that animates a value using a physically-modeled spring.
- 
+
  Example usage:
  ```swift
  let springAnimation = SpringAnimation(spring: .bouncy, value: CGPoint(x: 0, y: 0), target: CGPoint(x: 50, y: 100))
@@ -148,12 +148,12 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         - initialVelocity: An optional inital velocity of the animtion.
      */
     public init(spring: Spring, value: Value, target: Value, initialVelocity: Value = .zero) {
-        self._value = value.animatableData
-        self._target = target.animatableData
-        self._velocity = initialVelocity.animatableData
+        _value = value.animatableData
+        _target = target.animatableData
+        _velocity = initialVelocity.animatableData
         self.spring = spring
-        self._startValue = _value
-        self._startVelocity = _velocity
+        _startValue = _value
+        _startVelocity = _velocity
     }
 
     deinit {
@@ -176,7 +176,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         spring = settings.configuration.spring ?? spring
 
         if settings.resetSpringVelocity {
-           _velocity = .zero
+            _velocity = .zero
         }
         if let gestureVelocity = settings.configuration.gestureVelocity {
             func applyGestureVelocity(_ gestureVelocity: CGRect) {
@@ -279,7 +279,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
 
     /**
      Stops the animation at the specified position.
-     
+
      - Parameters:
         - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.

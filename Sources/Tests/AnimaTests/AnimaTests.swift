@@ -1,5 +1,5 @@
-import XCTest
 @testable import Anima
+import XCTest
 
 final class AnimaTests: XCTestCase {
     func testExample() throws {

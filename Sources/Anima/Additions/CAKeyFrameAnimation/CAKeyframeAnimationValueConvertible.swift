@@ -1,6 +1,6 @@
 //
 //  CAKeyframeAnimationValueConvertible.swift
-//  
+//
 //  Copyright (c) 2020, Adam Bell
 //  Modifed:
 //  Florian Zand on 02.11.23.
@@ -8,9 +8,9 @@
 
 import Foundation
 #if os(macOS)
-import AppKit
+    import AppKit
 #elseif canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 // MARK: - CAKeyframeAnimationValueConvertible
@@ -27,13 +27,13 @@ public protocol CAKeyframeAnimationValueConvertible {
 
 extension Float: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {
-        return self as NSNumber
+        self as NSNumber
     }
 }
 
 extension Double: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {
-        return self as NSNumber
+        self as NSNumber
     }
 }
 
@@ -41,16 +41,16 @@ extension Double: CAKeyframeAnimationValueConvertible {
 
 extension CGFloat: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {
-        return self as NSNumber
+        self as NSNumber
     }
 }
 
 extension CGPoint: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {
         #if os(macOS)
-        return NSValue(point: self)
+            return NSValue(point: self)
         #else
-        return NSValue(cgPoint: self)
+            return NSValue(cgPoint: self)
         #endif
     }
 }
@@ -58,20 +58,19 @@ extension CGPoint: CAKeyframeAnimationValueConvertible {
 extension CGSize: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {
         #if os(macOS)
-        return NSValue(size: self)
+            return NSValue(size: self)
         #else
-        return NSValue(cgSize: self)
+            return NSValue(cgSize: self)
         #endif
     }
-
 }
 
 extension CGRect: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {
         #if os(macOS)
-        return NSValue(rect: self)
+            return NSValue(rect: self)
         #else
-        return NSValue(cgRect: self)
+            return NSValue(cgRect: self)
         #endif
     }
 }
@@ -83,17 +82,17 @@ extension CGColor: CAKeyframeAnimationValueConvertible {
 }
 
 #if os(macOS)
-extension NSColor: CAKeyframeAnimationValueConvertible {
-    public func toKeyframeValue() -> AnyObject {
-        self.cgColor
+    extension NSColor: CAKeyframeAnimationValueConvertible {
+        public func toKeyframeValue() -> AnyObject {
+            cgColor
+        }
     }
-}
 #else
-extension UIColor: CAKeyframeAnimationValueConvertible {
-    public func toKeyframeValue() -> AnyObject {
-        self.cgColor
+    extension UIColor: CAKeyframeAnimationValueConvertible {
+        public func toKeyframeValue() -> AnyObject {
+            cgColor
+        }
     }
-}
 #endif
 
 extension CATransform3D: CAKeyframeAnimationValueConvertible {
@@ -109,25 +108,25 @@ extension CGAffineTransform: CAKeyframeAnimationValueConvertible {
 }
 
 #if os(macOS)
-extension NSEdgeInsets: CAKeyframeAnimationValueConvertible {
-    public func toKeyframeValue() -> AnyObject {
-        #if os(macOS)
-        NSValue(edgeInsets: self)
-        #else
-        NSValue(uiEdgeInsets: self)
-        #endif
+    extension NSEdgeInsets: CAKeyframeAnimationValueConvertible {
+        public func toKeyframeValue() -> AnyObject {
+            #if os(macOS)
+                NSValue(edgeInsets: self)
+            #else
+                NSValue(uiEdgeInsets: self)
+            #endif
+        }
     }
-}
 #else
-extension UIEdgeInsets: CAKeyframeAnimationValueConvertible {
-    public func toKeyframeValue() -> AnyObject {
-        #if os(macOS)
-        NSValue(edgeInsets: self)
-        #else
-        NSValue(uiEdgeInsets: self)
-        #endif
+    extension UIEdgeInsets: CAKeyframeAnimationValueConvertible {
+        public func toKeyframeValue() -> AnyObject {
+            #if os(macOS)
+                NSValue(edgeInsets: self)
+            #else
+                NSValue(uiEdgeInsets: self)
+            #endif
+        }
     }
-}
 #endif
 
 extension NSDirectionalEdgeInsets: CAKeyframeAnimationValueConvertible {

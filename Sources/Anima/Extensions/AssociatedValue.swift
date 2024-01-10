@@ -12,25 +12,25 @@ import ObjectiveC.runtime
 
 private extension String {
     var address: UnsafeRawPointer {
-        return UnsafeRawPointer(bitPattern: abs(hashValue))!
+        UnsafeRawPointer(bitPattern: abs(hashValue))!
     }
 }
 
 /**
  Returns the associated value for the specified object and key.
- 
+
  - Parameters:
     - key: The key of the associated value.
     - object: The object of the associated value.
  - Returns: The associated value for the object and key, or nil if the value couldn't be found for the key..
  */
 func getAssociatedValue<T>(key: String, object: AnyObject) -> T? {
-    return (objc_getAssociatedObject(object, key.address) as? _AssociatedValue)?.value as? T
+    (objc_getAssociatedObject(object, key.address) as? _AssociatedValue)?.value as? T
 }
 
 /**
  Returns the associated value for the specified object, key and inital value.
- 
+
  - Parameters:
     - key: The key of the associated value.
     - object: The object of the associated value.
@@ -38,12 +38,12 @@ func getAssociatedValue<T>(key: String, object: AnyObject) -> T? {
  - Returns: The associated value for the object and key.
  */
 func getAssociatedValue<T>(key: String, object: AnyObject, initialValue: @autoclosure () -> T) -> T {
-    return getAssociatedValue(key: key, object: object) ?? setAndReturn(initialValue: initialValue(), key: key, object: object)
+    getAssociatedValue(key: key, object: object) ?? setAndReturn(initialValue: initialValue(), key: key, object: object)
 }
 
 /**
  Returns the associated value for the specified object, key and inital value.
- 
+
  - Parameters:
     - key: The key of the associated value.
     - object: The object of the associated value.
@@ -51,7 +51,7 @@ func getAssociatedValue<T>(key: String, object: AnyObject, initialValue: @autocl
  - Returns: The associated value for the object and key.
  */
 func getAssociatedValue<T>(key: String, object: AnyObject, initialValue: () -> T) -> T {
-    return getAssociatedValue(key: key, object: object) ?? setAndReturn(initialValue: initialValue(), key: key, object: object)
+    getAssociatedValue(key: key, object: object) ?? setAndReturn(initialValue: initialValue(), key: key, object: object)
 }
 
 private func setAndReturn<T>(initialValue: T, key: String, object: AnyObject) -> T {
@@ -61,7 +61,7 @@ private func setAndReturn<T>(initialValue: T, key: String, object: AnyObject) ->
 
 /**
  Sets a associated value for the specified object and key.
- 
+
  - Parameters:
     - associatedValue: The value of the associated value.
     - key: The key of the associated value.
@@ -73,7 +73,7 @@ func set<T>(associatedValue: T?, key: String, object: AnyObject) {
 
 /**
  Sets a weak associated value for the specified object and key.
- 
+
  - Parameters:
     - weakAssociatedValue: The weak value of the associated value.
     - key: The key of the associated value.
@@ -92,7 +92,7 @@ private class _AssociatedValue {
     var _value: Any?
 
     var value: Any? {
-        return _weakValue ?? _value
+        _weakValue ?? _value
     }
 
     init(_ value: Any?) {

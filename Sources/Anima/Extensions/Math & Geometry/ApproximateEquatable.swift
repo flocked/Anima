@@ -14,7 +14,7 @@ protocol ApproximateEquatable {
     associatedtype Epsilon: FloatingPointInitializable
     /**
      A Boolean value that indicates whether `self` and the specified `other` value are approximately equal.
-     
+
      - Parameters:
         - other: The value to compare.
         - epsilon: The margin by which both values can differ and still be considered the same value.
@@ -42,7 +42,7 @@ extension CGFloat: ApproximateEquatable {
 
 extension Array: ApproximateEquatable where Element: FloatingPointInitializable {
     public func isApproximatelyEqual(to other: Self, epsilon: Element) -> Bool {
-        for i in 0..<indices.count {
+        for i in 0 ..< indices.count {
             if !self[i].isApproximatelyEqual(to: other[i], absoluteTolerance: epsilon) {
                 return false
             }
@@ -56,7 +56,7 @@ extension Set: ApproximateEquatable where Element: FloatingPointInitializable {
         let check = Array(self)
         let other = Array(other)
 
-        for i in 0..<indices.count {
+        for i in 0 ..< indices.count {
             if !check[i].isApproximatelyEqual(to: other[i], absoluteTolerance: epsilon) {
                 return false
             }
@@ -65,28 +65,28 @@ extension Set: ApproximateEquatable where Element: FloatingPointInitializable {
     }
 }
 
-extension AnimatablePair: ApproximateEquatable  where First: ApproximateEquatable, Second: ApproximateEquatable {
+extension AnimatablePair: ApproximateEquatable where First: ApproximateEquatable, Second: ApproximateEquatable {
     func isApproximatelyEqual(to other: AnimatablePair<First, Second>, epsilon: Double) -> Bool {
-        first.isApproximatelyEqual(to: other.first, epsilon: First.Epsilon(epsilon)) &&  second.isApproximatelyEqual(to: other.second, epsilon: Second.Epsilon(epsilon))
+        first.isApproximatelyEqual(to: other.first, epsilon: First.Epsilon(epsilon)) && second.isApproximatelyEqual(to: other.second, epsilon: Second.Epsilon(epsilon))
     }
 }
 
 extension Numeric where Magnitude: FloatingPoint {
     /**
      A Boolean value that indicates whether the value and the specified `other` value are approximately equal.
-     
+
      - Parameters:
         - other: The value to which `self` is compared.
         - relativeTolerance: The tolerance to use in the comparison. Defaults to `.ulpOfOne.squareRoot()`.
         - norm: The norm to use for the comparison. Defaults to `\.magnitude`.
      */
     func isApproximatelyEqual(to other: Self, relativeTolerance: Magnitude = Magnitude.ulpOfOne.squareRoot(), norm: (Self) -> Magnitude = \.magnitude) -> Bool {
-        return isApproximatelyEqual(to: other, absoluteTolerance: relativeTolerance * Magnitude.leastNormalMagnitude, relativeTolerance: relativeTolerance, norm: norm)
+        isApproximatelyEqual(to: other, absoluteTolerance: relativeTolerance * Magnitude.leastNormalMagnitude, relativeTolerance: relativeTolerance, norm: norm)
     }
 
     /**
      A Boolean value that indicates whether the value and the specified `other` value are approximately equal.
-     
+
      - Parameters:
         - other: The value to which `self` is compared.
         - absoluteTolerance: The absolute tolerance to use in the comparison.
@@ -111,7 +111,7 @@ extension Numeric where Magnitude: FloatingPoint {
 extension AdditiveArithmetic {
     /**
      A Boolean value that indicates whether the value and the specified `other` value are approximately equal.
-     
+
      - Parameters:
      - other: The value to which `self` is compared.
      - absoluteTolerance: The absolute tolerance to use in the comparison.
@@ -128,17 +128,17 @@ extension AdditiveArithmetic {
         assert(
             absoluteTolerance >= 0 && absoluteTolerance.isFinite,
             "absoluteTolerance should be non-negative and finite, " +
-            "but is \(absoluteTolerance)."
+                "but is \(absoluteTolerance)."
         )
         assert(
             relativeTolerance >= 0 && relativeTolerance <= 1,
             "relativeTolerance should be non-negative and <= 1, " +
-            "but is \(relativeTolerance)."
+                "but is \(relativeTolerance)."
         )
         if self == other { return true }
         let delta = norm(self - other)
         let scale = max(norm(self), norm(other))
-        let bound = max(absoluteTolerance, scale*relativeTolerance)
+        let bound = max(absoluteTolerance, scale * relativeTolerance)
         return delta.isFinite && delta <= bound
     }
 }

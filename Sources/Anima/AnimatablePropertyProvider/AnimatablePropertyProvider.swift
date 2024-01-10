@@ -1,6 +1,6 @@
 //
 //  AnimatablePropertyProvider.swift
-//  
+//
 //
 //  Created by Florian Zand on 27.10.23.
 //
@@ -14,16 +14,14 @@ public protocol AnimatablePropertyProvider: AnyObject {
 
     /**
      Provides animatable properties of the object.
-     
+
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update the values outside an animation block.
-     
+
      See ``PropertyAnimator`` for more information.
      */
     var animator: PropertyAnimator<Provider> { get }
 }
 
-extension AnimatablePropertyProvider {
-    public var animator: PropertyAnimator<Self> {
-        get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: PropertyAnimator(self)) }
-    }
+public extension AnimatablePropertyProvider {
+    var animator: PropertyAnimator<Self> { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: PropertyAnimator(self)) }
 }

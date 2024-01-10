@@ -8,18 +8,18 @@
 import Foundation
 import QuartzCore
 #if os(macOS)
-import AppKit
+    import AppKit
 #elseif canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 /**
  Provides animatable properties and animations of an object conforming to ``AnimatablePropertyProvider``.
- 
+
  ### Accessing Properties
 
  To access the animatable properties, use their keypath on the objects ``AnimatablePropertyProvider/animator-94wn0``:
- 
+
  To animate them, change their values inside an  an ``Anima`` animation block. To stop their animations and to update them immediately, change their values outside an animation block.
 
  ```swift
@@ -27,52 +27,52 @@ import UIKit
     var speed: CGFloat = 0.0
     var location: CGPoint = .zero
  }
- 
+
  let car = Car()
- 
+
  Anima.animate(withSpring: .smooth) {
     car.animator[\.speed] = 120.0
     car.animator[\.location].x = 200.0
  }
  ```
- 
+
  For easier access of the properties, you can extend the animator.
- 
+
  ```swift
  public extension PropertyAnimator<Car> {
     var speed: CGFloat {
         get { self[\.speed] }
         set { self[\.speed] = newValue }
     }
- 
+
     var location: CGPoint {
         get { self[\.location] }
         set { self[\.location] = newValue }
     }
  }
-  
+
  Anima.animate(withSpring: .smooth) {
     car.animator.speed = 120.0
     car.animator.location.x = 200.0
  }
  ```
-  
+
  ### Accessing Animations
- 
+
  ``animations`` is a dictionary of all running animations keyed by property names.
- 
+
  To access the animation for a specific property, use it's keypath on the `animator` using ``subscript(animation:)``:
- 
+
  ```swift
  if let speedAnimation = car.animator[animation: \.speed] {
     speedAnimation.stop()
  }
  ```
- 
+
  ### Accessing Animation velocity
- 
+
  To access or change the animation velocity of a property that is currently animated,  use it's keypath on the `animator` using ``subscript(velocity:)``:
- 
+
  ```swift
  car.animator[velocity: \.speed] = 120.0
  ```
@@ -83,14 +83,15 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     init(_ object: Provider) {
         self.object = object
     }
+
     /// A dictionary containing the current animated property keys and associated animations.
     public internal(set) var animations: [String: AnimationProviding] = [:]
 
     /**
      The current value of the property at the specified keypath.
-     
+
      Assigning a new value inside a ``Anima`` animation block animates to the new value. Changing the value outside an animation block, stops it's animation and updates the value imminently.
-     
+
      - Parameter keyPath: The keypath to the animatable property.
      */
     public subscript<Value: AnimatableProperty>(keyPath: WritableKeyPath<Provider, Value>) -> Value {
@@ -103,9 +104,7 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
 
      - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> AnimationProviding? {
-        get { animation(for: keyPath) }
-    }
+    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> AnimationProviding? { animation(for: keyPath) }
 
     /**
      The current animation velocity of the property at the specified keypath, or `zero` if the property isn't animated or the animation doesn't support velocity values.
@@ -113,7 +112,7 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
      - Parameter keyPath: The keypath to the animatable property for the velocity.
      */
     public subscript<Value: AnimatableProperty>(velocity keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        get { animation(for: keyPath)?.velocity as? Value ?? .zero  }
+        get { animation(for: keyPath)?.velocity as? Value ?? .zero }
         set { animation(for: keyPath)?.setVelocity(newValue) }
     }
 
@@ -199,13 +198,13 @@ extension PropertyAnimator {
         }
 
         #if os(iOS) || os(tvOS)
-        if let self = self as? PropertyAnimator<UIView> {
-            if settings.preventUserInteraction {
-                self.preventingUserInteractionAnimations.insert(animation.id)
-            } else {
-                self.preventingUserInteractionAnimations.remove(animation.id)
+            if let self = self as? PropertyAnimator<UIView> {
+                if settings.preventUserInteraction {
+                    self.preventingUserInteractionAnimations.insert(animation.id)
+                } else {
+                    self.preventingUserInteractionAnimations.remove(animation.id)
+                }
             }
-        }
         #endif
 
         let animationKey = keyPath.stringValue
@@ -215,7 +214,7 @@ extension PropertyAnimator {
                 completion?()
                 self?.animations[animationKey] = nil
                 #if os(iOS) || os(tvOS)
-                (self as? PropertyAnimator<UIView>)?.preventingUserInteractionAnimations.remove(animation.id)
+                    (self as? PropertyAnimator<UIView>)?.preventingUserInteractionAnimations.remove(animation.id)
                 #endif
                 AnimationController.shared.executeHandler(uuid: animation.groupID, finished: true, retargeted: false)
             default:

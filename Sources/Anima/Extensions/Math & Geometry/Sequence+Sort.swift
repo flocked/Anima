@@ -17,23 +17,23 @@ enum SequenceSortOrder: Int, Hashable {
 
 extension Sequence {
     /**
-    An array of the elements sorted by the given keypath.
-     
-     - Parameter keyPath: The keypath to compare the elements.
-     - Parameter order: The order of the sorting.
-     */
+     An array of the elements sorted by the given keypath.
+
+      - Parameter keyPath: The keypath to compare the elements.
+      - Parameter order: The order of the sorting.
+      */
     func sorted<Value>(by keyPath: KeyPath<Element, Value>, _ order: SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
-        return order == .ascending ? sorted(by: keyPath, using: <) : sorted(by: keyPath, using: >)
+        order == .ascending ? sorted(by: keyPath, using: <) : sorted(by: keyPath, using: >)
     }
 
     /**
-    An array of the elements sorted by the given keypath.
-     
-     - Parameter compare: The keypath to compare the elements.
-     - Parameter order: The order of the sorting.
-     */
+     An array of the elements sorted by the given keypath.
+
+      - Parameter compare: The keypath to compare the elements.
+      - Parameter order: The order of the sorting.
+      */
     func sorted<Value>(by keyPath: KeyPath<Element, Value?>, _ order: SequenceSortOrder = .ascending) -> [Element] where Value: Comparable {
-        return order == .ascending ? sorted(by: keyPath, using: <) : sorted(by: keyPath, using: >)
+        order == .ascending ? sorted(by: keyPath, using: <) : sorted(by: keyPath, using: >)
     }
 
     private func sorted<Value>(by compare: (Element) -> Value?, using comparator: (Value, Value) -> Bool) -> [Element] where Value: Comparable {
@@ -46,7 +46,7 @@ extension Sequence {
 
     private func sorted<Value>(by keyPath: KeyPath<Element, Value>, using comparator: (Value, Value) -> Bool) -> [Element] where Value: Comparable {
         sorted { a, b in
-            return comparator(a[keyPath: keyPath], b[keyPath: keyPath])
+            comparator(a[keyPath: keyPath], b[keyPath: keyPath])
         }
     }
 

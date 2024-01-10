@@ -1,6 +1,6 @@
 //
 //  DecayFunction.swift
-//  
+//
 //  Adopted from:
 //  Motion. https://github.com/b3ll/Motion/
 //
@@ -12,15 +12,15 @@ import SwiftUI
 
 /**
  The decay function calculates values with a decaying acceleration.
- 
+
  Example usage:
  ```swift
  let destination = DecayFunction.destination(value: 5.0, velocity: 100.0)
  // 54.95
- 
+
  let duration = DecayFunction.duration(value: 5.0, velocity: 100.0)
  // 3.05
- 
+
  let velocity = DecayFunction.velocity(startValue: 5.0, toValue: 200.0)
  // 390.4
  ```
@@ -43,26 +43,26 @@ public struct DecayFunction: Hashable {
     var one_ln_decelerationRate_1000: Double = 0.0
 
     /**
-      Initializes a decay function.
+     Initializes a decay function.
 
-      - Parameters:
-         - decelerationRate: The rate at which the velocity decays over time. Defaults to ``ScrollViewDecelerationRate``.
-      */
+     - Parameters:
+        - decelerationRate: The rate at which the velocity decays over time. Defaults to ``ScrollViewDecelerationRate``.
+     */
     public init(decelerationRate: Double = ScrollViewDecelerationRate) {
-         self.decelerationRate = decelerationRate
-         updateConstants()
-     }
+        self.decelerationRate = decelerationRate
+        updateConstants()
+    }
 
-     fileprivate mutating func updateConstants() {
-         one_ln_decelerationRate_1000 =  1.0 / (log(decelerationRate) * 1000.0)
-     }
+    fileprivate mutating func updateConstants() {
+        one_ln_decelerationRate_1000 = 1.0 / (log(decelerationRate) * 1000.0)
+    }
 
     /// Updates the current value and velocity of a decay animation.
     func update<V>(value: inout V, velocity: inout V, deltaTime: TimeInterval) where V: VectorArithmetic {
         let d_1000_dt = pow(decelerationRate, deltaTime * 1000.0)
 
         // Analytic decay equation with constants extracted out.
-        value = value + velocity.scaled(by: ((d_1000_dt - 1.0) * one_ln_decelerationRate_1000))
+        value = value + velocity.scaled(by: (d_1000_dt - 1.0) * one_ln_decelerationRate_1000)
 
         // Velocity is the derivative of the above equation
         velocity = velocity.scaled(by: d_1000_dt)
@@ -97,7 +97,7 @@ extension DecayFunction {
 
     /**
      Solves the destination for the specified value and starting velocity.
-     
+
      - Parameters:
         - value: The starting value.
         - velocity: The starting velocity of the decay.
@@ -106,7 +106,7 @@ extension DecayFunction {
      - Returns: The destination when the decay reaches zero velocity.
      */
     static func destination<V>(value: V, velocity: V, decelerationRate: Double = ScrollViewDecelerationRate) -> V where V: AnimatableProperty {
-        return V(destination(value: value.animatableData, velocity: velocity.animatableData, decelerationRate: decelerationRate))
+        V(destination(value: value.animatableData, velocity: velocity.animatableData, decelerationRate: decelerationRate))
     }
 
     /**
@@ -154,7 +154,7 @@ extension DecayFunction {
         let decayFunction = DecayFunction(decelerationRate: decelerationRate)
         let deltaTime = 1.0 / 60.0
         var duration: TimeInterval = 0.0
-        let velocityThreshold: Double = 0.05
+        let velocityThreshold = 0.05
 
         while velocity.magnitudeSquared > velocityThreshold {
             decayFunction.update(value: &value, velocity: &velocity, deltaTime: deltaTime)
@@ -189,7 +189,7 @@ extension DecayFunction {
      - Returns: The duration required to reach `toValue`.
      */
     static func duration<Value: AnimatableProperty>(value: Value, velocity: Value, decelerationRate: Double = ScrollViewDecelerationRate) -> TimeInterval {
-        return duration(value: value.animatableData, velocity: velocity.animatableData, decelerationRate: decelerationRate)
+        duration(value: value.animatableData, velocity: velocity.animatableData, decelerationRate: decelerationRate)
     }
 
     /**
@@ -203,6 +203,6 @@ extension DecayFunction {
      - Returns: The duration required to reach `toValue`.
      */
     static func duration<Value: AnimatableProperty>(startValue value: Value, toValue: Value, decelerationRate: Double = ScrollViewDecelerationRate) -> TimeInterval {
-        return duration(startValue: value.animatableData, toValue: toValue.animatableData, decelerationRate: decelerationRate)
+        duration(startValue: value.animatableData, toValue: toValue.animatableData, decelerationRate: decelerationRate)
     }
 }

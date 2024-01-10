@@ -9,7 +9,7 @@ import Foundation
 
 /**
  An animation that animates a value using an easing function (like `easeIn` or `linear`).
- 
+
  Example usage:
  ```swift
  let easingAnimation = EasingAnimation(timingFunction = .easeIn, duration: 3.0, value: CGPoint(x: 0, y: 0), target: CGPoint(x: 50, y: 100))
@@ -20,7 +20,6 @@ import Foundation
  ```
  */
 open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
-
     /// A unique identifier for the animation.
     public let id = UUID()
 
@@ -66,7 +65,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
 
     /// The resolved fraction complete using the timing function.
     var resolvedFractionComplete: CGFloat {
-        return timingFunction.solve(at: fractionComplete, duration: duration)
+        timingFunction.solve(at: fractionComplete, duration: duration)
     }
 
     /// The _current_ value of the animation. This value will change as the animation executes.
@@ -122,7 +121,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
 
     var startVelocity: Value {
         get { .zero }
-        set {  }
+        set {}
     }
 
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
@@ -141,9 +140,9 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         - target: The target value of the animation.
      */
     public init(timingFunction: TimingFunction, duration: CGFloat, value: Value, target: Value) {
-        self._value = value.animatableData
-        self._startValue = _value
-        self._target = target.animatableData
+        _value = value.animatableData
+        _startValue = _value
+        _target = target.animatableData
         self.duration = duration
         self.timingFunction = timingFunction
     }
@@ -185,7 +184,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         let previousValue = _value
 
         if isAnimated {
-            let secondsElapsed = deltaTime/duration
+            let secondsElapsed = deltaTime / duration
             fractionComplete = isReversed ? (fractionComplete - secondsElapsed) : (fractionComplete + secondsElapsed)
             _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
         } else {
@@ -193,7 +192,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
             _value = isReversed ? _startValue : _target
         }
 
-        _velocity = (_value - previousValue).scaled(by: 1.0/deltaTime)
+        _velocity = (_value - previousValue).scaled(by: 1.0 / deltaTime)
 
         let animationFinished = (isReversed ? fractionComplete <= 0.0 : fractionComplete >= 1.0) || !isAnimated
 
@@ -256,7 +255,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
 
     /**
      Stops the animation at the specified position.
-     
+
      - Parameters:
         - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
@@ -328,22 +327,22 @@ extension EasingAnimation: CustomStringConvertible {
 }
 
 /*
-/**
- A Boolean value indicating whether a paused animation scrubs linearly or uses its specified timing information.
- 
- The default value of this property is `true`, which causes the animator to use a linear timing function during scrubbing. Setting the property to `false` causes the animator to use its specified timing curve.
+ /**
+  A Boolean value indicating whether a paused animation scrubs linearly or uses its specified timing information.
+
+  The default value of this property is `true`, which causes the animator to use a linear timing function during scrubbing. Setting the property to `false` causes the animator to use its specified timing curve.
+  */
+ var scrubsLinearly: Bool = false
  */
-var scrubsLinearly: Bool = false
-*/
 
 /*
-func updateValue() {
-    guard state != .running else { return }
-    if scrubsLinearly {
-        _value = _startValue.interpolated(towards: _target, amount: fractionComplete)
-    } else {
-        _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
-    }
-    valueChanged?(value)
-}
-*/
+ func updateValue() {
+     guard state != .running else { return }
+     if scrubsLinearly {
+         _value = _startValue.interpolated(towards: _target, amount: fractionComplete)
+     } else {
+         _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
+     }
+     valueChanged?(value)
+ }
+ */

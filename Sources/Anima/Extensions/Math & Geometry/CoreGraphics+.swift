@@ -1,18 +1,18 @@
 //
-//  File.swift
-//  
+//  CoreGraphics+.swift
+//
 //
 //  Created by Florian Zand on 01.12.23.
 //
 
-import Foundation
 import CoreGraphics
+import Foundation
 
 extension CGPoint {
     /**
      Returns the scaled integral point of the current CGPoint.
      The x and y values are scaled based on the current device's screen scale.
-     
+
      - Returns: The scaled integral CGPoint.
      */
     public var scaledIntegral: CGPoint {
@@ -26,15 +26,15 @@ extension CGPoint {
 
     /**
      Returns a new CGPoint by offsetting the current point by the specified values along the x and y axes.
-     
+
      - Parameters:
         - x: The value to be added to the x-coordinate of the current point.
         - y: The value to be added to the y-coordinate of the current point.
-     
+
      - Returns: The new CGPoint obtained by offsetting the current point by the specified values.
      */
     func offset(x: CGFloat = 0, y: CGFloat) -> CGPoint {
-        return CGPoint(x: self.x + x, y: self.y + y)
+        CGPoint(x: self.x + x, y: self.y + y)
     }
 
     /// The point as `CGSize`, using the x-coordinate as width and y-coordinate as height.
@@ -54,7 +54,7 @@ extension CGSize {
     /**
      Returns the scaled integral size of the size.
      The width and height values are scaled based on the current device's screen scale.
-     
+
      - Returns: The scaled integral size of the size.
      */
     public var scaledIntegral: CGSize {
@@ -74,11 +74,11 @@ extension CGSize {
 
 extension CGRect {
     /**
-      Returns the scaled integral rect based on the current rect.
-      The origin and size values are scaled based on the current device's screen scale.
-      
-      - Returns: The scaled integral rect.
-      */
+     Returns the scaled integral rect based on the current rect.
+     The origin and size values are scaled based on the current device's screen scale.
+
+     - Returns: The scaled integral rect.
+     */
     public var scaledIntegral: CGRect {
         CGRect(
             x: origin.x.scaledIntegral,
@@ -90,19 +90,19 @@ extension CGRect {
 
     /// The center point of the rectangle.
     var center: CGPoint {
-        get { return CGPoint(x: centerX, y: centerY) }
+        get { CGPoint(x: centerX, y: centerY) }
         set { centerX = newValue.x; centerY = newValue.y }
     }
 
     /// The horizontal center of the rectangle.
     var centerX: CGFloat {
-        get { return midX }
+        get { midX }
         set { origin.x = newValue - width * 0.5 }
     }
 
     /// The vertical center of the rectangle.
     var centerY: CGFloat {
-        get { return midY }
+        get { midY }
         set { origin.y = newValue - height * 0.5 }
     }
 

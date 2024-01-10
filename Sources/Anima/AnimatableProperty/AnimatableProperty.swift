@@ -6,45 +6,44 @@
 //
 
 #if os(macOS)
-import AppKit
+    import AppKit
 #elseif canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
-import SwiftUI
 import Decomposed
+import SwiftUI
 
 // MARK: - AnimatableProperty
 
 /**
  A type that describes an animatable value.
-  
+
  `Anima` can animate any type conforming to this protocol. It uses `animatableData` to calculate new values in an animation.
- 
+
  If the type you want to conform has many properties, consider using ``AnimatableArray`` as `animatableData`. It lets you combine a collection of values.
- 
+
  Example conformance:
  ```swift
  struct MyStruct {
     let value: Double
     let point: CGPoint
  }
- 
+
  extension MyStruct: AnimatableProperty {
     init(_ animatableData: AnimatableArray<Double>) {
         value = animatableData[0]
         point = CGPoint(x: animatableData[1], y: animatableData[2])
     }
- 
+
     var animatableData: AnimatableArray<Double> {
         [value, point.x, point.y]
     }
- 
+
     static let zero = MyStruct(value: 0, point: .zero)
  }
  ```
  */
 public protocol AnimatableProperty: Equatable {
-
     /// The type defining the animatable representation of the value.
     associatedtype AnimatableData: VectorArithmetic
 
@@ -69,11 +68,11 @@ public extension AnimatableProperty {
 
 extension Optional: AnimatableProperty where Wrapped: AnimatableProperty {
     public var animatableData: Wrapped.AnimatableData {
-        self.optional?.animatableData ?? Wrapped.zero.animatableData
+        optional?.animatableData ?? Wrapped.zero.animatableData
     }
 
     public init(_ animatableData: Wrapped.AnimatableData) {
-        self = Wrapped.init(animatableData)
+        self = Wrapped(animatableData)
     }
 
     public static var zero: Wrapped? {
@@ -81,12 +80,12 @@ extension Optional: AnimatableProperty where Wrapped: AnimatableProperty {
     }
 }
 
-extension AnimatableProperty where Self.AnimatableData == Self {
-    public var animatableData: Self {
+public extension AnimatableProperty where Self.AnimatableData == Self {
+    var animatableData: Self {
         self
     }
 
-    public init(_ animatableData: Self) {
+    init(_ animatableData: Self) {
         self = animatableData
     }
 }
@@ -94,13 +93,13 @@ extension AnimatableProperty where Self.AnimatableData == Self {
 extension Float: AnimatableProperty {
     public var scaledIntegral: Self {
         #if os(macOS)
-        let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
+            let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
         #elseif os(iOS) || os(tvOS)
-        let scale = Float(UIScreen.main.scale)
+            let scale = Float(UIScreen.main.scale)
         #else
-        let scale: Float = 1.0
+            let scale: Float = 1.0
         #endif
-        return rounded(toNearest: 1.0/scale)
+        return rounded(toNearest: 1.0 / scale)
     }
 }
 
@@ -115,13 +114,13 @@ extension Double: AnimatableProperty {
 
     public var scaledIntegral: Self {
         #if os(macOS)
-        let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
+            let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
         #elseif os(iOS) || os(tvOS)
-        let scale = UIScreen.main.scale
+            let scale = UIScreen.main.scale
         #else
-        let scale = 1.0
+            let scale = 1.0
         #endif
-        return rounded(toNearest: 1.0/scale)
+        return rounded(toNearest: 1.0 / scale)
     }
 }
 
@@ -136,18 +135,18 @@ extension CGFloat: AnimatableProperty {
 
     public var scaledIntegral: Self {
         #if os(macOS)
-        let scale = NSScreen.main?.backingScaleFactor ?? 1.0
+            let scale = NSScreen.main?.backingScaleFactor ?? 1.0
         #elseif os(iOS) || os(tvOS)
-        let scale = UIScreen.main.scale
+            let scale = UIScreen.main.scale
         #else
-        let scale = 1.0
+            let scale = 1.0
         #endif
-        return rounded(toNearest: 1.0/scale)
+        return rounded(toNearest: 1.0 / scale)
     }
 }
 
-extension AnimatableProperty where Self: NSNumber {
-    public init(_ animatableData: AnimatableArray<Double>) {
+public extension AnimatableProperty where Self: NSNumber {
+    init(_ animatableData: AnimatableArray<Double>) {
         self.init(value: animatableData[0])
     }
 }
@@ -181,58 +180,58 @@ extension CGRect: AnimatableProperty {
 }
 
 #if os(macOS)
-extension AnimatableProperty where Self: NSColor {
-    public init(_ animatableData: AnimatableArray<Double>) {
-        #if os(macOS)
-        self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
-        #else
-        self.init(red: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
-        #endif
-    }
-}
-
-extension NSColor: AnimatableProperty {
-    public var animatableData: AnimatableArray<Double> {
-        let rgba = self.rgbaComponents()
-        return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
+    public extension AnimatableProperty where Self: NSColor {
+        init(_ animatableData: AnimatableArray<Double>) {
+            #if os(macOS)
+                self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
+            #else
+                self.init(red: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
+            #endif
+        }
     }
 
-    public static var zero: Self {
-        Self(red: 0, green: 0, blue: 0, alpha: 0)
+    extension NSColor: AnimatableProperty {
+        public var animatableData: AnimatableArray<Double> {
+            let rgba = rgbaComponents()
+            return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
+        }
+
+        public static var zero: Self {
+            Self(red: 0, green: 0, blue: 0, alpha: 0)
+        }
     }
-}
 #else
-extension AnimatableProperty where Self: UIColor {
-    public init(_ animatableData: AnimatableArray<Double>) {
-        #if os(macOS)
-        self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
-        #else
-        self.init(red: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
-        #endif
-    }
-}
-
-extension UIColor: AnimatableProperty {
-    public var animatableData: AnimatableArray<Double> {
-        let rgba = self.rgbaComponents()
-        return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
+    public extension AnimatableProperty where Self: UIColor {
+        init(_ animatableData: AnimatableArray<Double>) {
+            #if os(macOS)
+                self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
+            #else
+                self.init(red: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
+            #endif
+        }
     }
 
-    public static var zero: Self {
-        Self(red: 0, green: 0, blue: 0, alpha: 0)
+    extension UIColor: AnimatableProperty {
+        public var animatableData: AnimatableArray<Double> {
+            let rgba = rgbaComponents()
+            return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
+        }
+
+        public static var zero: Self {
+            Self(red: 0, green: 0, blue: 0, alpha: 0)
+        }
     }
-}
 #endif
 
-extension AnimatableProperty where Self: CGColor {
-    public init(_ animatableData: AnimatableArray<Double>) {
+public extension AnimatableProperty where Self: CGColor {
+    init(_ animatableData: AnimatableArray<Double>) {
         self = NSUIColor(animatableData).cgColor as! Self
     }
 }
 
 extension CGColor: AnimatableProperty {
     public var animatableData: AnimatableArray<Double> {
-        self.nsUIColor?.animatableData ?? [0, 0, 0, 0]
+        nsUIColor?.animatableData ?? [0, 0, 0, 0]
     }
 
     public static var zero: Self {
@@ -261,33 +260,33 @@ extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
     }
 
     public var animatableData: AnimatableArray<Double> {
-        get {[top, bottom, leading, trailing] }
+        get { [top, bottom, leading, trailing] }
         set { self = .init(newValue) }
     }
 }
 
 #if os(macOS)
-extension NSEdgeInsets: AnimatableProperty, Animatable {
-    public var animatableData: AnimatableArray<Double> {
-        get { [top, self.left, bottom, self.right] }
-        set { self = .init(newValue) }
-    }
+    extension NSEdgeInsets: AnimatableProperty, Animatable {
+        public var animatableData: AnimatableArray<Double> {
+            get { [top, left, bottom, right] }
+            set { self = .init(newValue) }
+        }
 
-    public init(_ animatableData: AnimatableArray<Double>) {
-        self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
+        public init(_ animatableData: AnimatableArray<Double>) {
+            self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
+        }
     }
-}
 #else
-extension UIEdgeInsets: AnimatableProperty, Animatable {
-    public var animatableData: AnimatableArray<Double> {
-        get { [top, self.left, bottom, self.right] }
-        set { self = .init(newValue) }
-    }
+    extension UIEdgeInsets: AnimatableProperty, Animatable {
+        public var animatableData: AnimatableArray<Double> {
+            get { [top, left, bottom, right] }
+            set { self = .init(newValue) }
+        }
 
-    public init(_ animatableData: AnimatableArray<Double>) {
-        self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
+        public init(_ animatableData: AnimatableArray<Double>) {
+            self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
+        }
     }
-}
 #endif
 
 extension CGVector: AnimatableProperty, Animatable {
@@ -318,12 +317,12 @@ extension CGQuaternion: AnimatableProperty, Animatable {
     }
 
     public var animatableData: AnimatableArray<Double> {
-        get { [self.angle, self.axis.x, self.axis.y, self.axis.z] }
+        get { [angle, axis.x, axis.y, axis.z] }
         set { self = .init(newValue) }
     }
 
     public static var zero: CGQuaternion {
-        CGQuaternion.init(angle: 0, axis: .init(0, 0, 0))
+        CGQuaternion(angle: 0, axis: .init(0, 0, 0))
     }
 }
 
@@ -359,15 +358,13 @@ extension CGVector4: AnimatableProperty, Animatable {
 
 extension Array: AnimatableProperty where Element: AnimatableProperty {
     public init(_ animatableData: AnimatableArray<Element.AnimatableData>) {
-        self.init(animatableData.elements.compactMap({Element($0)}))
+        self.init(animatableData.elements.compactMap { Element($0) })
     }
 
-    public var animatableData: AnimatableArray<Element.AnimatableData> {
-        get { AnimatableArray<Element.AnimatableData>(self.compactMap({$0.animatableData})) }
-    }
+    public var animatableData: AnimatableArray<Element.AnimatableData> { AnimatableArray<Element.AnimatableData>(compactMap(\.animatableData)) }
 
     public static var zero: [Element] {
-        Self.init()
+        Self()
     }
 }
 
@@ -381,7 +378,7 @@ protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableA
 
 extension AnimatableColor {
     func animatable(to other: any AnimatableColor) -> Self {
-        if self.alpha == 0.0 {
+        if alpha == 0.0 {
             var animatableData = other.animatableData
             animatableData[safe: 3] = 0.0
             return Self(animatableData)
@@ -390,17 +387,17 @@ extension AnimatableColor {
     }
 }
 
-extension CGColor: AnimatableColor { }
+extension CGColor: AnimatableColor {}
 
 extension NSUIColor: AnimatableColor {
     var alpha: CGFloat {
-        return alphaComponent
+        alphaComponent
     }
 }
 
 extension Optional: AnimatableColor where Wrapped: AnimatableColor {
     var alpha: CGFloat {
-        self.optional?.alpha ?? 0.0
+        optional?.alpha ?? 0.0
     }
 }
 
@@ -415,16 +412,16 @@ protocol AnimatableConfiguration {
 extension AnimatableConfiguration {
     func animatable(to other: AnimatableConfiguration) -> Self {
         var configuration = self
-        if self.color == nil || self.color?.alpha == 0.0, let otherColor = other.color {
+        if color == nil || color?.alpha == 0.0, let otherColor = other.color {
             configuration.color = otherColor.withAlphaComponent(0.0)
         }
         return configuration
     }
 }
 
-extension ShadowConfiguration: AnimatableConfiguration { }
+extension ShadowConfiguration: AnimatableConfiguration {}
 
-extension BorderConfiguration: AnimatableConfiguration { }
+extension BorderConfiguration: AnimatableConfiguration {}
 
 // MARK: - AnimatableCollection
 
@@ -436,14 +433,14 @@ protocol AnimatableCollection: RangeReplaceableCollection, BidirectionalCollecti
 
 extension AnimatableArray: AnimatableCollection {
     func animatable(to collection: any AnimatableCollection) -> Self {
-        let diff = collection.count - self.count
+        let diff = collection.count - count
         return diff > 0 ? (self + Array(repeating: .zero, count: diff)) : self
     }
 }
 
 extension Array: AnimatableCollection where Self: AnimatableProperty {
     func animatable(to collection: any AnimatableCollection) -> Self {
-        let diff = collection.count - self.count
+        let diff = collection.count - count
         return diff > 0 ? (self + Array(repeating: .zero, count: diff)) : self
     }
 }

@@ -1,6 +1,6 @@
 //
 //  KeyPath+.swift
-//  
+//
 //
 //  Created by Florian Zand on 13.10.23.
 //
@@ -14,7 +14,7 @@ extension PartialKeyPath {
             return string
         }
         let me = String(describing: self)
-        let rootName =  String(describing: Root.self)
+        let rootName = String(describing: Root.self)
         let removingRootName = me.components(separatedBy: rootName)
         var keyPathValue = removingRootName.last ?? ""
         if keyPathValue.first == "." { keyPathValue.removeFirst() }

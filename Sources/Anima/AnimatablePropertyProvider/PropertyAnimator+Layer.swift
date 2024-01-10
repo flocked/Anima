@@ -1,35 +1,33 @@
 //
 //  PropertyAnimator+Layer.swift
-//  
+//
 //
 //  Created by Florian Zand on 12.10.23.
 //
 
 #if os(macOS)
-import AppKit
+    import AppKit
 #elseif canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 import Decomposed
 
-extension CALayer: AnimatablePropertyProvider { }
+extension CALayer: AnimatablePropertyProvider {}
 
-extension AnimatablePropertyProvider where Self: CALayer {
+public extension AnimatablePropertyProvider where Self: CALayer {
     /**
      Provides animatable properties of the layer.
-     
+
      To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
-     
+
      See ``LayerAnimator`` for more information about how to animate and all animatable properties.
      */
-    public var animator: LayerAnimator<Self> {
-        get { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self)) }
-    }
+    var animator: LayerAnimator<Self> { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self)) }
 }
 
 /**
  Provides animatable properties of `CALayer`.
- 
+
  ### Animating Properties
 
  To animate the properties, change their values inside an ``Anima`` animation block:
@@ -45,29 +43,28 @@ extension AnimatablePropertyProvider where Self: CALayer {
  ```swift
  layer.animator.backgroundColor = .white
  ```
- 
+
  ### Accessing Animations
- 
+
  To access the animation for a property, use ``animation(for:)``:
- 
+
  ```swift
  if let animation = layer.animator.animation(for: \.frame) {
     animation.stop()
  }
  ```
- 
+
  ### Accessing Animation Velocity
- 
+
  To access the animation velocity for a property, use ``animationVelocity(for:)``.
- 
+
  ```swift
  if let velocity = layer.animator.animation(for: \.origin) {
- 
+
  }
  ```
  */
 public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
-
     // MARK: - Animatable Properties
 
     /// The bounds of the layer.
@@ -143,18 +140,18 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     }
 
     /*
-    /// The border color of the layer.
-    var borderColor: CGColor? {
-        get { self[\.borderColor] }
-        set { self[\.borderColor] = newValue }
-    }
-    
-    /// The border width of the layer.
-    var borderWidth: CGFloat {
-        get { self[\.borderWidth] }
-        set { self[\.borderWidth] = newValue }
-    }
-    */
+     /// The border color of the layer.
+     var borderColor: CGColor? {
+         get { self[\.borderColor] }
+         set { self[\.borderColor] = newValue }
+     }
+
+     /// The border width of the layer.
+     var borderWidth: CGFloat {
+         get { self[\.borderWidth] }
+         set { self[\.borderWidth] = newValue }
+     }
+     */
 
     /// The shadow of the layer.
     public var shadow: ShadowConfiguration {
@@ -238,181 +235,179 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     }
 }
 
-extension LayerAnimator where Layer: CAShapeLayer {
-
+public extension LayerAnimator where Layer: CAShapeLayer {
     /// The color used to fill the shape’s path.
-    public var fillColor: CGColor? {
+    var fillColor: CGColor? {
         get { self[\.fillColor] }
         set { self[\.fillColor] = newValue }
     }
 
     /// The dash pattern applied to the shape’s path when stroked.
-    public var lineDashPattern: [Double] {
+    var lineDashPattern: [Double] {
         get { self[\._lineDashPattern] }
         set { self[\._lineDashPattern] = newValue }
     }
 
     /// The dash phase applied to the shape’s path when stroked.
-    public var lineDashPhase: CGFloat {
+    var lineDashPhase: CGFloat {
         get { self[\.lineDashPhase] }
         set { self[\.lineDashPhase] = newValue }
     }
 
     /// Specifies the line width of the shape’s path.
-    public var lineWidth: CGFloat {
+    var lineWidth: CGFloat {
         get { self[\.lineWidth] }
         set { self[\.lineWidth] = newValue }
     }
 
     /// The miter limit used when stroking the shape’s path.
-    public var miterLimit: CGFloat {
+    var miterLimit: CGFloat {
         get { self[\.miterLimit] }
         set { self[\.miterLimit] = newValue }
     }
 
     /// The color used to stroke the shape’s path.
-    public var strokeColor: CGColor? {
+    var strokeColor: CGColor? {
         get { self[\.strokeColor] }
         set { self[\.strokeColor] = newValue }
     }
 
     /// The relative location at which to begin stroking the path.
-    public var strokeStart: CGFloat {
+    var strokeStart: CGFloat {
         get { self[\.strokeStart] }
         set { self[\.strokeStart] = newValue }
     }
 
     /// The relative location at which to stop stroking the path.
-    public var strokeEnd: CGFloat {
+    var strokeEnd: CGFloat {
         get { self[\.strokeEnd] }
         set { self[\.strokeEnd] = newValue }
     }
 }
 
-extension LayerAnimator where Layer: CAReplicatorLayer {
-
+public extension LayerAnimator where Layer: CAReplicatorLayer {
     /// Specifies the delay, in seconds, between replicated copies.
-    public var instanceDelay: CGFloat {
+    var instanceDelay: CGFloat {
         get { self[\.instanceDelay] }
         set { self[\.instanceDelay] = newValue }
     }
 
     /// The transform matrix applied to the previous instance to produce the current instance.
-    public var instanceTransform: CATransform3D {
+    var instanceTransform: CATransform3D {
         get { self[\.instanceTransform] }
         set { self[\.instanceTransform] = newValue }
     }
 
     /// Defines the color used to multiply the source object.
-    public var instanceColor: CGColor? {
+    var instanceColor: CGColor? {
         get { self[\.instanceColor] }
         set { self[\.instanceColor] = newValue }
     }
 
     /// Defines the offset added to the red component of the color for each replicated instance. Animatable.
-    public var instanceRedOffset: CGFloat {
+    var instanceRedOffset: CGFloat {
         get { CGFloat(self[\.instanceRedOffset]) }
         set { self[\.instanceRedOffset] = Float(newValue) }
     }
 
     /// Defines the offset added to the green component of the color for each replicated instance. Animatable.
-    public var instanceGreenOffset: CGFloat {
+    var instanceGreenOffset: CGFloat {
         get { CGFloat(self[\.instanceGreenOffset]) }
         set { self[\.instanceGreenOffset] = Float(newValue) }
     }
 
     /// Defines the offset added to the blue component of the color for each replicated instance. Animatable.
-    public var instanceBlueOffset: CGFloat {
+    var instanceBlueOffset: CGFloat {
         get { CGFloat(self[\.instanceBlueOffset]) }
         set { self[\.instanceBlueOffset] = Float(newValue) }
     }
 
     /// Defines the offset added to the alpha component of the color for each replicated instance. Animatable.
-    public var instanceAlphaOffset: CGFloat {
+    var instanceAlphaOffset: CGFloat {
         get { CGFloat(self[\.instanceAlphaOffset]) }
         set { self[\.instanceAlphaOffset] = Float(newValue) }
     }
 }
 
-extension LayerAnimator where Layer: CATiledLayer {
+public extension LayerAnimator where Layer: CATiledLayer {
     /// The maximum size of each tile used to create the layer's content.
-    public var tileSize: CGSize {
+    var tileSize: CGSize {
         get { self[\.tileSize] }
         set { self[\.tileSize] = newValue }
     }
 }
 
-extension LayerAnimator where Layer: CAGradientLayer {
+public extension LayerAnimator where Layer: CAGradientLayer {
     /// The fill color of the layer.
-    public var colors: [CGColor] {
+    var colors: [CGColor] {
         get { self[\._colors] }
         set { self[\._colors] = newValue }
     }
 
     /// The locations of each gradient stop.
-    public var locations: [CGFloat] {
+    var locations: [CGFloat] {
         get { self[\._locations] }
         set { self[\._locations] = newValue }
     }
 
     /// The start point of the gradient when drawn in the layer’s coordinate space.
-    public var startPoint: CGPoint {
+    var startPoint: CGPoint {
         get { self[\.startPoint] }
         set { self[\.startPoint] = newValue }
     }
 
     /// The end point of the gradient when drawn in the layer’s coordinate space.
-    public var endPoint: CGPoint {
+    var endPoint: CGPoint {
         get { self[\.endPoint] }
         set { self[\.endPoint] = newValue }
     }
 }
 
-extension LayerAnimator where Layer: CAEmitterLayer {
+public extension LayerAnimator where Layer: CAEmitterLayer {
     /// The position of the center of the particle emitter.
-    public var emitterPosition: CGPoint {
+    var emitterPosition: CGPoint {
         get { self[\.emitterPosition] }
         set { self[\.emitterPosition] = newValue }
     }
 
     /// Specifies the center of the particle emitter shape along the z-axis.
-    public var emitterZPosition: CGFloat {
+    var emitterZPosition: CGFloat {
         get { self[\.emitterZPosition] }
         set { self[\.emitterZPosition] = newValue }
     }
 
     /// Determines the depth of the emitter shape.
-    public var emitterDepth: CGFloat {
+    var emitterDepth: CGFloat {
         get { self[\.emitterDepth] }
         set { self[\.emitterDepth] = newValue }
     }
 
     /// Determines the size of the particle emitter shape.
-    public var emitterSize: CGSize {
+    var emitterSize: CGSize {
         get { self[\.emitterSize] }
         set { self[\.emitterSize] = newValue }
     }
 
     /// Defines a multiplier applied to the cell-defined particle spin.
-    public var spin: CGFloat {
+    var spin: CGFloat {
         get { CGFloat(self[\.spin]) }
         set { self[\.spin] = Float(newValue) }
     }
 
     /// Defines a multiplier applied to the cell-defined particle velocity.
-    public var velocity: CGFloat {
+    var velocity: CGFloat {
         get { CGFloat(self[\.velocity]) }
         set { self[\.velocity] = Float(newValue) }
     }
 
     /// Defines a multiplier that is applied to the cell-defined birth rate.
-    public var birthRate: CGFloat {
+    var birthRate: CGFloat {
         get { CGFloat(self[\.birthRate]) }
         set { self[\.birthRate] = Float(newValue) }
     }
 
     /// Defines a multiplier applied to the cell-defined lifetime range when particles are created.
-    public var lifetime: CGFloat {
+    var lifetime: CGFloat {
         get { CGFloat(self[\.lifetime]) }
         set { self[\.lifetime] = Float(newValue) }
     }
@@ -420,21 +415,21 @@ extension LayerAnimator where Layer: CAEmitterLayer {
 
 extension CAGradientLayer {
     var _locations: [CGFloat] {
-        get { locations?.compactMap({$0.doubleValue}) ?? []  }
+        get { locations?.compactMap(\.doubleValue) ?? [] }
         set { locations = newValue as [NSNumber] }
     }
 }
 
-fileprivate extension CAShapeLayer {
+private extension CAShapeLayer {
     var _lineDashPattern: [Double] {
-        get {lineDashPattern?.compactMap({$0.doubleValue}) ?? [] }
+        get { lineDashPattern?.compactMap(\.doubleValue) ?? [] }
         set { lineDashPattern = newValue as [NSNumber] }
     }
 }
 
-fileprivate extension CAGradientLayer {
+private extension CAGradientLayer {
     var _colors: [CGColor] {
-        get { return (colors as? [CGColor]) ??  [] }
+        get { (colors as? [CGColor]) ?? [] }
         set { colors = newValue }
     }
 }

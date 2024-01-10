@@ -8,22 +8,25 @@ let package = Package(
     platforms: [
         .iOS(.v13),
         .macOS(.v11),
-        .tvOS(.v13)
+        .tvOS(.v13),
     ],
     products: [
         .library(
             name: "Anima",
-            targets: ["Anima"])
+            targets: ["Anima"]
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/b3ll/Decomposed.git", branch: "main")
+        .package(url: "https://github.com/b3ll/Decomposed.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "Anima",
-            dependencies: ["Decomposed"]),
+            dependencies: ["Decomposed"]
+        ),
         .testTarget(
             name: "AnimaTests",
-            dependencies: ["Anima"])
+            dependencies: ["Anima"]
+        ),
     ]
 )

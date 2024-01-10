@@ -23,9 +23,9 @@ public protocol AnimationProviding {
 
     /**
      The delay (in seconds) after which the animations begin.
-     
+
      The default value of this property is `0.0`. When the value is greater than `0`, the start of any animations is delayed by the specified amount of time.
-     
+
      To set a value for this property, use the ``start(afterDelay:)`` method when starting your animations.
      */
     var delay: TimeInterval { get }
@@ -42,7 +42,7 @@ public protocol AnimationProviding {
 
     /**
      Stops the animation at the specified position.
-     
+
      - Parameters:
         - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.

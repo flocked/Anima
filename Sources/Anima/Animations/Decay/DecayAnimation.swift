@@ -10,31 +10,31 @@
 import Foundation
 
 /**
- An animation that animates a value with a decaying acceleration.
- 
-There are two ways ways to create a decay animation:
+  An animation that animates a value with a decaying acceleration.
 
- - **target**: You provide a target and the animation will animate the value to the target with a decaying acceleration.
+ There are two ways ways to create a decay animation:
 
- ```swift
- let decayAnimation = DecayAnimation(value: value, target: target)
- decayAnimation.valueChanged = { newValue in
-     view.frame.origin = newValue
- }
- decayAnimation.start()
- ```
+  - **target**: You provide a target and the animation will animate the value to the target with a decaying acceleration.
 
- - **velocity**: You provide a velocity and the animation will increase or decrease the initial value depending on the velocity and will slow to a stop. This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
+  ```swift
+  let decayAnimation = DecayAnimation(value: value, target: target)
+  decayAnimation.valueChanged = { newValue in
+      view.frame.origin = newValue
+  }
+  decayAnimation.start()
+  ```
 
- ```swift
- let decayAnimation = DecayAnimation(value: value, velocity: velocity)
- decayAnimation.valueChanged = { newValue in
-     view.frame.origin = newValue
- }
- decayAnimation.start()
- ```
+  - **velocity**: You provide a velocity and the animation will increase or decrease the initial value depending on the velocity and will slow to a stop. This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
 
- */
+  ```swift
+  let decayAnimation = DecayAnimation(value: value, velocity: velocity)
+  decayAnimation.valueChanged = { newValue in
+      view.frame.origin = newValue
+  }
+  decayAnimation.start()
+  ```
+
+  */
 open class DecayAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
@@ -123,12 +123,13 @@ open class DecayAnimation<Value: AnimatableProperty>: AnimationProviding, Config
 
     /**
      Computes the target value the decay animation will stop at. Getting this value will compute the estimated endpoint for the decay animation. Setting this value adjust the ``velocity`` to an value  that will result in the animation ending up at the specified target when it stops.
-     
+
      Adjusting this is similar to providing a new `targetContentOffset` in `UIScrollView`'s `scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>)`.
      */
     public var target: Value {
         get {
-            _velocity == .zero ? value : Value(DecayFunction.destination(value: _value, velocity: _velocity, decelerationRate: decayFunction.decelerationRate)) }
+            _velocity == .zero ? value : Value(DecayFunction.destination(value: _value, velocity: _velocity, decelerationRate: decayFunction.decelerationRate))
+        }
         set {
             let newVelocity = DecayFunction.velocity(startValue: value.animatableData, toValue: newValue.animatableData)
             guard newVelocity != _velocity else { return }
@@ -308,7 +309,7 @@ open class DecayAnimation<Value: AnimatableProperty>: AnimationProviding, Config
 
     /**
      Stops the animation at the specified position.
-     
+
      - Parameters:
         - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
@@ -375,9 +376,9 @@ extension DecayAnimation: CustomStringConvertible {
     }
 }
 
-extension Anima {
+public extension Anima {
     /// The mode how ``Anima`` should animate properties with a decaying animation.
-    public enum DecayAnimationMode {
+    enum DecayAnimationMode {
         /// The value of animated properties will increase or decrease (depending on the values applied) with a decelerating rate.  This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
         case velocity
         /// The animated properties will animate to the applied values  with a decelerating rate.

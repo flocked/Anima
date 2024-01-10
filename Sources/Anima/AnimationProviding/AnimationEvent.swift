@@ -1,6 +1,6 @@
 //
 //  AnimationEvent.swift
-//  
+//
 //
 //  Created by Florian Zand on 15.11.23.
 //

@@ -8,24 +8,23 @@
 //  Advance, https://github.com/timdonnelly/Advance
 //
 
-import Foundation
 import Accelerate
+import Foundation
 
 public extension TimingFunction {
     /// A bezier curve that can be used to calculate timing functions.
     struct UnitBezier: Hashable, Sendable {
-
         /// The first point of the bezier.
         public var first: CGPoint {
             didSet {
-                self.first = CGPoint(first.x.clamped(max: 1.0), first.y.clamped(max: 1.0))
+                first = CGPoint(first.x.clamped(max: 1.0), first.y.clamped(max: 1.0))
             }
         }
 
         /// The second point of the bezier.
         public var second: CGPoint {
             didSet {
-                self.second = CGPoint(second.x.clamped(max: 1.0), second.y.clamped(max: 1.0))
+                second = CGPoint(second.x.clamped(max: 1.0), second.y.clamped(max: 1.0))
             }
         }
 
@@ -42,26 +41,26 @@ public extension TimingFunction {
 
         /**
          Calculates the resulting `y` for given `x`.
-         
+
          - Parameters:
          - x: The value to solve for.
          - epsilon: The required precision of the result (where `x * epsilon` is the maximum time segment to be evaluated).
          - Returns: The solved `y` value.
          */
         public func solve(x: Double, epsilon: Double) -> Double {
-            return UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: epsilon)
+            UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: epsilon)
         }
 
         /**
          Calculates the resulting `y` for given `x`.
-         
+
          - Parameters:
          - x: The value to solve for.
          - duration: The duration of the solving value. It is used to calculate the required precision of the result.
          - Returns: The solved `y` value.
          */
         public func solve(x: Double, duration: Double) -> Double {
-            return UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: 1.0 / (duration * 1000.0))
+            UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: 1.0 / (duration * 1000.0))
         }
     }
 }
@@ -76,7 +75,6 @@ private struct UnitBezierSolver {
     private let cy: Double
 
     init(p1x: Double, p1y: Double, p2x: Double, p2y: Double) {
-
         // Calculate the polynomial coefficients, implicit first and last control points are (0,0) and (1,1).
         cx = 3.0 * p1x
         bx = 3.0 * (p2x - p1x) - cx
@@ -88,31 +86,31 @@ private struct UnitBezierSolver {
     }
 
     func solve(x: Double, eps: Double) -> Double {
-        return sampleCurveY(t: solveCurveX(x: x, eps: eps))
+        sampleCurveY(t: solveCurveX(x: x, eps: eps))
     }
 
     private func sampleCurveX(t: Double) -> Double {
-        return ((ax * t + bx) * t + cx) * t
+        ((ax * t + bx) * t + cx) * t
     }
 
     private func sampleCurveY(t: Double) -> Double {
-        return ((ay * t + by) * t + cy) * t
+        ((ay * t + by) * t + cy) * t
     }
 
     private func sampleCurveDerivativeX(t: Double) -> Double {
-        return (3.0 * ax * t + 2.0 * bx) * t + cx
+        (3.0 * ax * t + 2.0 * bx) * t + cx
     }
 
     private func solveCurveX(x: Double, eps: Double) -> Double {
-        var t0: Double = 0.0
-        var t1: Double = 0.0
-        var t2: Double = 0.0
-        var x2: Double = 0.0
-        var d2: Double = 0.0
+        var t0 = 0.0
+        var t1 = 0.0
+        var t2 = 0.0
+        var x2 = 0.0
+        var d2 = 0.0
 
         // First try a few iterations of Newton's method -- normally very fast.
         t2 = x
-        for _ in 0..<8 {
+        for _ in 0 ..< 8 {
             x2 = sampleCurveX(t: t2) - x
             if abs(x2) < eps {
                 return t2
@@ -138,7 +136,7 @@ private struct UnitBezierSolver {
 
         while t0 < t1 {
             x2 = sampleCurveX(t: t2)
-            if abs(x2-x) < eps {
+            if abs(x2 - x) < eps {
                 return t2
             }
             if x > x2 {
@@ -146,7 +144,7 @@ private struct UnitBezierSolver {
             } else {
                 t1 = t2
             }
-            t2 = (t1-t0) * 0.5 + t0
+            t2 = (t1 - t0) * 0.5 + t0
         }
 
         return t2
