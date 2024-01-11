@@ -2,7 +2,7 @@
 
 Anima is an animation framework for iOS, tvOS, and macOS. It lets you animate properties using spring, easing and decay animations.
 
-**Take a look at the included sample app located at */Example/*.**
+**Take a look at the included sample app which demonstrates most features.**
 
 **For a full documentation take a look at the** [Online Documentation](https://swiftpackageindex.com/flocked/Anima/documentation/anima).
 
