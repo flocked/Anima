@@ -796,7 +796,7 @@
                                     <font key="font" size="12" name="Helvetica"/>
                                 </sliderCell>
                                 <connections>
-                                    <action selector="durationChanged:" target="XfG-lQ-9wD" id="Q0S-bn-jw1"/>
+                                    <action selector="durationSliderChanged:" target="XfG-lQ-9wD" id="N2P-vt-VSq"/>
                                 </connections>
                             </slider>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" id="zsM-oc-dCO">
@@ -836,10 +836,10 @@
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="animationDurationSlider" destination="3sW-wK-1R8" id="SHK-h3-YaN"/>
-                        <outlet property="animationDurationTextField" destination="XwI-tQ-clh" id="HLy-e4-5Ao"/>
                         <outlet property="backgroundColorCheckButton" destination="OnI-hQ-Rhu" id="dgE-0H-gbk"/>
                         <outlet property="cornerRadiusCheckButton" destination="BEs-G2-69o" id="LpG-Pu-c9L"/>
+                        <outlet property="durationSlider" destination="3sW-wK-1R8" id="jOp-JS-BEs"/>
+                        <outlet property="durationTextField" destination="XwI-tQ-clh" id="2jY-PG-ydN"/>
                         <outlet property="frameCheckButton" destination="Zcz-BM-boH" id="PnQ-dl-u6d"/>
                         <outlet property="sizeCheckButton" destination="HBs-v4-afU" id="uXK-CD-UPd"/>
                     </connections>

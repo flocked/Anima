@@ -15,8 +15,8 @@ class ViewController: NSViewController {
     @IBOutlet weak var sizeCheckButton: NSButton!
     @IBOutlet weak var backgroundColorCheckButton: NSButton!
     @IBOutlet weak var cornerRadiusCheckButton: NSButton!
-    @IBOutlet weak var animationDurationSlider: NSSlider!
-    @IBOutlet weak var animationDurationTextField: NSTextField!
+    @IBOutlet weak var durationSlider: NSSlider!
+    @IBOutlet weak var durationTextField: NSTextField!
      
     func decayAnimate() {
         Anima.animate(withDecay: .value) {
@@ -25,13 +25,13 @@ class ViewController: NSViewController {
     }
     
     func easeAnimate() {
-        Anima.animate(withEasing: .easeInEaseOut, duration: animationDurationSlider.doubleValue) {
+        Anima.animate(withEasing: .easeInEaseOut, duration: durationSlider.doubleValue) {
             animate()
         }
     }
     
     func springAnimate() {
-        Anima.animate(withSpring: .bouncy(duration: animationDurationSlider.doubleValue)) {
+        Anima.animate(withSpring: .bouncy(duration: durationSlider.doubleValue)) {
             animate()
         }
     }
@@ -53,10 +53,6 @@ class ViewController: NSViewController {
         if backgroundColorCheckButton.state == .on {
             animatedView.animator.backgroundColor = backgroundColor
         }
-        
-        if cornerRadiusCheckButton.state == .on {
-            animatedView.animator.cornerRadius = CGFloat.random(in: 2.0...16.0)
-        }
 
         let frameSize: CGSize
         switch animationPosition {
@@ -67,14 +63,22 @@ class ViewController: NSViewController {
         default:
             frameSize = view.bounds.size * 0.6
         }
-        
-        if sizeCheckButton.state == .on || frameCheckButton.state == .on {
+        Swift.print(sizeCheckButton.state == .on, frameCheckButton.state == .on)
+        if sizeCheckButton.state == .on && frameCheckButton.state == .on {
+            Swift.print("11")
             animatedView.animator.frame.size = frameSize
             animateOrigin()
         } else if sizeCheckButton.state == .on {
+            Swift.print("22")
             animatedView.animator.size = frameSize
+            Swift.print("33")
         } else if frameCheckButton.state == .on {
             animateOrigin()
+        }
+        
+        if cornerRadiusCheckButton.state == .on {
+            Int.random(in: <#T##Range<Int>#>)
+            animatedView.animator.cornerRadius = CGFloat.random(in: 0.0...animatedView.animator.frame.height*0.5)
         }
     }
     
@@ -106,8 +110,8 @@ class ViewController: NSViewController {
     }
     
     
-    @IBAction func durationChanged(_ sender: Any? = nil) {
-        animationDurationTextField.stringValue = "\(animationDurationSlider.doubleValue)s"
+    @IBAction func durationSliderChanged(_ sender: Any? = nil) {
+        durationTextField.stringValue = "\(durationSlider.doubleValue)s"
     }
     
     // Monitors keyDown events
