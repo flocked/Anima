@@ -18,19 +18,19 @@ class ViewController: NSViewController {
     @IBOutlet weak var animationDurationSlider: NSSlider!
     @IBOutlet weak var animationDurationTextField: NSTextField!
      
-    func animateWithDecay() {
+    func decayAnimate() {
         Anima.animate(withDecay: .value) {
             animate()
         }
     }
     
-    func animateWithEasing() {
+    func easeAnimate() {
         Anima.animate(withEasing: .easeInEaseOut, duration: animationDurationSlider.doubleValue) {
             animate()
         }
     }
     
-    func animateWithSpring() {
+    func springAnimate() {
         Anima.animate(withSpring: .bouncy(duration: animationDurationSlider.doubleValue)) {
             animate()
         }
@@ -115,9 +115,9 @@ class ViewController: NSViewController {
     func setupKeyDownMonitor() {
         keyDownMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: { event in
             switch event.keyCode {
-            case 49: self.animateWithDecay()
-            case 18: self.animateWithEasing()
-            case 19: self.animateWithDecay()
+            case 49: self.springAnimate()
+            case 18: self.easeAnimate()
+            case 19: self.decayAnimate()
             case 01: self.stopAnimation(immediately: true)
             case 02: self.stopAnimation(immediately: false)
             default: return event
