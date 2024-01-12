@@ -16,7 +16,7 @@
 
          The default value is CGPointZero.
          */
-        @objc dynamic var contentOffset: CGPoint {
+        @objc var contentOffset: CGPoint {
             get { documentVisibleRect.origin }
             set { documentView?.scroll(newValue) }
         }
@@ -26,7 +26,7 @@
 
          The value can be animated via `animator()`.
          */
-        @objc dynamic var documentSize: CGSize {
+        @objc var documentSize: CGSize {
             get { documentView?.frame.size ?? NSSize.zero }
             set { documentView?.setFrameSize(newValue) }
         }

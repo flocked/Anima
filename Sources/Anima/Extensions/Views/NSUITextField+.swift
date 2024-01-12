@@ -18,14 +18,14 @@ extension NSUITextField {
 
          The value can be animated via `animator()`.
          */
-        @objc dynamic var fontSize: CGFloat {
+        @objc var fontSize: CGFloat {
             get { font?.pointSize ?? 0.0 }
             set { font = font?.withSize(newValue) }
         }
 
     #elseif canImport(UIKit)
         /// The font size of the text.
-        @objc dynamic var fontSize: CGFloat {
+        @objc var fontSize: CGFloat {
             get { font?.pointSize ?? 0.0 }
             set { font = font?.withSize(newValue) }
         }

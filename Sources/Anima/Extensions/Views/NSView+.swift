@@ -11,7 +11,7 @@
 
     extension NSView {
         /// The view whose alpha channel is used to mask a view’s content.
-        @objc dynamic var mask: NSView? {
+        @objc var mask: NSView? {
             get { layer?.mask?.parentView }
             set {
                 wantsLayer = true
@@ -22,7 +22,7 @@
         }
 
         /// The anchor point of the view’s bounds rectangle.
-        @objc dynamic var anchorPoint: CGPoint {
+        @objc var anchorPoint: CGPoint {
             get { layer?.anchorPoint ?? .zero }
             set {
                 wantsLayer = true

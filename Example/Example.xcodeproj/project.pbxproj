@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		726D5BB42B51E50E00E4E272 /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726D5BB32B51E50E00E4E272 /* WindowController.swift */; };
 		72A0C7BD2B4FADAD00779BA0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A0C7BC2B4FADAD00779BA0 /* AppDelegate.swift */; };
 		72A0C7BF2B4FADAD00779BA0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A0C7BE2B4FADAD00779BA0 /* ViewController.swift */; };
 		72A0C7C12B4FADAF00779BA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72A0C7C02B4FADAF00779BA0 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		726D5BB32B51E50E00E4E272 /* WindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		72A0C7B92B4FADAD00779BA0 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		72A0C7BC2B4FADAD00779BA0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		72A0C7BE2B4FADAD00779BA0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -60,6 +62,7 @@
 			children = (
 				72A0C7BC2B4FADAD00779BA0 /* AppDelegate.swift */,
 				72A0C7BE2B4FADAD00779BA0 /* ViewController.swift */,
+				726D5BB32B51E50E00E4E272 /* WindowController.swift */,
 				72A0C7D02B4FAE7300779BA0 /* Extensions */,
 				72A0C7C02B4FADAF00779BA0 /* Assets.xcassets */,
 				72A0C7C22B4FADAF00779BA0 /* Main.storyboard */,
@@ -154,6 +157,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				72A0C7BF2B4FADAD00779BA0 /* ViewController.swift in Sources */,
+				726D5BB42B51E50E00E4E272 /* WindowController.swift in Sources */,
 				72A0C7BD2B4FADAD00779BA0 /* AppDelegate.swift in Sources */,
 				72A0C7CF2B4FAE6D00779BA0 /* CoreGraphics+.swift in Sources */,
 				72A0C7D42B4FAF3D00779BA0 /* NSView+.swift in Sources */,
