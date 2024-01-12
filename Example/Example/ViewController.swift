@@ -77,7 +77,6 @@ class ViewController: NSViewController {
         }
         
         if cornerRadiusCheckButton.state == .on {
-            Int.random(in: <#T##Range<Int>#>)
             animatedView.animator.cornerRadius = CGFloat.random(in: 0.0...animatedView.animator.frame.height*0.5)
         }
     }
