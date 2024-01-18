@@ -376,6 +376,9 @@ protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableA
     func animatable(to other: any AnimatableColor) -> Self
 }
 
+
+
+
 extension AnimatableColor {
     func animatable(to other: any AnimatableColor) -> Self {
         if alpha == 0.0 {
@@ -422,6 +425,13 @@ extension AnimatableConfiguration {
 extension ShadowConfiguration: AnimatableConfiguration {}
 
 extension BorderConfiguration: AnimatableConfiguration {}
+
+extension Optional: AnimatableConfiguration where Wrapped: AnimatableConfiguration {
+    var color: NSUIColor? {
+        get { self?.color }
+        set { self?.color = newValue }
+    }
+}
 
 // MARK: - AnimatableCollection
 
