@@ -102,6 +102,7 @@ Subclassing ``PropertyAnimation`` let's you create your own animations. Itself i
 - ``LayerAnimator``
 - ``LayoutAnimator``
 - ``ViewAnimator``
+- ``PopoverAnimator``
 - ``WindowAnimator``
 
 ### Animations

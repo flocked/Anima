@@ -38,9 +38,9 @@ extension NSLayoutConstraint: AnimatablePropertyProvider {
  widthConstraint.animator.constant = 50.0
  ```
 
- ### Accessing Animations
+ ### Accessing Animation
 
- To access the animation for a property, use ``animation(for:)``:
+ To access the animation for `constant`, use ``animation(for:)``:
 
  ```swift
  if let animation = widthConstraint.animator.animation(for: \.constant) {
@@ -50,7 +50,7 @@ extension NSLayoutConstraint: AnimatablePropertyProvider {
 
  ### Accessing Animation Velocity
 
- To access the animation velocity for a property, use ``animationVelocity(for:)``.
+ To access the animation velocity for `constant`, use ``animationVelocity(for:)``.
 
  ```swift
  if let velocity = widthConstraint.animator.animation(for: \.constant) {
