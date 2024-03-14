@@ -20,6 +20,30 @@
             get { documentVisibleRect.origin }
             set { documentView?.scroll(newValue) }
         }
+        
+        /**
+         The fractional document offset.
+
+         - A value of `CGPoint(x:0, y:0)` indicates the document view is at the bottom left.
+         - A value of `CGPoint(x:1, y:1)` indicates the document view is at the top right.
+         */
+        var documentOffsetFractional: CGPoint {
+            get {
+                guard let maxOffset = maxContentOffset else { return .zero }
+                return CGPoint(contentOffset.x / maxOffset.x, contentOffset.y / maxOffset.y)
+            }
+            set {
+                guard let maxOffset = maxContentOffset else { return }
+                contentOffset = CGPoint(newValue.x.clamped(max: 1.0) * maxOffset.x, newValue.y.clamped(max: 1.0) * maxOffset.y)
+            }
+        }
+        
+        var maxContentOffset: CGPoint? {
+            guard let documentView = documentView else { return nil }
+            let maxY = documentView.frame.maxY - contentView.bounds.height
+            let maxX = documentView.frame.maxX - contentView.bounds.width
+            return CGPoint(maxX, maxY)
+        }
 
         /**
          The size of the document view, or `nil` if there isn't a document view.

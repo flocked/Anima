@@ -592,6 +592,17 @@ import Decomposed
             get { self[\.contentOffset] }
             set { self[\.contentOffset] = newValue }
         }
+                
+        /**
+         The fractional document offset.
+         
+         - A value of `CGPoint(x:0, y:0)` indicates the document view is at the bottom left.
+         - A value of `CGPoint(x:1, y:1)` indicates the document view is at the top right.
+         */
+        var documentOffsetFractional: CGPoint {
+            get { self[\.documentOffsetFractional] }
+            set { self[\.documentOffsetFractional] = newValue }
+        }
 
         /// The size of the document view.
         var documentSize: CGSize {
