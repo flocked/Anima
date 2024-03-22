@@ -230,10 +230,7 @@ import Decomposed
             object.optionalLayer?.animator.lastAccessedPropertyKey = ""
             lastAccessedPropertyKey = ""
             _ = self[keyPath: keyPath]
-            if let layerKey = object.optionalLayer?.animator.lastAccessedPropertyKey, layerKey != "" {
-                return object.optionalLayer?.animator.animations[layerKey]
-            }
-            return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
+           return object.optionalLayer?.animator.lastAccessedProperty ?? lastAccessedProperty ?? animation(for: keyPath.stringValue)
         }
 
         /**
@@ -247,6 +244,15 @@ import Decomposed
                 velocity = self[keyPath: keyPath]
             }
             return velocity
+        }
+        
+        /**
+         The current animation value for the specified property, or the value of the property if it isn't animated.
+
+         - Parameter keyPath: The keypath to an animatable property.
+         */
+        public func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> Value {
+            (animation(for: keyPath) as? (any ConfigurableAnimationProviding))?.value as? Value ?? self[keyPath: keyPath]
         }
     }
 #else

@@ -130,6 +130,15 @@
             }
             return velocity
         }
+        
+        /**
+         The current animation value for the specified property, or the value of the property if it isn't animated.
+
+         - Parameter keyPath: The keypath to an animatable property.
+         */
+        func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<WindowAnimator, Value>) -> Value {
+            (animation(for: keyPath) as? (any ConfigurableAnimationProviding))?.value as? Value ?? self[keyPath: keyPath]
+        }
     }
 
 #endif

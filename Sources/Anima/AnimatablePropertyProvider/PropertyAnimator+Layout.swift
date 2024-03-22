@@ -73,6 +73,8 @@ public extension LayoutAnimator {
      - Parameter keyPath: The keypath to an animatable property.
      */
     func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayoutAnimator, Value>) -> AnimationProviding? {
+        animation(for: keyPath.stringValue)
+        
         lastAccessedPropertyKey = ""
         _ = self[keyPath: keyPath]
         return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
@@ -89,5 +91,14 @@ public extension LayoutAnimator {
             velocity = self[keyPath: keyPath]
         }
         return velocity
+    }
+    
+    /**
+     The current animation value for the specified property, or the value of the property if it isn't animated.
+
+     - Parameter keyPath: The keypath to an animatable property.
+     */
+    func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayoutAnimator, Value>) -> Value {
+        (animation(for: keyPath) as? (any ConfigurableAnimationProviding))?.value as? Value ?? self[keyPath: keyPath]
     }
 }

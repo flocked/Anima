@@ -233,6 +233,15 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         }
         return velocity
     }
+    
+    /**
+     The current animation value for the specified property, or the value of the property if it isn't animated.
+
+     - Parameter keyPath: The keypath to an animatable property.
+     */
+    public func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayerAnimator, Value>) -> Value {
+        (animation(for: keyPath) as? (any ConfigurableAnimationProviding))?.value as? Value ?? self[keyPath: keyPath]
+    }
 }
 
 public extension LayerAnimator where Layer: CAShapeLayer {

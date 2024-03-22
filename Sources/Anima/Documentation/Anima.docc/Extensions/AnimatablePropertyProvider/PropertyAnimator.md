@@ -11,8 +11,11 @@
 
 - ``subscript(velocity:)``
 
+### Accessing Animation Values
+
+- ``subscript(value:)``
+
 ### Accessing Values
 
 - ``subscript(_:)``
-- ``subscript(value:)``
 
