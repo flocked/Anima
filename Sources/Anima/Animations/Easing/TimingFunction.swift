@@ -489,6 +489,7 @@ extension TimingFunction.Easing {
     }
 }
 
+/*
 extension TimingFunction: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
@@ -501,7 +502,9 @@ extension TimingFunction: Hashable {
         return false
     }
 }
+ */
 
+/*
 extension TimingFunction: CustomStringConvertible {
     /// The name of the timing function.
     public var name: String {
@@ -583,6 +586,7 @@ extension TimingFunction: CustomStringConvertible {
         "TimingFunction: \(name)"
     }
 }
+ */
 
 #if canImport(QuartzCore)
 

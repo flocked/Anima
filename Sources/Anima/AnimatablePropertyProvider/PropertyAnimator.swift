@@ -84,8 +84,26 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
         self.object = object
     }
 
-    /// A dictionary containing the current animated property keys and associated animations.
     public internal(set) var animations: [String: AnimationProviding] = [:]
+
+    public subscript<Value: AnimatableProperty>(keyPath: WritableKeyPath<Provider, Value>) -> Value {
+        get { value(for: keyPath) }
+        set { setValue(newValue, for: keyPath) }
+    }
+
+    var lastAccessedPropertyKey: String = ""
+}
+
+///  Provides animatable properties and animations of an object conforming to ``AnimatablePropertyProvider``.
+public protocol Animator {
+    /// The object that provides animatable properties.
+    associatedtype Provider: AnimatablePropertyProvider
+    
+    /// The property animator.
+    associatedtype Animator = Self
+    
+    /// A dictionary containing the current animated property keys and associated animations.
+    var animations: [String: AnimationProviding] { get }
 
     /**
      The current value of the property at the specified keypath.
@@ -94,45 +112,103 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
 
      - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        get { value(for: keyPath) }
-        set { setValue(newValue, for: keyPath) }
-    }
-
+    subscript<Value: AnimatableProperty>(keyPath: WritableKeyPath<Provider, Value>) -> Value { get set }
+    
     /**
      The current animation of the property at the specified keypath, or `nil` if the property isn't animated.
 
      - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> AnimationProviding? { animation(for: keyPath) }
-
+    subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Animator, Value>) -> AnimationProviding? { get }
+    
     /**
      The current animation velocity of the property at the specified keypath, or `zero` if the property isn't animated or the animation doesn't support velocity values.
 
      - Parameter keyPath: The keypath to the animatable property for the velocity.
      */
-    public subscript<Value: AnimatableProperty>(velocity keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        get { animation(for: keyPath)?.velocity as? Value ?? .zero }
-        set { animation(for: keyPath)?.setVelocity(newValue) }
-    }
+    subscript<Value: AnimatableProperty>(velocity keyPath: WritableKeyPath<Animator, Value>) -> Value { get set }
     
     /**
-     The current value of the animation for the specified property, or the property's value if it isn't animatin.
-     
+     The current value of the animation for the specified property, or the property's value if it isn't animating.
+
      - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(value keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        get { animation(for: keyPath)?.value as? Value ?? object[keyPath: keyPath] }
-    }
+    subscript<Value: AnimatableProperty>(value keyPath: WritableKeyPath<Animator, Value>) -> Value { get }
+}
 
-    var lastAccessedPropertyKey: String = ""
+protocol PropertyAnimatorInternal {
+    func resetLastAccessedAnimation()
+    var lastAccessedAnimation: (any ConfigurableAnimationProviding)? { get }
+}
+
+extension PropertyAnimator: Animator, PropertyAnimatorInternal { }
+
+extension Animator {
+    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Self, Value>) -> AnimationProviding? {
+        guard let animator = self as? PropertyAnimatorInternal else { return nil }
+        animator.resetLastAccessedAnimation()
+        _ = self[keyPath: keyPath]
+        return animator.lastAccessedAnimation
+    }
+    
+    public subscript<Value: AnimatableProperty>(velocity keyPath: WritableKeyPath<Self, Value>) -> Value {
+        get {
+            var value: Value = .zero
+            Anima.updateVelocity {
+                value = self[keyPath: keyPath]
+            }
+            return value
+        }
+        set {
+            Anima.updateVelocity {
+                self[keyPath: keyPath] = newValue
+            }
+        }
+    }
+    
+    public subscript<Value: AnimatableProperty>(value keyPath: WritableKeyPath<Self, Value>) -> Value {
+        get {
+            var value: Value = .zero
+            Anima.updateAnimationValue {
+                value = self[keyPath: keyPath]
+            }
+            return value
+        }
+    }
+}
+
+extension PropertyAnimator {
+    func resetLastAccessedAnimation() {
+        lastAccessedPropertyKey = ""
+        #if os(macOS)
+        (object as? NSView)?.layer?.animator.lastAccessedPropertyKey = ""
+        #elseif canImport(UIKit)
+        (object as? UIView)?.layer.animator.lastAccessedPropertyKey = ""
+        #endif
+    }
+    
+    var lastAccessedAnimation: (any ConfigurableAnimationProviding)? {
+        if let animation = animations[lastAccessedPropertyKey] as? (any ConfigurableAnimationProviding) {
+            return animation
+        }
+        #if os(macOS)
+        return (object as? NSView)?.layer?.animator.lastAccessedAnimation
+        #elseif canImport(UIKit)
+        return (object as? UIView)?.layer.animator.lastAccessedAnimation
+        #endif
+        return nil
+    }
 }
 
 extension PropertyAnimator {
     /// The current value of the property at the keypath. If the property is currently animated, it returns the animation's target value.
     func value<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        if AnimationController.shared.currentAnimationParameters?.configuration.isAnyVelocity == true {
-            return animation(for: keyPath)?.velocity as? Value ?? .zero
+        if let configuration = AnimationController.shared.currentAnimationParameters?.configuration {
+            if configuration.isAnyVelocity {
+                return animation(for: keyPath)?.velocity as? Value ?? .zero
+            } else if configuration.isAnimationValue {
+                return animation(for: keyPath)?.value as? Value ?? .zero
+            }
         }
         return animation(for: keyPath)?.target as? Value ?? object[keyPath: keyPath]
     }
@@ -175,6 +251,7 @@ extension PropertyAnimator {
             configurateAnimation(animation, target: target, keyPath: keyPath, settings: settings, completion: completion)
         case .velocityUpdate:
             animation(for: keyPath)?.setVelocity(newValue)
+        case .animationValueUpdate: break
         case .nonAnimated:
             break
         }
@@ -256,10 +333,11 @@ extension PropertyAnimator {
 extension PropertyAnimator {
     /// The current animation for the property at the keypath, or `nil` if there isn't an animation for the keypath.
     func animation(for keyPath: PartialKeyPath<Provider>) -> (any ConfigurableAnimationProviding)? {
-        lastAccessedPropertyKey = keyPath.stringValue
-        return animations[lastAccessedPropertyKey] as? any ConfigurableAnimationProviding
+        let animation = animations[lastAccessedPropertyKey] as? any ConfigurableAnimationProviding
+        lastAccessedPropertyKey = animation != nil ? keyPath.stringValue : ""
+        return animation
     }
-
+    
     /// The current decay animation for the property at the keypath, or `nil` if there isn't a decay animation for the keypath.
     func decayAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> DecayAnimation<Value>? {
         animation(for: keyPath) as? DecayAnimation<Value>
