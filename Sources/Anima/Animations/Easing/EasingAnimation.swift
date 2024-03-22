@@ -311,7 +311,7 @@ extension EasingAnimation: CustomStringConvertible {
             velocity: \(velocity)
             fractionComplete: \(fractionComplete)
 
-            timingFunction: \(timingFunction)
+            timingFunction: \(timingFunction.name)
             duration: \(duration)
             isReversed: \(isReversed)
             repeats: \(repeats)
