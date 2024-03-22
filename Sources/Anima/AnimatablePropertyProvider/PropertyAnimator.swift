@@ -115,6 +115,15 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
         get { animation(for: keyPath)?.velocity as? Value ?? .zero }
         set { animation(for: keyPath)?.setVelocity(newValue) }
     }
+    
+    /**
+     The current value of the animation for the specified property, or the property's value if it isn't animatin.
+     
+     - Parameter keyPath: The keypath to the animatable property.
+     */
+    public subscript<Value: AnimatableProperty>(value keyPath: WritableKeyPath<Provider, Value>) -> Value {
+        get { animation(for: keyPath)?.value as? Value ?? object[keyPath: keyPath] }
+    }
 
     var lastAccessedPropertyKey: String = ""
 }

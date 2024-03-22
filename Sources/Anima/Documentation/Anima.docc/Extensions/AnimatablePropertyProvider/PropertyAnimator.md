@@ -14,3 +14,5 @@
 ### Accessing Values
 
 - ``subscript(_:)``
+- ``subscript(value:)``
+
