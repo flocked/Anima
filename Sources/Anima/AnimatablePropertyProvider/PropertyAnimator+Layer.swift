@@ -46,20 +46,30 @@ public extension AnimatablePropertyProvider where Self: CALayer {
 
  ### Accessing Animations
 
- To access the animation for a property, use ``animation(for:)``:
+ To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-54u0m``:
 
  ```swift
  if let animation = layer.animator.animation(for: \.frame) {
     animation.stop()
  }
  ```
+ 
+ ### Accessing Animation Value
 
- ### Accessing Animation Velocity
-
- To access the animation velocity for a property, use ``animationVelocity(for:)``.
+ To access the current animation value for a property, use ``Anima/AnimationProvider/animationValue(for:)-91c63``.
 
  ```swift
- if let velocity = layer.animator.animation(for: \.origin) {
+ if let value = layer.animator.animationValue(for: \.origin) {
+
+ }
+ ```
+ 
+ ### Accessing Animation Velocity
+
+ To access the animation velocity for a property, use ``Anima/AnimationProvider/animationVelocity(for:)-1k944``.
+
+ ```swift
+ if let velocity = layer.animator.animationVelocity(for: \.origin) {
 
  }
  ```
@@ -138,20 +148,6 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         get { self[\.border] }
         set { self[\.border] = newValue }
     }
-
-    /*
-     /// The border color of the layer.
-     var borderColor: CGColor? {
-         get { self[\.borderColor] }
-         set { self[\.borderColor] = newValue }
-     }
-
-     /// The border width of the layer.
-     var borderWidth: CGFloat {
-         get { self[\.borderWidth] }
-         set { self[\.borderWidth] = newValue }
-     }
-     */
 
     /// The shadow of the layer.
     public var shadow: ShadowConfiguration {

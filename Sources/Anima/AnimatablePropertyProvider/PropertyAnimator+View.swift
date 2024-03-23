@@ -47,20 +47,30 @@ import Decomposed
 
      ### Accessing Animations
 
-     To access the animation for a property, use ``animation(for:)``:
+     To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-54u0m``:
 
      ```swift
      if let animation = view.animator.animation(for: \.frame) {
         animation.stop()
      }
      ```
+     
+     ### Accessing Animation Value
+
+     To access the current animation value for a property, use ``Anima/AnimationProvider/animationValue(for:)-91c63``.
+
+     ```swift
+     if let value = view.animator.animationValue(for: \.origin) {
+
+     }
+     ```
 
      ### Accessing Animation Velocity
 
-     To access the animation velocity for a property, use ``animationVelocity(for:)``.
+     To access the animation velocity for a property, use ``Anima/AnimationProvider/animationVelocity(for:)-1k944``.
 
      ```swift
-     if let velocity = view.animator.animation(for: \.origin) {
+     if let velocity = view.animator.animationVelocity(for: \.origin) {
 
      }
      ```

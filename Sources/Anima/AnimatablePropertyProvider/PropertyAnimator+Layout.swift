@@ -40,20 +40,30 @@ extension NSLayoutConstraint: AnimatablePropertyProvider {
 
  ### Accessing Animation
 
- To access the animation for `constant`, use ``animation(for:)``:
+ To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-54u0m``:
 
  ```swift
  if let animation = widthConstraint.animator.animation(for: \.constant) {
     animation.stop()
  }
  ```
+ 
+ ### Accessing Animation Value
+
+ To access the current animation value for a property, use ``Anima/AnimationProvider/animationValue(for:)-91c63``.
+
+ ```swift
+ if let value = widthConstraint.animator.animationValue(for: \.constant) {
+
+ }
+ ```
 
  ### Accessing Animation Velocity
 
- To access the animation velocity for `constant`, use ``animationVelocity(for:)``.
+ To access the animation velocity for `constant`, use ``Anima/AnimationProvider/animationVelocity(for:)-1k944``.
 
  ```swift
- if let velocity = widthConstraint.animator.animation(for: \.constant) {
+ if let velocity = widthConstraint.animator.animationVelocity(for: \.constant) {
 
  }
  ```
