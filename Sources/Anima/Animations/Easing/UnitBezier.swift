@@ -11,7 +11,7 @@
 import Accelerate
 import Foundation
 
-public extension TimingFunction {
+extension TimingFunction {
     /// A bezier curve that can be used to calculate timing functions.
     struct UnitBezier: Hashable, Sendable, CustomStringConvertible {
         /// The first point of the bezier.

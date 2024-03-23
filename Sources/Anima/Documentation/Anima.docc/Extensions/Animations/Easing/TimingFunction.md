@@ -7,9 +7,6 @@
 -  ``init(_:function:)``
 -  ``init(_:x1:y1:x2:y2:)``
 -  ``init(_:)``
--  ``init(_:bezier:)``
--  ``UnitBezier``
-
 
 ### Built-in timing functions
 

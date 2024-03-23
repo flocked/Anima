@@ -40,20 +40,16 @@ public struct TimingFunction: CustomStringConvertible {
 
     /// Initializes a bezier timing function with the given control points.
     public init(_ name: String? = nil, x1: Double, y1: Double, x2: Double, y2: Double) {
-        self = Self(name, bezier: .init(x1: x1, y1: y1, x2: x2, y2: y2))
-    }
-                
-    /// Initializes a bezier timing function.
-    public init(_ name: String? = nil, bezier: UnitBezier) {
+        let bezier = UnitBezier(x1: x1, y1: y1, x2: x2, y2: y2)
         self.function = { time, epsilon in
             bezier.solve(x: time, epsilon: epsilon)
         }
         // (4.0, 6.0)
         self.name = name ?? "\(bezier.description)"
     }
-    
+                    
     /// Initializes a timing function with Core Animation timing function.
-    init(_ caTimingFunction: CAMediaTimingFunction) {
+    public init(_ caTimingFunction: CAMediaTimingFunction) {
         let controlPoints = caTimingFunction.controlPoints
         self.init(caTimingFunction.description, x1: controlPoints.x1, y1: controlPoints.y1, x2: controlPoints.x2, y2: controlPoints.y1)
     }
