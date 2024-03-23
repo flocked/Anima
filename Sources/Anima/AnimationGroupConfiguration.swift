@@ -16,7 +16,7 @@ struct AnimationGroupConfiguration {
     var spring: SpringParameters?
     var easing: EasingParameters?
     var decay: DecayParameters?
-        
+    
     var animationType: AnimationType? {
         switch type {
         case .spring: return .spring
@@ -26,13 +26,20 @@ struct AnimationGroupConfiguration {
         }
     }
 
-    enum GroupType {
+    enum GroupType: Int {
+        /// Spring animation.
         case spring
+        /// Easing animation
         case easing
+        /// Decay animation.
         case decay
+        /// Decay velocity animation.
         case decayVelocity
+        /// Non animated value updates.
         case nonAnimated
+        /// Animation velocity updates.
         case animationVelocity
+        /// Animation value updates.
         case animationValue
     }
     
@@ -59,7 +66,7 @@ struct AnimationGroupConfiguration {
     }
 }
 
-enum AnimationType {
+enum AnimationType: Int {
     case spring
     case easing
     case decay

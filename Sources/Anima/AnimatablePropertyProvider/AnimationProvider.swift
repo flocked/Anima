@@ -64,7 +64,7 @@ public extension AnimationProvider {
         _ = self[keyPath: keyPath]
         return animator.layerAnimator?.lastAccessedProperty ?? animator.lastAccessedProperty ?? animator.animations[keyPath.stringValue]
     }
-    
+        
     func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> Value {
         var velocity: Value?
         Anima.updateVelocity {
