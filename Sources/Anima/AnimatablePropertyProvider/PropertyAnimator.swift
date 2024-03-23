@@ -162,31 +162,26 @@ extension PropertyAnimator {
 
     /// Animates the value of the property at the keypath to a new value.
     func setValue<Value: AnimatableProperty>(_ newValue: Value, for keyPath: WritableKeyPath<Provider, Value>, completion: (() -> Void)? = nil) {
+        let currentAnimation = animation(for: keyPath)
         guard let settings = AnimationController.shared.currentAnimationParameters, settings.isAnimation else {
-            animation(for: keyPath)?.stop(at: .current, immediately: true)
+            currentAnimation?.stop(at: .current, immediately: true)
             object[keyPath: keyPath] = newValue
             return
         }
-
-        if value(for: keyPath) == newValue {
-            if let animationType = settings.animationType {
-                guard animationType != animation(for: keyPath)?.animationType else {
-                    return
-                }
-            } else {
-                return
-            }
+        
+        guard value(for: keyPath) != newValue || settings.animationType != currentAnimation?.animationType else {
+            return
         }
 
         var value = object[keyPath: keyPath]
         var target = newValue
         updateValue(&value, target: &target)
 
-        AnimationController.shared.executeHandler(uuid: animation(for: keyPath)?.groupID, finished: false, retargeted: true)
+        AnimationController.shared.executeHandler(uuid: currentAnimation?.groupID, finished: false, retargeted: true)
         switch settings.configuration {
         case .spring:
             let animation = springAnimation(for: keyPath) ?? SpringAnimation(spring: .smooth, value: value, target: target)
-            if let oldAnimation = self.animation(for: keyPath), oldAnimation.id != animation.id, let velocity = oldAnimation._velocity as? Value.AnimatableData {
+            if currentAnimation?.id != animation.id, let velocity = currentAnimation?._velocity as? Value.AnimatableData {
                 animation._velocity = velocity
             }
             configurateAnimation(animation, target: target, keyPath: keyPath, settings: settings, completion: completion)
@@ -327,9 +322,6 @@ extension PropertyAnimator {
     func animationHandler<Value: AnimatableProperty>(for keyPath: String) -> ((Value, Value, Bool)->())? {
         if let handler = animationHandlers[keyPath] as? ((Value, Value, Bool)->()) {
             return handler
-        }
-        if let viewAnimator = (object as? CALayer)?.parentView?.animator {
-            return viewAnimator.animationHandler(for: keyPath)
         }
         return nil
     }

@@ -74,7 +74,11 @@ public struct Spring: Sendable, Hashable {
         - bounce: How bouncy the spring should be. A value of 0 indicates no bounces (a critically damped spring), positive values indicate increasing amounts of bounciness up to a maximum of 1.0 (corresponding to undamped oscillation), and negative values indicate overdamped springs with a minimum value of -1.0.
      */
     public init(duration: Double = 0.55, bounce: Double = 0.0) {
-        self.init(response: duration, dampingRatio: 1.0 - bounce, mass: 1.0)
+        if #available(macOS 14.0, iOS 17, tvOS 17, *) {
+            self = Spring(SwiftUI.Spring(duration: duration, bounce: bounce))
+        } else {
+            self.init(response: duration, dampingRatio: 1.0 - bounce, mass: 1.0)
+        }
     }
 
     /**
@@ -88,13 +92,18 @@ public struct Spring: Sendable, Hashable {
     public init(stiffness: Double, dampingRatio: Double, mass: Double = 1.0) {
         precondition(stiffness > 0, "The stiffness of the spring has to be > 0")
         precondition(dampingRatio > 0, "The dampingRatio of the spring has to be > 0")
-
-        self.dampingRatio = dampingRatio
-        self.stiffness = stiffness
-        self.mass = mass
-        response = Self.response(stiffness: stiffness, mass: mass)
-        damping = Self.damping(dampingRatio: dampingRatio, response: response, mass: mass)
-        settlingDuration = Self.settlingTime(dampingRatio: dampingRatio, damping: damping, stiffness: stiffness, mass: mass)
+        let response = Self.response(stiffness: stiffness, mass: mass)
+        let damping = Self.damping(dampingRatio: dampingRatio, response: response, mass: mass)
+        if #available(macOS 14.0, iOS 17, tvOS 17, *) {
+            self = Spring(SwiftUI.Spring(mass: mass, stiffness: stiffness, damping: damping, allowOverDamping: true))
+        } else {
+            self.dampingRatio = dampingRatio
+            self.stiffness = stiffness
+            self.mass = mass
+            self.response = response
+            self.damping = damping
+            settlingDuration = Self.settlingTime(dampingRatio: dampingRatio, damping: damping, stiffness: stiffness, mass: mass)
+        }
     }
 
     /**
@@ -102,23 +111,26 @@ public struct Spring: Sendable, Hashable {
 
      - parameters:
         - response: Represents the frequency response of the spring. This value affects how quickly the spring animation reaches its target value. The frequency response is the duration of one period in the spring's undamped system, measured in seconds. Values closer to `0` create a very fast animation, while values closer to `1.0` create a relatively slower animation.
-        - dampingRatio: The amount of oscillation the spring will < (i.e. "springiness"). A value of `1.0` (critically damped) will cause the spring to smoothly reach its target value without any oscillation. Values closer to `0.0` (underdamped) will increase oscillation (and overshoot the target) before settling.
+        - dampingRatio: The amount of oscillation the spring will exhibit (i.e. "springiness"). A value of `1.0` (critically damped) will cause the spring to smoothly reach its target value without any oscillation. Values closer to `0.0` (underdamped) will increase oscillation (and overshoot the target) before settling.
         - mass: The mass "attached" to the spring. The default value of `1.0` rarely needs to be modified.
      */
     public init(response: Double, dampingRatio: Double, mass: Double = 1.0) {
         precondition(dampingRatio >= 0, "The dampingRatio of the spring has to be >= 0")
         precondition(response >= 0, "The response of the spring has to be >= 0")
-
-        self.dampingRatio = dampingRatio
-        self.response = response
-        self.mass = mass
-        stiffness = Self.stiffness(response: response, mass: mass)
-
-        let unbandedDampingCoefficient = Self.damping(dampingRatio: dampingRatio, response: response, mass: mass)
-
-        damping = Rubberband.value(for: unbandedDampingCoefficient, range: 0 ... 60, interval: 15)
-
-        settlingDuration = Self.settlingTime(dampingRatio: dampingRatio, damping: damping, stiffness: stiffness, mass: mass)
+        if mass == 1, #available(macOS 14.0, iOS 17, tvOS 17, *) {
+            self = Spring(SwiftUI.Spring(response: response, dampingRatio: dampingRatio))
+        } else {
+            self.dampingRatio = dampingRatio
+            self.response = response
+            self.mass = mass
+            stiffness = Self.stiffness(response: response, mass: mass)
+            
+            let unbandedDampingCoefficient = Self.damping(dampingRatio: dampingRatio, response: response, mass: mass)
+            
+            damping = Rubberband.value(for: unbandedDampingCoefficient, range: 0 ... 60, interval: 15)
+            
+            settlingDuration = Self.settlingTime(dampingRatio: dampingRatio, damping: damping, stiffness: stiffness, mass: mass)
+        }
     }
 
     /**
@@ -137,7 +149,7 @@ public struct Spring: Sendable, Hashable {
 
     /// Creates a spring from a SwiftUI spring.
     @available(macOS 14.0, iOS 17, tvOS 17, *)
-    init(_ spring: SwiftUI.Spring) {
+    public init(_ spring: SwiftUI.Spring) {
         dampingRatio = spring.dampingRatio
         response = spring.response
         stiffness = spring.stiffness
