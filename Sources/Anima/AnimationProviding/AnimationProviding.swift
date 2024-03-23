@@ -8,7 +8,7 @@
 import Foundation
 
 ///  A type that provides an animation.
-public protocol AnimationProviding {
+public protocol AnimationProviding: AnyObject {
     /// An unique identifier for the animation.
     var id: UUID { get }
 
