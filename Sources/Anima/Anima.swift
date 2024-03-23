@@ -298,4 +298,13 @@ public enum Anima {
 
         AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
     }
+    
+    /// Updates the current animation value.
+    internal static func updateAnimationValue(changes: () -> Void) {
+        let settings = AnimationController.AnimationParameters(
+            groupID: UUID(),
+            configuration: .animationValueUpdate
+        )
+        AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
+    }
 }

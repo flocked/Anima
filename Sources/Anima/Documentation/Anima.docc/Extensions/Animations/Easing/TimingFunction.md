@@ -4,10 +4,12 @@
 
 ### Creating a timing function
 
--  ``init(x1:y1:x2:y2:)``
+-  ``init(_:function:)``
+-  ``init(_:x1:y1:x2:y2:)``
 -  ``init(_:)``
--  ``bezier(_:)``
--  ``function(_:)``
+-  ``init(_:bezier:)``
+-  ``UnitBezier``
+
 
 ### Built-in timing functions
 
@@ -27,4 +29,3 @@
 
 -  ``solve(at:epsilon:)``
 -  ``solve(at:duration:)``
-

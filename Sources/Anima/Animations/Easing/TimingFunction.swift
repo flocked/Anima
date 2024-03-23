@@ -23,18 +23,36 @@ import Foundation
 
  > Tip:  ``Easing`` provides addtional timing functions.
  */
-public enum TimingFunction {
-    /// The specified unit bezier is used to drive the timing function.
-    case bezier(UnitBezier)
-
-    /// The specified function is used as timing function.
-    case function((Double) -> (Double))
+public struct TimingFunction {
+    let function: ((Double, Double) -> (Double))
+    public let name: String
 
     /// Initializes a bezier timing function with the given control points.
-    public init(x1: Double, y1: Double, x2: Double, y2: Double) {
-        self = .bezier(UnitBezier(x1: x1, y1: y1, x2: x2, y2: y2))
+    public init(_ name: String? = nil, x1: Double, y1: Double, x2: Double, y2: Double) {
+        self = Self(name, bezier: .init(x1: x1, y1: y1, x2: x2, y2: y2))
     }
-
+                
+    /// Initializes a bezier timing function.
+    public init(_ name: String? = nil, bezier: UnitBezier) {
+        self.function = { time, epsilon in
+            bezier.solve(x: time, epsilon: epsilon)
+        }
+        self.name = name ?? "bezier"
+    }
+    
+    /// Initializes a timing function.
+    public init(_ name: String? = nil, function: @escaping ((Double) -> (Double))) {
+        self.function = { time,_ in
+            function(time)
+        }
+        self.name = name ?? "function"
+    }
+    
+    init(_ name: String, _ function: @escaping ((Double, Double) -> (Double))) {
+        self.function = function
+        self.name = name
+    }
+    
     /**
      Transforms the specified time.
 
@@ -44,12 +62,7 @@ public enum TimingFunction {
      - Returns: The resulting output time.
      */
     public func solve(at time: Double, epsilon: Double = 0.0001) -> Double {
-        switch self {
-        case let .bezier(unitBezier):
-            return unitBezier.solve(x: time, epsilon: epsilon)
-        case let .function(function):
-            return function(time)
-        }
+        function(time, epsilon)
     }
 
     /**
@@ -61,46 +74,42 @@ public enum TimingFunction {
      - Returns: The resulting output time.
      */
     public func solve(at time: Double, duration: Double) -> Double {
-        switch self {
-        case let .bezier(unitBezier):
-            return unitBezier.solve(x: time, epsilon: 1.0 / (duration * 1000.0))
-        case let .function(function):
-            return function(time)
-        }
+        function(time, (1.0 / (duration * 1000.0)))
     }
 }
 
 public extension TimingFunction {
     /// A linear timing function.
     static var linear: TimingFunction {
-        TimingFunction.function { $0 }
+        TimingFunction("linear") { $0 }
     }
 
     /// The system default timing function. Use this function to ensure that the timing of your animations matches that of most system animations.
     static var `default`: TimingFunction {
-        TimingFunction(x1: 0.25, y1: 0.1, x2: 0.25, y2: 1.0)
+        TimingFunction("`default`", x1: 0.25, y1: 0.1, x2: 0.25, y2: 1.0)
     }
 
     /// A `easeIn` timing function.
     static var easeIn: TimingFunction {
-        TimingFunction(x1: 0.42, y1: 0.0, x2: 1.0, y2: 1.0)
+        TimingFunction("easeIn", x1: 0.42, y1: 0.0, x2: 1.0, y2: 1.0)
     }
 
     /// A `easeOut` timing function.
     static var easeOut: TimingFunction {
-        TimingFunction(x1: 0.0, y1: 0.0, x2: 0.58, y2: 1.0)
+        TimingFunction("easeOut", x1: 0.0, y1: 0.0, x2: 0.58, y2: 1.0)
     }
 
     /// A `easeInEaseOut` timing function.
     static var easeInEaseOut: TimingFunction {
-        TimingFunction(x1: 0.42, y1: 0.0, x2: 0.58, y2: 1.0)
+        TimingFunction("easeInEaseOut", x1: 0.42, y1: 0.0, x2: 0.58, y2: 1.0)
     }
 
     /// A `swiftOut` timing function, inspired by the default curve in Google Material Design.
     static var swiftOut: TimingFunction {
-        TimingFunction(x1: 0.4, y1: 0.0, x2: 0.2, y2: 1.0)
+        TimingFunction("swiftOut", x1: 0.4, y1: 0.0, x2: 0.2, y2: 1.0)
     }
 }
+
 
 public extension TimingFunction {
     /// Additional easing time functions.
@@ -108,170 +117,170 @@ public extension TimingFunction {
         // MARK: Quadratic
 
         /// A `easeInQuad` timing function.
-        public static var easeInQuad = TimingFunction.function { x in
+        public static var easeInQuad = TimingFunction("function") { x in
             Easing.easeInQuad(x)
         }
 
         /// A `easeOutQuad` timing function.
-        public static var easeOutQuad = TimingFunction.function { x in
+        public static var easeOutQuad = TimingFunction("function") { x in
             Easing.easeOutQuad(x)
         }
 
         /// A `easeInEaseOutQuad` timing function.
-        public static var easeInEaseOutQuad = TimingFunction.function { x in
+        public static var easeInEaseOutQuad = TimingFunction("function") { x in
             Easing.easeInEaseOutQuad(x)
         }
 
         // MARK: Cubic
 
         /// A `easeInCubic` timing function.
-        public static var easeInCubic = TimingFunction.function { x in
+        public static var easeInCubic = TimingFunction("function") { x in
             Easing.easeInCubic(x)
         }
 
         /// A `easeOutCubic` timing function.
-        public static var easeOutCubic = TimingFunction.function { x in
+        public static var easeOutCubic = TimingFunction("function") { x in
             Easing.easeOutCubic(x)
         }
 
         /// A `easeInEaseOutCubic` timing function.
-        public static var easeInEaseOutCubic = TimingFunction.function { x in
+        public static var easeInEaseOutCubic = TimingFunction("function") { x in
             Easing.easeInEaseOutCubic(x)
         }
 
         // MARK: Quartic
 
         /// A `easeInQuart` timing function.
-        public static var easeInQuart = TimingFunction.function { x in
+        public static var easeInQuart = TimingFunction("function") { x in
             Easing.easeInQuart(x)
         }
 
         /// A `easeOutQuart` timing function.
-        public static var easeOutQuart = TimingFunction.function { x in
+        public static var easeOutQuart = TimingFunction("function") { x in
             Easing.easeOutQuart(x)
         }
 
         /// A `easeInEaseOutQuart` timing function.
-        public static var easeInEaseOutQuart = TimingFunction.function { x in
+        public static var easeInEaseOutQuart = TimingFunction("function") { x in
             Easing.easeInEaseOutQuart(x)
         }
 
         // MARK: Quintic
 
         /// A `easeInQuint` timing function.
-        public static var easeInQuint = TimingFunction.function { x in
+        public static var easeInQuint = TimingFunction("function") { x in
             Easing.easeInQuint(x)
         }
 
         /// A `easeOutQuint` timing function.
-        public static var easeOutQuint = TimingFunction.function { x in
+        public static var easeOutQuint = TimingFunction("function") { x in
             Easing.easeOutQuint(x)
         }
 
         /// A `easeInEaseOutQuint` timing function.
-        public static var easeInEaseOutQuint = TimingFunction.function { x in
+        public static var easeInEaseOutQuint = TimingFunction("function") { x in
             Easing.easeInEaseOutQuint(x)
         }
 
         // MARK: Sinusoidal
 
         /// A `easeInSine` timing function.
-        public static var easeInSine = TimingFunction.function { x in
+        public static var easeInSine = TimingFunction("function") { x in
             Easing.easeInSine(x)
         }
 
         /// A `easeOutSine` timing function.
-        public static var easeOutSine = TimingFunction.function { x in
+        public static var easeOutSine = TimingFunction("function") { x in
             Easing.easeOutSine(x)
         }
 
         /// A `easeInEaseOutSine` timing function.
-        public static var easeInEaseOutSine = TimingFunction.function { x in
+        public static var easeInEaseOutSine = TimingFunction("function") { x in
             Easing.easeInEaseOutSine(x)
         }
 
         // MARK: Exponential
 
         /// A `easeInExpo` timing function.
-        public static var easeInExpo = TimingFunction.function { x in
+        public static var easeInExpo = TimingFunction("function") { x in
             Easing.easeInExpo(x)
         }
 
         /// A `easeOutExpo` timing function.
-        public static var easeOutExpo = TimingFunction.function { x in
+        public static var easeOutExpo = TimingFunction("function") { x in
             Easing.easeOutExpo(x)
         }
 
         /// A `easeInEaseOutExpo` timing function.
-        public static var easeInEaseOutExpo = TimingFunction.function { x in
+        public static var easeInEaseOutExpo = TimingFunction("function") { x in
             Easing.easeInEaseOutExpo(x)
         }
 
         // MARK: Circular
 
         /// A `easeInCirc` timing function.
-        public static var easeInCirc = TimingFunction.function { x in
+        public static var easeInCirc = TimingFunction("function") { x in
             Easing.easeInCirc(x)
         }
 
         /// A `easeOutCirc` timing function.
-        public static var easeOutCirc = TimingFunction.function { x in
+        public static var easeOutCirc = TimingFunction("function") { x in
             Easing.easeOutCirc(x)
         }
 
         /// A `easeInEaseOutCirc` timing function.
-        public static var easeInEaseOutCirc = TimingFunction.function { x in
+        public static var easeInEaseOutCirc = TimingFunction("function") { x in
             Easing.easeInEaseOutCirc(x)
         }
 
         // MARK: Bounce
 
         /// A `easeInBounce` timing function.
-        public static var easeInBounce = TimingFunction.function { x in
+        public static var easeInBounce = TimingFunction("function") { x in
             Easing.easeInBounce(x)
         }
 
         /// A `easeOutBounce` timing function.
-        public static var easeOutBounce = TimingFunction.function { x in
+        public static var easeOutBounce = TimingFunction("function") { x in
             Easing.easeOutBounce(x)
         }
 
         /// A `easeInEaseOutBounce` timing function.
-        public static var easeInEaseOutBounce = TimingFunction.function { x in
+        public static var easeInEaseOutBounce = TimingFunction("function") { x in
             Easing.easeInEaseOutBounce(x)
         }
 
         // MARK: Elastic
 
         /// A `easeInElastic` timing function.
-        public static var easeInElastic = TimingFunction.function { x in
+        public static var easeInElastic = TimingFunction("function") { x in
             Easing.easeInElastic(x)
         }
 
         /// A `easeOutElastic` timing function.
-        public static var easeOutElastic = TimingFunction.function { x in
+        public static var easeOutElastic = TimingFunction("function") { x in
             Easing.easeOutElastic(x)
         }
 
         /// A `easeInEaseOutElastic` timing function.
-        public static var easeInEaseOutElastic = TimingFunction.function { x in
+        public static var easeInEaseOutElastic = TimingFunction("function") { x in
             Easing.easeInEaseOutElastic(x)
         }
 
         // MARK: Back
 
         /// A `easeInBack` timing function.
-        public static var easeInBack = TimingFunction.function { x in
+        public static var easeInBack = TimingFunction("function") { x in
             Easing.easeInBack(x)
         }
 
         /// A `easeOutBack` timing function.
-        public static var easeOutBack = TimingFunction.function { x in
+        public static var easeOutBack = TimingFunction("function") { x in
             Easing.easeOutBack(x)
         }
 
         /// A `easeInEaseOutBack` timing function.
-        public static var easeInEaseOutBack = TimingFunction.function { x in
+        public static var easeInEaseOutBack = TimingFunction("function") { x in
             Easing.easeInEaseOutBack(x)
         }
     }
@@ -489,100 +498,12 @@ extension TimingFunction.Easing {
     }
 }
 
-extension TimingFunction: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
-    }
-
-    public static func == (lhs: TimingFunction, rhs: TimingFunction) -> Bool {
-        if lhs.name != "Function", lhs.name == rhs.name {
-            return true
-        }
-        return false
-    }
-}
-
 extension TimingFunction: CustomStringConvertible {
-    /// The name of the timing function.
-    public var name: String {
-        switch self {
-        case .linear:
-            return "Linear"
-        case .default:
-            return "default"
-        case .easeIn:
-            return "EaseIn"
-        case .easeOut:
-            return "EaseOut"
-        case .easeInEaseOut:
-            return "EaseInEaseOut"
-        case .swiftOut:
-            return "SwiftOut"
-        case Easing.easeInCirc:
-            return "EaseInCirc"
-        case Easing.easeOutCirc:
-            return "EaseOutCirc"
-        case Easing.easeInEaseOutCirc:
-            return "EaseInEaseOutCirc"
-        case Easing.easeInCubic:
-            return "EaseInCubic"
-        case Easing.easeOutCubic:
-            return "EaseOutCubic"
-        case Easing.easeInEaseOutCubic:
-            return "EaseInEaseOutCubic"
-        case Easing.easeInBack:
-            return "EaseInBack"
-        case Easing.easeOutBack:
-            return "EaseOutBack"
-        case Easing.easeInEaseOutBack:
-            return "EaseInEaseOutBack"
-        case Easing.easeInQuint:
-            return "EaseInQuint"
-        case Easing.easeOutQuint:
-            return "EaseOutQuint"
-        case Easing.easeInEaseOutQuint:
-            return "EaseInEaseOutQuint"
-        case Easing.easeInBounce:
-            return "EaseInBounce"
-        case Easing.easeOutBounce:
-            return "EaseOutBounce"
-        case Easing.easeInEaseOutBounce:
-            return "EaseInEaseOutBounce"
-        case Easing.easeInElastic:
-            return "EaseInElastic"
-        case Easing.easeOutElastic:
-            return "EaseOutElastic"
-        case Easing.easeInEaseOutElastic:
-            return "EaseInEaseOutElastic"
-        case Easing.easeInQuart:
-            return "EaseInQuart"
-        case Easing.easeOutQuart:
-            return "EaseOutQuart"
-        case Easing.easeInEaseOutQuart:
-            return "EaseInEaseOutQuart"
-        case Easing.easeInExpo:
-            return "EaseInExpo"
-        case Easing.easeOutExpo:
-            return "EaseOutExpo"
-        case Easing.easeInEaseOutExpo:
-            return "EaseInEaseOutExpo"
-        case Easing.easeInSine:
-            return "EaseInSine"
-        case Easing.easeOutSine:
-            return "EaseOutSine"
-        case Easing.easeInEaseOutSine:
-            return "EaseInEaseOutSine"
-        case .function:
-            return "Function"
-        case let .bezier(unitBezier):
-            return "Bezier(x1: \(unitBezier.first.x),  y1: \(unitBezier.first.y), x2: \(unitBezier.second.x), y2: \(unitBezier.second.y))"
-        }
-    }
-
     public var description: String {
         "TimingFunction: \(name)"
     }
 }
+
 
 #if canImport(QuartzCore)
 
@@ -596,8 +517,7 @@ extension TimingFunction: CustomStringConvertible {
                 coreAnimationTimingFunction.getControlPoint(at: index, values: &rawValues)
                 return (x: Double(rawValues[0]), y: Double(rawValues[1]))
             }
-
-            self.init(
+            self.init(coreAnimationTimingFunction.name,
                 x1: controlPoints[1].x,
                 y1: controlPoints[1].y,
                 x2: controlPoints[2].x,
@@ -605,5 +525,23 @@ extension TimingFunction: CustomStringConvertible {
             )
         }
     }
+
+extension CAMediaTimingFunction {
+    var name: String {
+        if self == CAMediaTimingFunction(name: .default) {
+            return "default"
+        } else if self == CAMediaTimingFunction(name: .easeIn) {
+            return "easeIn"
+        } else if self == CAMediaTimingFunction(name: .easeInEaseOut) {
+            return "easeInEaseOut"
+        } else if self == CAMediaTimingFunction(name: .easeOut) {
+            return "easeOut"
+        } else if self == CAMediaTimingFunction(name: .linear) {
+            return "linear"
+        } else {
+            return "function"
+        }
+    }
+}
 
 #endif

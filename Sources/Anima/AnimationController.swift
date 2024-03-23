@@ -210,6 +210,7 @@ extension AnimationController {
             case decay(mode: Anima.DecayAnimationMode, decelerationRate: Double)
             case nonAnimated
             case velocityUpdate
+            case animationValueUpdate
 
             var type: AnimationType? {
                 switch self {
@@ -217,6 +218,13 @@ extension AnimationController {
                 case .easing: return .easing
                 case .decay: return .decay
                 default: return nil
+                }
+            }
+            
+            var isAnimationValue: Bool {
+                switch self {
+                case .animationValueUpdate: return true
+                default: return false
                 }
             }
 

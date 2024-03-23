@@ -105,40 +105,4 @@
             set { setFrame(newValue, display: false) }
         }
     }
-
-    public extension WindowAnimator {
-        /**
-         The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
-
-         - Parameter keyPath: The keypath to an animatable property.
-         */
-        func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<WindowAnimator, Value>) -> AnimationProviding? {
-            lastAccessedPropertyKey = ""
-            _ = self[keyPath: keyPath]
-            return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
-        }
-
-        /**
-         The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
-
-         - Parameter keyPath: The keypath to an animatable property.
-         */
-        func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<WindowAnimator, Value>) -> Value? {
-            var velocity: Value?
-            Anima.updateVelocity {
-                velocity = self[keyPath: keyPath]
-            }
-            return velocity
-        }
-        
-        /**
-         The current animation value for the specified property, or the value of the property if it isn't animated.
-
-         - Parameter keyPath: The keypath to an animatable property.
-         */
-        func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<WindowAnimator, Value>) -> Value {
-            (animation(for: keyPath) as? (any ConfigurableAnimationProviding))?.value as? Value ?? self[keyPath: keyPath]
-        }
-    }
-
 #endif

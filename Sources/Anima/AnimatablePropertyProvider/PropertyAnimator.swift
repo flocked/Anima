@@ -132,14 +132,18 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
         guard lastAccessedPropertyKey != "" else { return nil }
         return animations[lastAccessedPropertyKey]
     }
+    var animationHandlers: [String: Any] = [:]
 }
 
 extension PropertyAnimator {
-    
     /// The current value of the property at the keypath. If the property is currently animated, it returns the animation's target value.
     func value<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        if AnimationController.shared.currentAnimationParameters?.configuration.isAnyVelocity == true {
-            return animation(for: keyPath)?.velocity as? Value ?? .zero
+        if let configuration = AnimationController.shared.currentAnimationParameters?.configuration {
+            if configuration.isAnyVelocity {
+                return animation(for: keyPath)?.velocity as? Value ?? .zero
+            } else if configuration.isAnimationValue {
+                return animation(for: keyPath)?.value as? Value ?? .zero
+            }
         }
         return animation(for: keyPath)?.target as? Value ?? object[keyPath: keyPath]
     }
@@ -182,6 +186,8 @@ extension PropertyAnimator {
             configurateAnimation(animation, target: target, keyPath: keyPath, settings: settings, completion: completion)
         case .velocityUpdate:
             animation(for: keyPath)?.setVelocity(newValue)
+        case .animationValueUpdate:
+            break
         case .nonAnimated:
             break
         }
@@ -201,15 +207,28 @@ extension PropertyAnimator {
 
         animation.startValue = animation.value
         animation.configure(withSettings: settings)
+        let animationKey = keyPath.stringValue
+
+        var handler: ((Value,Value, Bool)->())? {
+            if let handler: ((Value,Value, Bool)->()) = animationHandler(for: animationKey) {
+                return handler
+            }
+            return nil
+        }
+        
         if Provider.self is CALayer.Type {
             animation.valueChanged = { [weak self] value in
+                guard let self = self else { return }
                 DisableActions {
-                    self?.object[keyPath: keyPath] = value
+                    self.object[keyPath: keyPath] = value
+                    handler?(value,animation.velocity, false)
                 }
             }
         } else {
             animation.valueChanged = { [weak self] value in
-                self?.object[keyPath: keyPath] = value
+                guard let self = self else { return }
+                self.object[keyPath: keyPath] = value
+                handler?(value, animation.velocity, false)
             }
         }
 
@@ -222,13 +241,12 @@ extension PropertyAnimator {
                 }
             }
         #endif
-
-        let animationKey = keyPath.stringValue
         animation.completion = { [weak self] event in
             switch event {
             case .finished:
                 completion?()
                 self?.animations[animationKey] = nil
+                handler?(animation.value, .zero, true)
                 #if os(iOS) || os(tvOS)
                     (self as? PropertyAnimator<UIView>)?.preventingUserInteractionAnimations.remove(animation.id)
                 #endif
@@ -277,7 +295,6 @@ extension PropertyAnimator {
         #elseif canImport(UIKit)
         return (object as? UIView)?.layer.animator.animation(for: keyPath)
         #endif
-        return nil
     }
 
     /// The current decay animation for the property at the keypath, or `nil` if there isn't a decay animation for the keypath.
@@ -293,5 +310,15 @@ extension PropertyAnimator {
     /// The current spring animation for the property at the keypath, or `nil` if there isn't a spring animation for the keypath.
     func springAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> SpringAnimation<Value>? {
         animation(for: keyPath) as? SpringAnimation<Value>
+    }
+    
+    func animationHandler<Value: AnimatableProperty>(for keyPath: String) -> ((Value, Value, Bool)->())? {
+        if let handler = animationHandlers[keyPath] as? ((Value, Value, Bool)->()) {
+            return handler
+        }
+        if let viewAnimator = (object as? CALayer)?.parentView?.animator {
+            return viewAnimator.animationHandler(for: keyPath)
+        }
+        return nil
     }
 }

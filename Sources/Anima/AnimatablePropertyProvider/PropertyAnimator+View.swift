@@ -218,42 +218,6 @@ import Decomposed
             get { object.optionalLayer?.animator.skew ?? .zero }
             set { object.optionalLayer?.animator.skew = newValue }
         }
-
-        // MARK: - Accessing animations
-
-        /**
-         The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
-
-         - Parameter keyPath: The keypath to an animatable property.
-         */
-        public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> AnimationProviding? {
-            object.optionalLayer?.animator.lastAccessedPropertyKey = ""
-            lastAccessedPropertyKey = ""
-            _ = self[keyPath: keyPath]
-           return object.optionalLayer?.animator.lastAccessedProperty ?? lastAccessedProperty ?? animation(for: keyPath.stringValue)
-        }
-
-        /**
-         The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
-
-         - Parameter keyPath: The keypath to an animatable property.
-         */
-        public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> Value? {
-            var velocity: Value?
-            Anima.updateVelocity {
-                velocity = self[keyPath: keyPath]
-            }
-            return velocity
-        }
-        
-        /**
-         The current animation value for the specified property, or the value of the property if it isn't animated.
-
-         - Parameter keyPath: The keypath to an animatable property.
-         */
-        public func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> Value {
-            (animation(for: keyPath) as? (any ConfigurableAnimationProviding))?.value as? Value ?? self[keyPath: keyPath]
-        }
     }
 #else
     extension UIView: AnimatablePropertyProvider {}
@@ -463,41 +427,10 @@ import Decomposed
             get { object.optionalLayer?.animator.skew ?? .zero }
             set { object.optionalLayer?.animator.skew = newValue }
         }
-
-        // MARK: - Accessing animations
-
-        /**
-         The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
-
-         - Parameter keyPath: The keypath to an animatable property.
-         */
-        public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> AnimationProviding? {
-            object.optionalLayer?.animator.lastAccessedPropertyKey = ""
-            lastAccessedPropertyKey = ""
-            _ = self[keyPath: keyPath]
-            if let layerKey = object.optionalLayer?.animator.lastAccessedPropertyKey, layerKey != "" {
-                return object.optionalLayer?.animator.animations[layerKey]
-            }
-            return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
-        }
-
-        /**
-         The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
-
-         - Parameter keyPath: The keypath to an animatable property.
-         */
-        public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<ViewAnimator, Value>) -> Value? {
-            var velocity: Value?
-            Anima.updateVelocity {
-                velocity = self[keyPath: keyPath]
-            }
-            return velocity
-        }
     }
 #endif
 
 #if os(macOS)
-
     public extension ViewAnimator where View: NSDatePicker {
         /// The text color of the date picker.
         var textColor: NSColor {

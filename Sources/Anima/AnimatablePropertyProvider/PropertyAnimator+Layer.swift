@@ -207,41 +207,6 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         get { transform.skew }
         set { transform.skew = newValue }
     }
-
-    // MARK: - Accessing animations
-
-    /**
-     The current animation for the property at the specified keypath, or `nil` if the property isn't animated.
-
-     - Parameter keyPath: The keypath to an animatable property.
-     */
-    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayerAnimator, Value>) -> AnimationProviding? {
-        lastAccessedPropertyKey = ""
-        _ = self[keyPath: keyPath]
-        return animations[lastAccessedPropertyKey != "" ? lastAccessedPropertyKey : keyPath.stringValue]
-    }
-
-    /**
-     The current animation velocity for the property at the specified keypath, or `nil` if the property isn't animated or doesn't support velocity values.
-
-     - Parameter keyPath: The keypath to an animatable property.
-     */
-    public func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayerAnimator, Value>) -> Value? {
-        var velocity: Value?
-        Anima.updateVelocity {
-            velocity = self[keyPath: keyPath]
-        }
-        return velocity
-    }
-    
-    /**
-     The current animation value for the specified property, or the value of the property if it isn't animated.
-
-     - Parameter keyPath: The keypath to an animatable property.
-     */
-    public func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<LayerAnimator, Value>) -> Value {
-        (animation(for: keyPath) as? (any ConfigurableAnimationProviding))?.value as? Value ?? self[keyPath: keyPath]
-    }
 }
 
 public extension LayerAnimator where Layer: CAShapeLayer {
