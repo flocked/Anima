@@ -6,7 +6,6 @@
 //
 
 import Combine
-import Foundation
 #if os(macOS)
     import AppKit
 #elseif canImport(UIKit)
@@ -19,7 +18,7 @@ class AnimationController {
 
     private var displayLink: AnyCancellable?
 
-    private var animations: [UUID: any ConfigurableAnimationProviding] = [:]
+    private var animations: [UUID: WeakANimation] = [:]
     private var animationSettingsStack = SettingsStack()
 
     typealias CompletionBlock = (_ finished: Bool, _ retargeted: Bool) -> Void
@@ -50,8 +49,7 @@ class AnimationController {
     func runAnimationGroup(
         configuration: AnimationGroupConfiguration,
         animations: () -> Void,
-        completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
-    ) {
+        completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil) {
         precondition(Thread.isMainThread, "All Anima animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.")
 
         // Register the handler
@@ -66,18 +64,20 @@ class AnimationController {
         if displayLinkIsRunning == false {
             startDisplayLink()
         }
-
-        animations[animation.id] = animation
-
+        animations[animation.id] = WeakANimation(animation)
         animation.updateAnimation(deltaTime: .zero)
     }
 
     public func stopAnimation(_ animation: AnimationProviding) {
         animations[animation.id] = nil
     }
+    
+    func stopAnimation(_ animation: WeakANimation) {
+        animations[animation.id] = nil
+    }
 
     public func stopAllAnimations(immediately: Bool) {
-        animations.values.forEach { $0.stop(at: .current, immediately: immediately) }
+        animations.values.forEach { $0.animation?.stop(at: .current, immediately: immediately) }
     }
 
     private func updateAnimations(_ frame: DisplayLink.Frame) {
@@ -96,11 +96,15 @@ class AnimationController {
 
         let sortedAnimations = animations.values.sorted(by: \.relativePriority, .descending)
 
-        for animation in sortedAnimations {
-            if animation.state != .running {
-                stopAnimation(animation)
+        for weak in sortedAnimations {
+            if let animation = weak.animation {
+                if animation.state != .running {
+                    stopAnimation(animation)
+                } else {
+                    animation.updateAnimation(deltaTime: deltaTime)
+                }
             } else {
-                animation.updateAnimation(deltaTime: deltaTime)
+                stopAnimation(weak)
             }
         }
 
@@ -143,9 +147,7 @@ class AnimationController {
         guard let uuid = uuid, let block = groupAnimationCompletionBlocks[uuid] else {
             return
         }
-
         block(finished, retargeted)
-
         if retargeted == false, finished {
             groupAnimationCompletionBlocks[uuid] = nil
         }
@@ -168,20 +170,24 @@ extension AnimationController {
             stack.removeLast()
         }
     }
-}
-
-private class WeakANimation {
-    weak var _weakValue: AnyObject?
-    var _value: Any?
-    var animation: (any ConfigurableAnimationProviding)? {
-        (_weakValue ?? _value) as? (any ConfigurableAnimationProviding)
-    }
-    var relativePriority: Int {
-        animation?.relativePriority ?? 0
-    }
-    let id: UUID
-    init(_ animation: any ConfigurableAnimationProviding) {
-        _weakValue = animation as AnyObject
-        id = animation.id
+    
+    class WeakANimation {
+        let id: UUID
+        var relativePriority: Int {
+            animation?.relativePriority ?? 0
+        }
+        var animation: (any ConfigurableAnimationProviding)? {
+            (_weakValue ?? _value) as? (any ConfigurableAnimationProviding)
+        }
+        weak var _weakValue: AnyObject?
+        var _value: Any?
+        init(_ animation: any ConfigurableAnimationProviding) {
+            id = animation.id
+            if type(of: animation) is AnyClass {
+                _weakValue = animation as AnyObject
+            } else {
+                _value = animation
+            }
+        }
     }
 }
