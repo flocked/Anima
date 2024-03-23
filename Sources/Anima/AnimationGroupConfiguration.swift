@@ -1,24 +1,15 @@
 //
-//  File.swift
+//  AnimationGroupConfiguration.swift
 //  
 //
 //  Created by Florian Zand on 23.03.24.
 //
 
 import Foundation
-// AnimationGroupParameters
-// AnimationGroupSettings
-// AnimationGroupConfiguration
-
-enum AnimationType {
-    case spring
-    case easing
-    case decay
-}
 
 struct AnimationGroupConfiguration {
     let groupID: UUID
-    let type: SettingsType
+    let type: GroupType
     let delay: CGFloat
     let options: Anima.AnimationOptions
     let completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)?
@@ -35,7 +26,7 @@ struct AnimationGroupConfiguration {
         }
     }
 
-    enum SettingsType {
+    enum GroupType {
         case spring
         case easing
         case decay
@@ -59,11 +50,17 @@ struct AnimationGroupConfiguration {
         let decelerationRate: Double
     }
     
-    init(type: SettingsType, groupID: UUID = UUID(), delay: CGFloat = 0.0, options: Anima.AnimationOptions = [], completion: ((_: Bool, _: Bool) -> Void)? = nil) {
+    init(type: GroupType, groupID: UUID = UUID(), delay: CGFloat = 0.0, options: Anima.AnimationOptions = [], completion: ((_: Bool, _: Bool) -> Void)? = nil) {
         self.groupID = groupID
         self.delay = delay
         self.type = type
         self.options = options
         self.completion = completion
     }
+}
+
+enum AnimationType {
+    case spring
+    case easing
+    case decay
 }
