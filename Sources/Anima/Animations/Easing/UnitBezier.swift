@@ -13,7 +13,7 @@ import Foundation
 
 public extension TimingFunction {
     /// A bezier curve that can be used to calculate timing functions.
-    struct UnitBezier: Hashable, Sendable {
+    struct UnitBezier: Hashable, Sendable, CustomStringConvertible {
         /// The first point of the bezier.
         public var first: CGPoint {
             didSet {
@@ -61,6 +61,10 @@ public extension TimingFunction {
          */
         public func solve(x: Double, duration: Double) -> Double {
             UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: 1.0 / (duration * 1000.0))
+        }
+        
+        public var description: String {
+            "((\(first.x), \(first.y)), (\(second.x), \(second.y)))"
         }
     }
 }
