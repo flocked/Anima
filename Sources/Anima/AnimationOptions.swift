@@ -64,3 +64,13 @@ extension Anima.AnimationOptions: CustomStringConvertible {
         #endif
     }
 }
+
+extension Anima.AnimationOptions {
+    var repeats: Bool { contains(.repeats) }
+    var integralizeValues: Bool { contains(.integralizeValues) }
+    var autoreverse: Bool { contains(.autoreverse) }
+    var resetSpringVelocity: Bool { contains(.resetSpringVelocity) }
+    #if os(iOS) || os(tvOS)
+        var preventUserInteraction: Bool { contains(.preventUserInteraction) }
+    #endif
+}

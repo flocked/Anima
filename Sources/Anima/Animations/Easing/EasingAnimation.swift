@@ -156,17 +156,17 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    let animationType: AnimationController.AnimationParameters.AnimationType = .easing
+    let animationType: AnimationParameters.AnimationType = .easing
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationController.AnimationParameters) {
+    func configure(withSettings settings: AnimationParameters) {
         groupID = settings.groupID
-        repeats = settings.repeats
-        autoreverse = settings.autoreverse
-        integralizeValues = settings.integralizeValues
+        repeats = settings.options.repeats
+        autoreverse = settings.options.autoreverse
+        integralizeValues = settings.options.integralizeValues
 
-        timingFunction = settings.configuration.timingFunction ?? timingFunction
-        duration = settings.configuration.duration ?? duration
+        timingFunction = settings.easing?.timingFunction ?? timingFunction
+        duration = settings.easing?.duration ?? duration
     }
 
     /**

@@ -64,8 +64,8 @@ protocol ConfigurableAnimationProviding<Value>: AnimationProviding {
     var velocity: Value { get set }
     var _velocity: Value.AnimatableData { get set }
     var startVelocity: Value { get set }
-    var animationType: AnimationController.AnimationParameters.AnimationType { get }
-    func configure(withSettings settings: AnimationController.AnimationParameters)
+    var animationType: AnimationParameters.AnimationType { get }
+    func configure(withSettings settings: AnimationParameters)
     func reset()
     func updateAnimation(deltaTime: TimeInterval)
 }
@@ -78,5 +78,11 @@ extension ConfigurableAnimationProviding {
         if includingFromVelocity {
             animation.startVelocity = velocity
         }
+    }
+    
+    func setValue(_ value: Any) {
+        guard let value = value as? Value, value != self.value else { return }
+        var animation = self
+        animation.value = value
     }
 }

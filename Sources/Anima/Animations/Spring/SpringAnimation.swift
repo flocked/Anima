@@ -165,20 +165,20 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    let animationType: AnimationController.AnimationParameters.AnimationType = .spring
+    let animationType: AnimationParameters.AnimationType = .spring
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationController.AnimationParameters) {
+    func configure(withSettings settings: AnimationParameters) {
         groupID = settings.groupID
-        repeats = settings.repeats
-        autoreverse = settings.autoreverse
-        integralizeValues = settings.integralizeValues
-        spring = settings.configuration.spring ?? spring
+        repeats = settings.options.repeats
+        autoreverse = settings.options.autoreverse
+        integralizeValues = settings.options.integralizeValues
+        spring = settings.spring?.spring ?? spring
 
-        if settings.resetSpringVelocity {
+        if settings.options.resetSpringVelocity {
             _velocity = .zero
         }
-        if let gestureVelocity = settings.configuration.gestureVelocity {
+        if let gestureVelocity = settings.spring?.gestureVelocity {
             func applyGestureVelocity(_ gestureVelocity: CGRect) {
                 if let animation = self as? SpringAnimation<CGRect> {
                     animation.velocity = gestureVelocity

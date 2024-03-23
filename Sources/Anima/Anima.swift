@@ -126,14 +126,9 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
-        let settings = AnimationController.AnimationParameters(
-            groupID: UUID(),
-            delay: delay,
-            configuration: .spring(spring: spring, gestureVelocity: gestureVelocity),
-            options: options,
-            completion: completion
-        )
-
+        var settings = AnimationParameters(type: .spring, delay: delay, options: options, completion: completion)
+        settings.spring = .init(spring: spring, gestureVelocity: gestureVelocity)
+    
         AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
     }
 
@@ -166,14 +161,9 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
-        let settings = AnimationController.AnimationParameters(
-            groupID: UUID(),
-            delay: delay,
-            configuration: .easing(timingFunction: timingFunction, duration: duration),
-            options: options,
-            completion: completion
-        )
-
+        var settings = AnimationParameters(type: .easing, delay: delay, options: options, completion: completion)
+        settings.easing = .init(timingFunction: timingFunction, duration: duration)
+    
         AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
     }
 
@@ -218,14 +208,9 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
-        let settings = AnimationController.AnimationParameters(
-            groupID: UUID(),
-            delay: delay,
-            configuration: .decay(mode: mode, decelerationRate: decelerationRate),
-            options: options,
-            completion: completion
-        )
-
+        var settings = AnimationParameters(type: mode == .velocity ? .decayVelocity : .decay, delay: delay, options: options, completion: completion)
+        settings.decay = .init(decelerationRate: decelerationRate)
+        
         AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
     }
 
@@ -266,11 +251,7 @@ public enum Anima {
      - Note: For a list of all objects that provide animatable properties take a look at ``Anima``.
      */
     static func updateVelocity(changes: () -> Void) {
-        let settings = AnimationController.AnimationParameters(
-            groupID: UUID(),
-            configuration: .velocityUpdate
-        )
-
+        let settings = AnimationParameters(type: .animationVelocity)
         AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
     }
 
@@ -293,20 +274,13 @@ public enum Anima {
      - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
      */
     static func nonAnimate(changes: () -> Void) {
-        let settings = AnimationController.AnimationParameters(
-            groupID: UUID(),
-            configuration: .nonAnimated
-        )
-
+        let settings = AnimationParameters(type: .nonAnimated)
         AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
     }
     
     /// Updates the current animation value.
     internal static func updateAnimationValue(changes: () -> Void) {
-        let settings = AnimationController.AnimationParameters(
-            groupID: UUID(),
-            configuration: .animationValueUpdate
-        )
+        let settings = AnimationParameters(type: .animationValue)
         AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
     }
 }

@@ -231,16 +231,16 @@ open class DecayAnimation<Value: AnimatableProperty>: AnimationProviding, Config
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    let animationType: AnimationController.AnimationParameters.AnimationType = .decay
+    let animationType: AnimationParameters.AnimationType = .decay
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationController.AnimationParameters) {
+    func configure(withSettings settings: AnimationParameters) {
         groupID = settings.groupID
-        repeats = settings.repeats
-        autoreverse = settings.autoreverse
-        integralizeValues = settings.integralizeValues
+        repeats = settings.options.repeats
+        autoreverse = settings.options.autoreverse
+        integralizeValues = settings.options.integralizeValues
 
-        decelerationRate = settings.configuration.decelerationRate ?? decelerationRate
+        decelerationRate = settings.decay?.decelerationRate ?? decelerationRate
     }
 
     /**

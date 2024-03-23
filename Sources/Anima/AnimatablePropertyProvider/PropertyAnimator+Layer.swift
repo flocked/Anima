@@ -22,7 +22,9 @@ public extension AnimatablePropertyProvider where Self: CALayer {
 
      See ``LayerAnimator`` for more information about how to animate and all animatable properties.
      */
-    var animator: LayerAnimator<Self> { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self)) }
+    var animator: LayerAnimator<Self> { 
+        getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self))
+    }
 }
 
 /**
@@ -203,6 +205,8 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         get { transform.skew }
         set { transform.skew = newValue }
     }
+    
+   
 }
 
 public extension LayerAnimator where Layer: CAShapeLayer {

@@ -104,7 +104,7 @@ public extension AnimationProvider {
 protocol PropertyAnimatorInternal: AnyObject {
     var lastAccessedPropertyKey: String { get set }
     associatedtype Provider
-    var object: Provider { get }
+    var _object: Provider? { get }
     var animationHandlers: [String: Any] { get set }
     var lastAccessedProperty: AnimationProviding? { get }
     var animations: [String: AnimationProviding] { get set }
@@ -114,6 +114,6 @@ extension PropertyAnimator: PropertyAnimatorInternal { }
 
 extension PropertyAnimatorInternal {
     var layerAnimator: (any PropertyAnimatorInternal)? {
-        (object as? NSUIView)?.optionalLayer?.animator
+        (_object as? NSUIView)?.optionalLayer?.animator
     }
 }
