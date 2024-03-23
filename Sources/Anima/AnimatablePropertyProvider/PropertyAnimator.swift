@@ -128,6 +128,14 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
     }
 
     var lastAccessedPropertyKey: String = ""
+    func lastAccessedProperty(includingLayer: Bool = false) -> AnimationProviding? {
+        if lastAccessedPropertyKey != "" {
+            return animations[lastAccessedPropertyKey]
+        } else if includingLayer {
+            return (object as? NSUIView)?.optionalLayer?.animator.lastAccessedProperty()
+        }
+        return nil
+    }
     var lastAccessedProperty: AnimationProviding? {
         guard lastAccessedPropertyKey != "" else { return nil }
         return animations[lastAccessedPropertyKey]

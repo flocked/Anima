@@ -63,16 +63,21 @@ protocol PropertyAnimatorInternal: AnyObject {
     var animations: [String: AnimationProviding] { get set }
 }
 
+extension PropertyAnimatorInternal {
+    var layerAnimator: (any PropertyAnimatorInternal)? {
+        (object as? NSUIView)?.optionalLayer?.animator
+    }
+}
+
 extension PropertyAnimator: AnimationProvider, PropertyAnimatorInternal { }
 
 public extension AnimationProvider {
-    
     func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> AnimationProviding? {
         guard let animator = self as? (any PropertyAnimatorInternal) else { return nil }
         animator.lastAccessedPropertyKey = ""
-        (animator.object as? NSView)?.layer?.animator.lastAccessedPropertyKey = ""
+        animator.layerAnimator?.lastAccessedPropertyKey = ""
         _ = self[keyPath: keyPath]
-        return (animator.object as? NSView)?.layer?.animator.lastAccessedProperty ?? animator.lastAccessedProperty ?? animator.animations[keyPath.stringValue]
+        return animator.layerAnimator?.lastAccessedProperty ?? animator.lastAccessedProperty ?? animator.animations[keyPath.stringValue]
     }
     
     func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> Value {
@@ -96,18 +101,12 @@ public extension AnimationProvider {
         _ = self.animation(for: keyPath)
         if animator.lastAccessedPropertyKey != "" {
             animator.animationHandlers[animator.lastAccessedPropertyKey] = handler
-        } else if let animator = (animator.object as? NSUIView)?.optionalLayer?.animator, animator.lastAccessedPropertyKey != "" {
+        } else if let animator = animator.layerAnimator, animator.lastAccessedPropertyKey != "" {
             if let handler = handler, type(of: Value.self) == type(of: Optional<NSUIColor>.self) {
-                let newHandler: ((CGColor?,CGColor?, Bool)->()) = { value, velocity, finished in
-                    var color: NSUIColor? = nil
-                    var velocityColor: NSUIColor? = nil
-                    if let value = value as? AnyObject, CFGetTypeID(value) == CGColor.typeID {
-                        color = NSUIColor(cgColor: value as! CGColor)
-                    }
-                    if let velocity = velocity as? AnyObject, CFGetTypeID(velocity) == CGColor.typeID {
-                        velocityColor = NSUIColor(cgColor: velocity as! CGColor)
-                    }
-                    handler(color as! Value, velocityColor as! Value, finished)
+                let newHandler: ((CGColor?,CGColor?,Bool)->()) = { value, velocity, finished in
+                    let value = value != nil ? NSUIColor(cgColor: value!) : nil
+                    let velocity = velocity != nil ? NSUIColor(cgColor: velocity!) : nil
+                    handler(value as! Value, velocity as! Value, finished)
                 }
                 animator.animationHandlers[animator.lastAccessedPropertyKey] = newHandler
             } else {
