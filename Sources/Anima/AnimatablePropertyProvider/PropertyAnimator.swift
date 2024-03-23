@@ -5,7 +5,6 @@
 //  Created by Florian Zand on 07.10.23.
 //
 
-import QuartzCore
 #if os(macOS)
     import AppKit
 #elseif canImport(UIKit)
@@ -147,13 +146,12 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider>: NSObject {
     
     deinit {
         animations.values.forEach({AnimationController.shared.stopAnimation($0)})
-        animations.values.forEach({$0.stop(at: .current, immediately: true)})
     }
 }
 
 extension PropertyAnimator {
-    var settings: AnimationParameters? {
-        AnimationController.shared.currentAnimationParameters
+    var settings: AnimationGroupConfiguration? {
+        AnimationController.shared.currentGroupConfiguration
     }
     
     /// The current value of the property at the keypath. If the property is currently animated, it returns the animation's target value.
@@ -210,7 +208,8 @@ extension PropertyAnimator {
     }
 
     /// Configurates an animation and starts it.
-    func configurateAnimation<Value>(_ animation: some ConfigurableAnimationProviding<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, settings: AnimationParameters, completion: (() -> Void)? = nil) {
+    func configurateAnimation<Value>(_ animation: some ConfigurableAnimationProviding<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, settings: AnimationGroupConfiguration, completion: (() -> Void)? = nil) {
+        
         var animation = animation
         animation.reset()
 
@@ -231,30 +230,15 @@ extension PropertyAnimator {
             }
             return nil
         }
-        
-        if Provider.self is CALayer.Type {
-            animation.valueChanged = { [weak self] value in
-                guard let self = self else { return }
-                guard let object = self.object else {
-                    AnimationController.shared.stopAnimation(animation)
-                   // animation.stop(at: .current, immediately: true)
-                    return
-                }
-                DisableActions {
-                    object[keyPath: keyPath] = value
-                    handler?(value,animation.velocity, false)
-                }
+ 
+        animation.valueChanged = { [weak self] value in
+            guard let self = self else { return }
+            guard let object = self.object else {
+                AnimationController.shared.stopAnimation(animation)
+                return
             }
-        } else {
-            animation.valueChanged = { [weak self] value in
-                guard let self = self else { return }
-                guard let object = self.object else {
-                    AnimationController.shared.stopAnimation(animation)
-                    return
-                }
-                object[keyPath: keyPath] = value
-                handler?(value, animation.velocity, false)
-            }
+            object[keyPath: keyPath] = value
+            handler?(value, animation.velocity, false)
         }
 
         #if os(iOS) || os(tvOS)
@@ -315,11 +299,7 @@ extension PropertyAnimator {
             return animation
         }
         guard checkLayer else { return nil }
-        #if os(macOS)
-        return (object as? NSView)?.layer?.animator.animation(for: keyPath)
-        #elseif canImport(UIKit)
-        return (object as? UIView)?.layer.animator.animation(for: keyPath)
-        #endif
+        return (object as? NSUIView)?.optionalLayer?.animator.animation(for: keyPath)
     }
 
     /// The current decay animation for the property at the keypath, or `nil` if there isn't a decay animation for the keypath.

@@ -131,10 +131,10 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    let animationType: AnimationParameters.AnimationType = .easing
+    let animationType: AnimationType = .easing
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationParameters) {
+    func configure(withSettings settings: AnimationGroupConfiguration) {
         groupID = settings.groupID
     }
 

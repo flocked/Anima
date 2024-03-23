@@ -165,10 +165,10 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    let animationType: AnimationParameters.AnimationType = .spring
+    let animationType: AnimationType = .spring
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationParameters) {
+    func configure(withSettings settings: AnimationGroupConfiguration) {
         groupID = settings.groupID
         repeats = settings.options.repeats
         autoreverse = settings.options.autoreverse

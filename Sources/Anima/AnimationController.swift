@@ -25,7 +25,7 @@ class AnimationController {
     typealias CompletionBlock = (_ finished: Bool, _ retargeted: Bool) -> Void
     var groupAnimationCompletionBlocks: [UUID: CompletionBlock] = [:]
 
-    var currentAnimationParameters: AnimationParameters? {
+    var currentGroupConfiguration: AnimationGroupConfiguration? {
         animationSettingsStack.currentSettings
     }
 
@@ -47,17 +47,17 @@ class AnimationController {
         }
     }
 
-    func runAnimationBlock(
-        settings: AnimationParameters,
+    func runAnimationGroup(
+        configuration: AnimationGroupConfiguration,
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
         precondition(Thread.isMainThread, "All Anima animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.")
 
         // Register the handler
-        groupAnimationCompletionBlocks[settings.groupID] = completion
+        groupAnimationCompletionBlocks[configuration.groupID] = completion
 
-        animationSettingsStack.push(settings: settings)
+        animationSettingsStack.push(settings: configuration)
         animations()
         animationSettingsStack.pop()
     }
@@ -73,7 +73,6 @@ class AnimationController {
     }
 
     public func stopAnimation(_ animation: AnimationProviding) {
-        let count = animations.count
         animations[animation.id] = nil
     }
 
@@ -155,18 +154,34 @@ class AnimationController {
 
 extension AnimationController {
     private class SettingsStack {
-        private var stack: [AnimationParameters] = []
+        private var stack: [AnimationGroupConfiguration] = []
         
-        var currentSettings: AnimationParameters? {
+        var currentSettings: AnimationGroupConfiguration? {
             stack.last
         }
         
-        func push(settings: AnimationParameters) {
+        func push(settings: AnimationGroupConfiguration) {
             stack.append(settings)
         }
         
         func pop() {
             stack.removeLast()
         }
+    }
+}
+
+private class WeakANimation {
+    weak var _weakValue: AnyObject?
+    var _value: Any?
+    var animation: (any ConfigurableAnimationProviding)? {
+        (_weakValue ?? _value) as? (any ConfigurableAnimationProviding)
+    }
+    var relativePriority: Int {
+        animation?.relativePriority ?? 0
+    }
+    let id: UUID
+    init(_ animation: any ConfigurableAnimationProviding) {
+        _weakValue = animation as AnyObject
+        id = animation.id
     }
 }

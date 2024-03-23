@@ -126,10 +126,10 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
-        var settings = AnimationParameters(type: .spring, delay: delay, options: options, completion: completion)
-        settings.spring = .init(spring: spring, gestureVelocity: gestureVelocity)
+        var configuration = AnimationGroupConfiguration(type: .spring, delay: delay, options: options, completion: completion)
+        configuration.spring = .init(spring: spring, gestureVelocity: gestureVelocity)
     
-        AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
+        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
 
     /**
@@ -161,10 +161,10 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
-        var settings = AnimationParameters(type: .easing, delay: delay, options: options, completion: completion)
-        settings.easing = .init(timingFunction: timingFunction, duration: duration)
+        var configuration = AnimationGroupConfiguration(type: .easing, delay: delay, options: options, completion: completion)
+        configuration.easing = .init(timingFunction: timingFunction, duration: duration)
     
-        AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
+        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
 
     /**
@@ -208,10 +208,10 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
     ) {
-        var settings = AnimationParameters(type: mode == .velocity ? .decayVelocity : .decay, delay: delay, options: options, completion: completion)
-        settings.decay = .init(decelerationRate: decelerationRate)
+        var configuration = AnimationGroupConfiguration(type: mode == .velocity ? .decayVelocity : .decay, delay: delay, options: options, completion: completion)
+        configuration.decay = .init(decelerationRate: decelerationRate)
         
-        AnimationController.shared.runAnimationBlock(settings: settings, animations: animations, completion: completion)
+        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
 
     /**
@@ -251,8 +251,8 @@ public enum Anima {
      - Note: For a list of all objects that provide animatable properties take a look at ``Anima``.
      */
     static func updateVelocity(changes: () -> Void) {
-        let settings = AnimationParameters(type: .animationVelocity)
-        AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
+        let configuration = AnimationGroupConfiguration(type: .animationVelocity)
+        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: changes, completion: nil)
     }
 
     /**
@@ -274,13 +274,13 @@ public enum Anima {
      - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
      */
     static func nonAnimate(changes: () -> Void) {
-        let settings = AnimationParameters(type: .nonAnimated)
-        AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
+        let configuration = AnimationGroupConfiguration(type: .nonAnimated)
+        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: changes, completion: nil)
     }
     
     /// Updates the current animation value.
     internal static func updateAnimationValue(changes: () -> Void) {
-        let settings = AnimationParameters(type: .animationValue)
-        AnimationController.shared.runAnimationBlock(settings: settings, animations: changes, completion: nil)
+        let configuration = AnimationGroupConfiguration(type: .animationValue)
+        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: changes, completion: nil)
     }
 }

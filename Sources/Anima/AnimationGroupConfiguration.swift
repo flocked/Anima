@@ -6,8 +6,17 @@
 //
 
 import Foundation
+// AnimationGroupParameters
+// AnimationGroupSettings
+// AnimationGroupConfiguration
 
-struct AnimationParameters {
+enum AnimationType {
+    case spring
+    case easing
+    case decay
+}
+
+struct AnimationGroupConfiguration {
     let groupID: UUID
     let type: SettingsType
     let delay: CGFloat
@@ -24,12 +33,6 @@ struct AnimationParameters {
         case .decay, .decayVelocity: return .decay
         default: return nil
         }
-    }
-    
-    enum AnimationType {
-        case spring
-        case easing
-        case decay
     }
 
     enum SettingsType {
