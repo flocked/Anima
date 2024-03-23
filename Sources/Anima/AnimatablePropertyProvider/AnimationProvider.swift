@@ -1,5 +1,5 @@
 //
-//  Animator.swift
+//  AnimationProvider.swift
 //  
 //
 //  Created by Florian Zand on 23.03.24.
@@ -11,7 +11,7 @@
     import UIKit
 #endif
 
-/// An object that provides animations.
+/// Provides animations.
 public protocol AnimationProvider: AnyObject {
     
     /// The animation provider.
@@ -54,22 +54,7 @@ public protocol AnimationProvider: AnyObject {
     func setAnimationHandler<Value: AnimatableProperty>(_ keyPath: WritableKeyPath<AnimationProvider, Value>, handler: ((_ value: Value,_ velocity: Value, _ isFinished: Bool)->())?)
 }
 
-protocol PropertyAnimatorInternal: AnyObject {
-    var lastAccessedPropertyKey: String { get set }
-    associatedtype Provider
-    var object: Provider { get }
-    var animationHandlers: [String: Any] { get set }
-    var lastAccessedProperty: AnimationProviding? { get }
-    var animations: [String: AnimationProviding] { get set }
-}
-
-extension PropertyAnimatorInternal {
-    var layerAnimator: (any PropertyAnimatorInternal)? {
-        (object as? NSUIView)?.optionalLayer?.animator
-    }
-}
-
-extension PropertyAnimator: AnimationProvider, PropertyAnimatorInternal { }
+extension PropertyAnimator: AnimationProvider { }
 
 public extension AnimationProvider {
     func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> AnimationProviding? {
@@ -113,5 +98,22 @@ public extension AnimationProvider {
                 animator.animationHandlers[animator.lastAccessedPropertyKey] = handler
             }
         }
+    }
+}
+
+protocol PropertyAnimatorInternal: AnyObject {
+    var lastAccessedPropertyKey: String { get set }
+    associatedtype Provider
+    var object: Provider { get }
+    var animationHandlers: [String: Any] { get set }
+    var lastAccessedProperty: AnimationProviding? { get }
+    var animations: [String: AnimationProviding] { get set }
+}
+
+extension PropertyAnimator: PropertyAnimatorInternal { }
+
+extension PropertyAnimatorInternal {
+    var layerAnimator: (any PropertyAnimatorInternal)? {
+        (object as? NSUIView)?.optionalLayer?.animator
     }
 }
