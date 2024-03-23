@@ -5,15 +5,23 @@
 ### Accessing Animations
 
 - ``animations``
+- ``PropertyAnimator/animations``
+- ``Anima/AnimationProvider/animation(for:)-54u0m``
 - ``subscript(animation:)``
-
-### Accessing Animation Velocities
-
-- ``subscript(velocity:)``
 
 ### Accessing Animation Values
 
-- ``subscript(value:)``
+- ``Anima/AnimationProvider/animationValue(for:)-91c63``
+- ``subscript(animationValue:)``
+
+### Accessing Animation Velocities
+
+- ``Anima/AnimationProvider/animationVelocity(for:)-1k944``
+- ``subscript(animationVelocity:)``
+
+### Providing Animation Handlers
+
+- ``Anima/AnimationProvider/setAnimationHandler(_:handler:)-523cw``
 
 ### Accessing Values
 

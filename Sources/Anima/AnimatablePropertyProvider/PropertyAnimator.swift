@@ -113,7 +113,7 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
 
      - Parameter keyPath: The keypath to the animatable property for the velocity.
      */
-    public subscript<Value: AnimatableProperty>(velocity keyPath: WritableKeyPath<Provider, Value>) -> Value {
+    public subscript<Value: AnimatableProperty>(animationVelocity keyPath: WritableKeyPath<Provider, Value>) -> Value {
         get { animation(for: keyPath, checkLayer: true)?.velocity as? Value ?? .zero }
         set { animation(for: keyPath, checkLayer: true)?.setVelocity(newValue) }
     }
@@ -123,7 +123,7 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
      
      - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(value keyPath: WritableKeyPath<Provider, Value>) -> Value {
+    public subscript<Value: AnimatableProperty>(animationValue keyPath: WritableKeyPath<Provider, Value>) -> Value {
         animation(for: keyPath, checkLayer: true)?.value as? Value ?? object[keyPath: keyPath]
     }
 

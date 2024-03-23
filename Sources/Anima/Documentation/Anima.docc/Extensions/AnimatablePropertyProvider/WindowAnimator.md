@@ -11,6 +11,9 @@
 
 - ``Anima/AnimationProvider/animationValue(for:)-91c63``
 - ``Anima/AnimationProvider/animationVelocity(for:)-1k944``
+
+### Providing animation handlers
+
 - ``Anima/AnimationProvider/setAnimationHandler(_:handler:)-523cw``
 
 ### Animatable properties

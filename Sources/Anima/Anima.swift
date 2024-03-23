@@ -78,7 +78,7 @@ public enum Anima {
      }
      ```
 
-     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
+     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
 
      - Parameters:
         - gestureVelocity: If provided, this value will be used to set the spring ``SpringAnimation/velocity`` of whatever underlying animations run in the `animations` block that animates the same type. This should be primarily used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations. If you apply a velocity of type `CGPoint` it's used for animating properties of type `GGPoint` and `CGRect`.
@@ -108,7 +108,7 @@ public enum Anima {
      }
      ```
 
-     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
+     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
 
      - Parameters:
         - spring: The ``Spring`` used to determine the timing curve and duration of the animation.
@@ -148,7 +148,7 @@ public enum Anima {
      }
      ```
 
-     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
+     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
 
      - Parameters:
         - timingFunction: The ``TimingFunction`` used to determine the timing curve.
@@ -198,7 +198,7 @@ public enum Anima {
      })
      ```
 
-     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties check ``Anima``.
+     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
 
      - Parameters:
         - mode: The mode how the animation should decay:
@@ -251,6 +251,8 @@ public enum Anima {
 
     /**
      Updates the animation velocities for decay and spring animations.
+     
+     Changing the properties of an object animator updates their current animation velocities.
 
      Example usage:
      ```swift
@@ -261,7 +263,7 @@ public enum Anima {
 
      - Parameter changes: A block containing the updated velocities.
 
-     - Note: For a list of all objects that provide animatable properties check ``Anima``.
+     - Note: For a list of all objects that provide animatable properties take a look at ``Anima``.
      */
     static func updateVelocity(changes: () -> Void) {
         let settings = AnimationController.AnimationParameters(
@@ -286,7 +288,7 @@ public enum Anima {
      myView.animator.center = newCenterPoint
      ```
 
-     - Note: For a list of all objects that provide animatable properties check ``Anima``.
+     - Note: For a list of all objects that provide animatable properties take a look at ``Anima``.
 
      - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
      */
