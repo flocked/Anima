@@ -140,6 +140,11 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider> {
         return animations[lastAccessedPropertyKey]
     }
     var animationHandlers: [String: Any] = [:]
+    
+    deinit {
+        animations.values.forEach({AnimationController.shared.stopAnimation($0)})
+        animations.removeAll()
+    }
 }
 
 extension PropertyAnimator {
