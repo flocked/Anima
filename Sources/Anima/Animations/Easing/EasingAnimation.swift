@@ -19,7 +19,7 @@ import Foundation
  easingAnimation.start()
  ```
  */
-open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
+open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, _AnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
 
@@ -112,7 +112,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
     var _startValue: Value.AnimatableData
 
     /// The current velocity of the animation.
-    public internal(set) var velocity: Value {
+    public var velocity: Value {
         get { Value(_velocity) }
         set { _velocity = newValue.animatableData }
     }
@@ -225,11 +225,12 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
         guard state != .running else { return }
 
-        let start = {
+        let start = { [weak self] in
+            guard let self = self else { return }
             self.state = .running
             AnimationController.shared.runAnimation(self)
         }
-
+        
         delayedStart?.cancel()
         self.delay = delay
 
@@ -261,6 +262,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
      */
     open func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
+        guard state == .running else { return }
         delayedStart?.cancel()
         delay = 0.0
         if immediately == false {

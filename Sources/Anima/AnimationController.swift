@@ -12,7 +12,7 @@ import Combine
     import UIKit
 #endif
 
-/// Manages all ``Anima`` animations.
+/// Manages the animations of ``Anima``.
 class AnimationController {
     public static let shared = AnimationController()
 
@@ -60,7 +60,7 @@ class AnimationController {
         animationSettingsStack.pop()
     }
 
-    public func runAnimation(_ animation: some ConfigurableAnimationProviding) {
+    public func runAnimation(_ animation: some _AnimationProviding) {
         if displayLinkIsRunning == false {
             startDisplayLink()
         }
@@ -176,12 +176,12 @@ extension AnimationController {
         var relativePriority: Int {
             animation?.relativePriority ?? 0
         }
-        var animation: (any ConfigurableAnimationProviding)? {
-            (_weakValue ?? _value) as? (any ConfigurableAnimationProviding)
+        var animation: (any _AnimationProviding)? {
+            (_weakValue ?? _value) as? (any _AnimationProviding)
         }
         weak var _weakValue: AnyObject?
         var _value: Any?
-        init(_ animation: any ConfigurableAnimationProviding) {
+        init(_ animation: any _AnimationProviding) {
             id = animation.id
             if type(of: animation) is AnyClass {
                 _weakValue = animation as AnyObject

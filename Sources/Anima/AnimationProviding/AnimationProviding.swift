@@ -8,7 +8,7 @@
 import Foundation
 
 ///  A type that provides an animation.
-public protocol AnimationProviding {
+public protocol AnimationProviding: AnyObject {
     /// An unique identifier for the animation.
     var id: UUID { get }
 
@@ -50,39 +50,46 @@ public protocol AnimationProviding {
     func stop(at position: AnimationPosition, immediately: Bool)
 }
 
-/// An internal extension to `AnimationProviding` used for configurating animations.
-protocol ConfigurableAnimationProviding<Value>: AnimationProviding {
+extension AnimationProviding {
+    func _animation<Value: AnimatableProperty>() -> (any _AnimationProviding<Value>)? {
+        if #available(macOS 13.0, iOS 16.0, tvOS 16.0, *), let animation = self as? (any _AnimationProviding<Value>) {
+            return animation
+        } else if let animation = self as? SpringAnimation<Value> {
+            return animation
+        } else if let animation = self as? EasingAnimation<Value> {
+            return animation
+        } else if let animation = self as? DecayAnimation<Value> {
+            return animation
+        }
+        return nil
+    }
+}
+
+/// An internal protocol to `AnimationProviding` used for configurating the animation.
+protocol _AnimationProviding<Value>: AnimationProviding {
     associatedtype Value: AnimatableProperty
-    var state: AnimatingState { get set }
-    var delay: TimeInterval { get set }
     var value: Value { get set }
     var target: Value { get set }
     var startValue: Value { get set }
     var completion: ((_ event: AnimationEvent<Value>) -> Void)? { get set }
     var valueChanged: ((_ currentValue: Value) -> Void)? { get set }
-    var delayedStart: DispatchWorkItem? { get set }
     var velocity: Value { get set }
     var _velocity: Value.AnimatableData { get set }
-    var startVelocity: Value { get set }
     var animationType: AnimationType { get }
     func configure(withSettings settings: AnimationGroupConfiguration)
     func reset()
     func updateAnimation(deltaTime: TimeInterval)
 }
 
-extension ConfigurableAnimationProviding {
-    func setVelocity(_ velocity: Any, includingFromVelocity: Bool = false) {
-        guard let velocity = velocity as? Value, velocity != self.velocity else { return }
-        var animation = self
-        animation.velocity = velocity
-        if includingFromVelocity {
-            animation.startVelocity = velocity
-        }
+extension _AnimationProviding {
+    var propertyAnimation: PropertyAnimationProviding<Value> {
+        getAssociatedValue(key: "propertyAnimation", object: self, initialValue: PropertyAnimationProviding(self))
     }
-    
-    func setValue(_ value: Any) {
-        guard let value = value as? Value, value != self.value else { return }
-        var animation = self
-        animation.value = value
-    }
+}
+
+enum AnimationType: Int {
+    case spring
+    case easing
+    case decay
+    case property
 }

@@ -65,9 +65,3 @@ struct AnimationGroupConfiguration {
         self.completion = completion
     }
 }
-
-enum AnimationType: Int {
-    case spring
-    case easing
-    case decay
-}

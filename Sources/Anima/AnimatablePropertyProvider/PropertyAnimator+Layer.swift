@@ -48,7 +48,7 @@ public extension AnimatablePropertyProvider where Self: CALayer {
 
  ### Accessing Animations
 
- To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-54u0m``:
+ To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-80x48``:
 
  ```swift
  if let animation = layer.animator.animation(for: \.frame) {
@@ -56,23 +56,14 @@ public extension AnimatablePropertyProvider where Self: CALayer {
  }
  ```
  
- ### Accessing Animation Value
-
- To access the current animation value for a property, use ``Anima/AnimationProvider/animationValue(for:)-91c63``.
-
- ```swift
- if let value = layer.animator.animationValue(for: \.origin) {
-
- }
- ```
+ ### Accessing Animation Value and Velocity
  
- ### Accessing Animation Velocity
-
- To access the animation velocity for a property, use ``Anima/AnimationProvider/animationVelocity(for:)-1k944``.
+ The animation returned via ``Anima/AnimationProvider/animation(for:)-80x48`` provides the current animation value and velocity.
 
  ```swift
- if let velocity = layer.animator.animationVelocity(for: \.origin) {
-
+ if let animation = layer.animator.animation(for: \.frame) {
+    let velocity = animation.velocity
+    let value = animation.value
  }
  ```
  */

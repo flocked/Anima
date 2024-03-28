@@ -5,7 +5,7 @@
 ### Accessing animations
 
 - ``Anima/AnimationProvider/animations``
-- ``Anima/AnimationProvider/animation(for:)-54u0m``
+- ``Anima/AnimationProvider/animation(for:)-80x48``
 
 ### Accessing animation values
 

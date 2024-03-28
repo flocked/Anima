@@ -34,7 +34,7 @@ import Foundation
 
  ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value.
  */
-open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
+open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, _AnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
 
@@ -45,7 +45,16 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
     open var relativePriority: Int = 0
 
     /// The current state of the animation (`inactive`, `running`, or `ended`).
-    open var state: AnimatingState = .inactive
+    open var state: AnimatingState = .inactive {
+        didSet {
+            guard oldValue != state else { return }
+            if state == .running {
+                AnimationController.shared.runAnimation(self)
+            } else {
+                AnimationController.shared.stopAnimation(self)
+            }
+        }
+    }
 
     /// The delay (in seconds) after which the animations begin.
     open var delay: TimeInterval = 0.0
@@ -131,7 +140,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    let animationType: AnimationType = .easing
+    let animationType: AnimationType = .property
 
     /// Configurates the animation with the specified settings.
     func configure(withSettings settings: AnimationGroupConfiguration) {
@@ -161,9 +170,9 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
         precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
         guard state != .running else { return }
 
-        let start = {
+        let start = { [weak self] in
+            guard let self = self else { return }
             self.state = .running
-            AnimationController.shared.runAnimation(self)
         }
 
         delayedStart?.cancel()
@@ -183,7 +192,6 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
     /// Pauses the animation at the current position.
     open func pause() {
         guard state == .running else { return }
-        AnimationController.shared.stopAnimation(self)
         state = .inactive
         delayedStart?.cancel()
         delay = 0.0
@@ -208,7 +216,6 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
             default: break
             }
         } else {
-            AnimationController.shared.stopAnimation(self)
             state = .inactive
             switch position {
             case .start:
@@ -225,7 +232,11 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Con
     }
 
     /// Resets the animation.
-    func reset() {}
+    func reset() {
+        state = .inactive
+        _value = _startValue
+        valueChanged?(value)
+    }
 }
 
 extension PropertyAnimation: CustomStringConvertible {

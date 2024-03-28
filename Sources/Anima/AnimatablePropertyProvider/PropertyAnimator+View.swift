@@ -47,7 +47,7 @@ import Decomposed
 
      ### Accessing Animations
 
-     To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-54u0m``:
+     To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-80x48``:
 
      ```swift
      if let animation = view.animator.animation(for: \.frame) {
@@ -55,26 +55,16 @@ import Decomposed
      }
      ```
      
-     ### Accessing Animation Value
-
-     To access the current animation value for a property, use ``Anima/AnimationProvider/animationValue(for:)-91c63``.
-
-     ```swift
-     if let value = view.animator.animationValue(for: \.origin) {
-
-     }
-     ```
-
-     ### Accessing Animation Velocity
-
-     To access the animation velocity for a property, use ``Anima/AnimationProvider/animationVelocity(for:)-1k944``.
+     ### Accessing Animation Value and Velocity
+     
+     The animation returned via ``Anima/AnimationProvider/animation(for:)-80x48`` provides the current animation value and velocity.
 
      ```swift
-     if let velocity = view.animator.animationVelocity(for: \.origin) {
-
+     if let animation = view.animator.animation(for: \.frame) {
+        let velocity = animation.velocity
+        let value = animation.value
      }
      ```
-
      */
     public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
         // MARK: - Animatable Properties

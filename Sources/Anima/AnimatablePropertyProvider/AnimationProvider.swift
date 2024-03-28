@@ -25,22 +25,8 @@ public protocol AnimationProvider: AnyObject {
 
      - Parameter keyPath: The keypath to the property.
      */
-    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<AnimationProvider, Value>) -> AnimationProviding?
-    
-    /**
-     The current animation velocity for the specified property, or `zero` if the property isn't animated.
+    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<AnimationProvider, Value>) -> PropertyAnimationProviding<Value>?
 
-     - Parameter keyPath: The keypath to the property.
-     */
-    func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<AnimationProvider, Value>) -> Value
-    
-    /**
-     The current animation value for the specified property, or the value of the property if it isn't animated.
-
-     - Parameter keyPath: The keypath to the property.
-     */
-    func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<AnimationProvider, Value>) -> Value
-    
     /**
      Sets the handler that gets called when the specified property is animated and it's value changed.
 
@@ -57,63 +43,56 @@ public protocol AnimationProvider: AnyObject {
 extension PropertyAnimator: AnimationProvider { }
 
 public extension AnimationProvider {
-    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> AnimationProviding? {
-        guard let animator = self as? (any PropertyAnimatorInternal) else { return nil }
-        animator.lastAccessedPropertyKey = ""
-        animator.layerAnimator?.lastAccessedPropertyKey = ""
+    internal func _animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> AnimationProviding? {
+        guard let animator = self as? (any _PropertyAnimator) else { return nil }
+        animator.lastAccessedProperty = ""
+        animator.layerAnimator?.lastAccessedProperty = ""
         _ = self[keyPath: keyPath]
-        return animator.layerAnimator?.lastAccessedProperty ?? animator.lastAccessedProperty ?? animator.animations[keyPath.stringValue]
-    }
-        
-    func animationVelocity<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> Value {
-        var velocity: Value?
-        Anima.updateVelocity {
-            velocity = self[keyPath: keyPath]
-        }
-        return velocity ?? .zero
+        return animator.layerAnimator?.lastAccessedAnimation ?? animator.lastAccessedAnimation ?? animator.animations[keyPath.stringValue]
     }
     
-    func animationValue<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> Value {
-        var value: Value?
-        Anima.updateAnimationValue {
-            value = self[keyPath: keyPath]
+    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> PropertyAnimationProviding<Value>? {
+        guard let animation = _animation(for: keyPath) else { return nil }
+        if let animation: any _AnimationProviding<Value>  = animation._animation() {            
+            return animation.propertyAnimation
+        } else if type(of: Value.self) == type(of: Optional<NSUIColor>.self), let animation: any _AnimationProviding<Optional<CGColor>>  = animation._animation() {
+            return ColorPropertyAnimationProviding(animation) as? PropertyAnimationProviding<Value>
         }
-        return value ?? self[keyPath: keyPath]
+        return nil
     }
     
     func setAnimationHandler<Value: AnimatableProperty>(_ keyPath: WritableKeyPath<Self, Value>, handler: ((_ value: Value,_ velocity: Value, _ isFinished: Bool)->())?) {
-        guard let animator = self as? (any PropertyAnimatorInternal) else { return }
+        guard let animator = self as? (any _PropertyAnimator) else { return }
         _ = self.animation(for: keyPath)
-        if animator.lastAccessedPropertyKey != "" {
-            animator.animationHandlers[animator.lastAccessedPropertyKey] = handler
-        } else if let animator = animator.layerAnimator, animator.lastAccessedPropertyKey != "" {
+        if animator.lastAccessedProperty != "" {
+            animator.animationHandlers[animator.lastAccessedProperty] = handler
+        } else if let animator = animator.layerAnimator, animator.lastAccessedProperty != "" {
             if let handler = handler, type(of: Value.self) == type(of: Optional<NSUIColor>.self) {
-                let newHandler: ((CGColor?,CGColor?,Bool)->()) = { value, velocity, finished in
-                    let value = value != nil ? NSUIColor(cgColor: value!) : nil
-                    let velocity = velocity != nil ? NSUIColor(cgColor: velocity!) : nil
-                    handler(value as! Value, velocity as! Value, finished)
-                }
-                animator.animationHandlers[animator.lastAccessedPropertyKey] = newHandler
+                animator.animationHandlers[animator.lastAccessedProperty] = { (value: CGColor?, velocity: CGColor?, finished: Bool) in
+                    handler(value?.nsUIColor as! Value, velocity?.nsUIColor as! Value, finished) }
             } else {
-                animator.animationHandlers[animator.lastAccessedPropertyKey] = handler
+                animator.animationHandlers[animator.lastAccessedProperty] = handler
             }
         }
     }
 }
 
-protocol PropertyAnimatorInternal: AnyObject {
-    var lastAccessedPropertyKey: String { get set }
+/// An internal protocol for `PropertyAnimator` used for accessing animations by keypath.
+protocol _PropertyAnimator: AnyObject {
     associatedtype Provider
     var _object: Provider? { get }
+    var animations: [String: AnimationProviding] { get }
+    var lastAccessedProperty: String { get set }
+    var lastAccessedAnimation: AnimationProviding? { get }
     var animationHandlers: [String: Any] { get set }
-    var lastAccessedProperty: AnimationProviding? { get }
-    var animations: [String: AnimationProviding] { get set }
 }
 
-extension PropertyAnimator: PropertyAnimatorInternal { }
+extension PropertyAnimator: _PropertyAnimator { }
 
-extension PropertyAnimatorInternal {
-    var layerAnimator: (any PropertyAnimatorInternal)? {
+extension _PropertyAnimator {
+    var layerAnimator: (any _PropertyAnimator)? {
         (_object as? NSUIView)?.optionalLayer?.animator
     }
 }
+
+

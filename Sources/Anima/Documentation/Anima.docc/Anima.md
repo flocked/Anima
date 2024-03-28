@@ -135,6 +135,7 @@ Subclassing ``PropertyAnimation`` let's you create your own animations. Itself i
 ### Additions
 
 - ``AnimationProvider``
+- ``PropertyAnimationProviding``
 - ``CAKeyframeAnimationEmittable``
 - ``CAKeyframeAnimationValueConvertible``
 - ``BorderConfiguration``

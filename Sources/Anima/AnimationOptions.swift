@@ -71,6 +71,6 @@ extension Anima.AnimationOptions {
     var autoreverse: Bool { contains(.autoreverse) }
     var resetSpringVelocity: Bool { contains(.resetSpringVelocity) }
     #if os(iOS) || os(tvOS)
-        var preventUserInteraction: Bool { contains(.preventUserInteraction) }
+    var preventUserInteraction: Bool { contains(.preventUserInteraction) }
     #endif
 }

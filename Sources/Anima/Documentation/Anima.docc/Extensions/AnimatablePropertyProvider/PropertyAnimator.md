@@ -6,17 +6,15 @@
 
 - ``animations``
 - ``PropertyAnimator/animations``
-- ``Anima/AnimationProvider/animation(for:)-54u0m``
+- ``Anima/AnimationProvider/animation(for:)-80x48``
 - ``subscript(animation:)``
 
 ### Accessing Animation Values
 
-- ``Anima/AnimationProvider/animationValue(for:)-91c63``
 - ``subscript(animationValue:)``
 
 ### Accessing Animation Velocities
 
-- ``Anima/AnimationProvider/animationVelocity(for:)-1k944``
 - ``subscript(animationVelocity:)``
 
 ### Providing Animation Handlers

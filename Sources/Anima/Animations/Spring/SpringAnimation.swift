@@ -24,7 +24,7 @@ import Foundation
  springAnimation.start()
  ```
  */
-open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, ConfigurableAnimationProviding {
+open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, _AnimationProviding {
     /// A unique identifier for the animation.
     public let id = UUID()
 
@@ -178,22 +178,12 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         if settings.options.resetSpringVelocity {
             _velocity = .zero
         }
+        
         if let gestureVelocity = settings.spring?.gestureVelocity {
-            func applyGestureVelocity(_ gestureVelocity: CGRect) {
-                if let animation = self as? SpringAnimation<CGRect> {
-                    animation.velocity = gestureVelocity
-                    animation.startVelocity = gestureVelocity
-                } else if let animation = self as? SpringAnimation<CGPoint> {
-                    animation.velocity = gestureVelocity.origin
-                    animation.startVelocity = gestureVelocity.origin
-                }
-            }
-            if let gestureVelocity = gestureVelocity as? CGPoint {
-                applyGestureVelocity(CGRect(origin: gestureVelocity, size: .zero))
-            } else if let gestureVelocity = gestureVelocity as? CGRect {
-                applyGestureVelocity(gestureVelocity)
-            } else {
-                setVelocity(gestureVelocity)
+            if let gestureVelocity = gestureVelocity as? CGPoint, let animation = self as? SpringAnimation<CGRect> {
+                animation.velocity.origin = gestureVelocity
+            } else if let gestureVelocity = gestureVelocity as? Value {
+                velocity = gestureVelocity
             }
         }
     }
@@ -249,7 +239,8 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
         guard state != .running else { return }
 
-        let start = {
+        let start = { [weak self] in
+            guard let self = self else { return }
             self.state = .running
             AnimationController.shared.runAnimation(self)
         }
@@ -285,6 +276,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, Confi
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
      */
     open func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
+        guard state == .running else { return }
         delayedStart?.cancel()
         delay = 0.0
         if immediately == false {
