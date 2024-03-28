@@ -76,7 +76,7 @@ protocol _AnimationProviding<Value>: AnimationProviding {
     var velocity: Value { get set }
     var _velocity: Value.AnimatableData { get set }
     var animationType: AnimationType { get }
-    func configure(withSettings settings: Anima.AnimationConfiguration)
+    func configure(with configuration: Anima.AnimationConfiguration)
     func reset()
     func updateAnimation(deltaTime: TimeInterval)
 }

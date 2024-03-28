@@ -168,18 +168,18 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, _Anim
     let animationType: AnimationType = .spring
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: Anima.AnimationConfiguration) {
-        groupID = settings.groupID
-        repeats = settings.options.repeats
-        autoreverse = settings.options.autoreverse
-        integralizeValues = settings.options.integralizeValues
-        spring = settings.spring?.spring ?? spring
+    func configure(with configuration: Anima.AnimationConfiguration) {
+        groupID = configuration.groupID
+        repeats = configuration.options.repeats
+        autoreverse = configuration.options.autoreverse
+        integralizeValues = configuration.options.integralizeValues
+        spring = configuration.spring?.spring ?? spring
 
-        if settings.options.resetSpringVelocity {
+        if configuration.options.resetSpringVelocity {
             _velocity = .zero
         }
         
-        if let gestureVelocity = settings.spring?.gestureVelocity {
+        if let gestureVelocity = configuration.spring?.gestureVelocity {
             if let gestureVelocity = gestureVelocity as? CGPoint, let animation = self as? SpringAnimation<CGRect> {
                 animation.velocity.origin = gestureVelocity
             } else if let gestureVelocity = gestureVelocity as? Value {

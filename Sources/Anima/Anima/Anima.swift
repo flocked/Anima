@@ -240,7 +240,7 @@ public enum Anima {
         set { AnimationController.shared.preferredFrameRateRange = newValue }
     }
     
-    static var currentSettings: Anima.AnimationConfiguration? {
-        AnimationController.shared.animationSettingsStack.currentSettings
+    static var currentConfiguration: Anima.AnimationConfiguration? {
+        AnimationController.shared.currentAnimationConfiguration
     }
 }

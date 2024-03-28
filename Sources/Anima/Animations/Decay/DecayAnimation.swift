@@ -235,12 +235,12 @@ open class DecayAnimation<Value: AnimatableProperty>: AnimationProviding, _Anima
     let animationType: AnimationType = .decay
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: Anima.AnimationConfiguration) {
-        groupID = settings.groupID
-        repeats = settings.options.repeats
-        autoreverse = settings.options.autoreverse
-        integralizeValues = settings.options.integralizeValues
-        decelerationRate = settings.decay?.decelerationRate ?? decelerationRate
+    func configure(with configuration: Anima.AnimationConfiguration) {
+        groupID = configuration.groupID
+        repeats = configuration.options.repeats
+        autoreverse = configuration.options.autoreverse
+        integralizeValues = configuration.options.integralizeValues
+        decelerationRate = configuration.decay?.decelerationRate ?? decelerationRate
     }
 
     /**

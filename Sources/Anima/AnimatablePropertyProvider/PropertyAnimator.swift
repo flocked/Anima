@@ -129,10 +129,10 @@ extension PropertyAnimator {
     
     /// The current value of the property at the keypath. If the property is currently animated, it returns the animation's target value.
     func value<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        if let settingsType = Anima.currentSettings?.type {
-            if settingsType == .animationVelocity || settingsType == .decayVelocity {
+        if let configurationType = Anima.currentConfiguration?.type {
+            if configurationType == .animationVelocity || configurationType == .decayVelocity {
                 return animation(for: keyPath)?.velocity ?? .zero
-            } else if settingsType == .animationValue {
+            } else if configurationType == .animationValue {
                 return animation(for: keyPath)?.value ?? .zero
             }
         }
@@ -143,13 +143,13 @@ extension PropertyAnimator {
     func setValue<Value: AnimatableProperty>(_ newValue: Value, for keyPath: ReferenceWritableKeyPath<Provider, Value>, completion: (() -> Void)? = nil) {
         guard let object = object else { return }
         let currentAnimation = animation(for: keyPath)
-        guard let settings = Anima.currentSettings, settings.type != .nonAnimated else {
+        guard let configuration = Anima.currentConfiguration, configuration.type != .nonAnimated else {
             currentAnimation?.stop(at: .current, immediately: true)
             object[keyPath: keyPath] = newValue
             return
         }
         
-        guard value(for: keyPath) != newValue || settings.animationType != currentAnimation?.animationType else {
+        guard value(for: keyPath) != newValue || configuration.animationType != currentAnimation?.animationType else {
             return
         }
 
@@ -157,20 +157,20 @@ extension PropertyAnimator {
         var target = newValue
         updateValue(&value, target: &target)
 
-        AnimationController.shared.executeHandler(uuid: currentAnimation?.groupID, state: .retargeted)
-        switch settings.type {
+        AnimationController.shared.executeGroupHandler(uuid: currentAnimation?.groupID, state: .retargeted)
+        switch configuration.type {
         case .spring:
             let animation = springAnimation(for: keyPath) ?? SpringAnimation(spring: .smooth, value: value, target: target)
             if currentAnimation?.id != animation.id, let velocity = currentAnimation?._velocity as? Value.AnimatableData {
                 animation._velocity = velocity
             }
-            configurateAnimation(animation, target: target, keyPath: keyPath, settings: settings, completion: completion)
+            configurateAnimation(animation, target: target, keyPath: keyPath, configuration: configuration, completion: completion)
         case .easing:
             let animation = easingAnimation(for: keyPath) ?? EasingAnimation(timingFunction: .linear, duration: 1.0, value: value, target: target)
-            configurateAnimation(animation, target: target, keyPath: keyPath, settings: settings, completion: completion)
+            configurateAnimation(animation, target: target, keyPath: keyPath, configuration: configuration, completion: completion)
         case .decay, .decayVelocity:
             let animation = decayAnimation(for: keyPath) ?? DecayAnimation(value: value, target: target)
-            configurateAnimation(animation, target: target, keyPath: keyPath, settings: settings, completion: completion)
+            configurateAnimation(animation, target: target, keyPath: keyPath, configuration: configuration, completion: completion)
         case .animationVelocity:
             animation(for: keyPath)?.velocity = newValue
         case .animationValue:
@@ -181,19 +181,19 @@ extension PropertyAnimator {
     }
 
     /// Configurates an animation and starts it.
-    func configurateAnimation<Value>(_ animation: some _AnimationProviding<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, settings: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
+    func configurateAnimation<Value>(_ animation: some _AnimationProviding<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, configuration: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
         
         var animation = animation
         animation.reset()
 
-        if settings.type == .decayVelocity, let animation = animation as? DecayAnimation<Value> {
+        if configuration.type == .decayVelocity, let animation = animation as? DecayAnimation<Value> {
             animation.velocity = target
             animation._startVelocity = animation._velocity
         } else {
             animation.target = target
         }
 
-        animation.configure(withSettings: settings)
+        animation.configure(with: configuration)
         
         let animationKey = keyPath.stringValue
                 
@@ -212,7 +212,7 @@ extension PropertyAnimator {
 
         #if os(iOS) || os(tvOS)
             if let self = self as? PropertyAnimator<UIView> {
-                if settings.options.preventUserInteraction {
+                if configuration.options.preventUserInteraction {
                     self.preventingUserInteractionAnimations.insert(animation.id)
                 } else {
                     self.preventingUserInteractionAnimations.remove(animation.id)
@@ -228,7 +228,7 @@ extension PropertyAnimator {
                 #if os(iOS) || os(tvOS)
                     (self as? PropertyAnimator<UIView>)?.preventingUserInteractionAnimations.remove(animation.id)
                 #endif
-                AnimationController.shared.executeHandler(uuid: animation.groupID, state: .finished)
+                AnimationController.shared.executeGroupHandler(uuid: animation.groupID, state: .finished)
             default:
                 break
             }
@@ -238,7 +238,7 @@ extension PropertyAnimator {
             oldAnimation.stop(at: .current, immediately: true)
         }
         animations[animationKey] = animation
-        animation.start(afterDelay: settings.delay)
+        animation.start(afterDelay: configuration.delay)
     }
 
     /// Updates the current value and target of an animatable property for better interpolation/animations.

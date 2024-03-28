@@ -159,13 +159,13 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, _Anim
     let animationType: AnimationType = .easing
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: Anima.AnimationConfiguration) {
-        groupID = settings.groupID
-        repeats = settings.options.repeats
-        autoreverse = settings.options.autoreverse
-        integralizeValues = settings.options.integralizeValues
-        timingFunction = settings.easing?.timingFunction ?? timingFunction
-        duration = settings.easing?.duration ?? duration
+    func configure(with configuration: Anima.AnimationConfiguration) {
+        groupID = configuration.groupID
+        repeats = configuration.options.repeats
+        autoreverse = configuration.options.autoreverse
+        integralizeValues = configuration.options.integralizeValues
+        timingFunction = configuration.easing?.timingFunction ?? timingFunction
+        duration = configuration.easing?.duration ?? duration
     }
 
     /**

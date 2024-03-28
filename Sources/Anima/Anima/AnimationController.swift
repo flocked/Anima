@@ -17,10 +17,13 @@ class AnimationController {
     
     public static let shared = AnimationController()
 
-    var displayLink: AnyCancellable?
-    var animations: [UUID: WeakAimation] = [:]
-    var animationSettingsStack = SettingsStack()
-    var groupAnimationCompletionBlocks: [UUID: ((_ state: Anima.AnimationState) -> Void)] = [:]
+    private var displayLink: AnyCancellable?
+    private var animations: [UUID: WeakAimation] = [:]
+    private var groupAnimationCompletionBlocks: [UUID: ((_ state: Anima.AnimationState) -> Void)] = [:]
+    var animationConfigurationStack = ConfigurationStack()
+    var currentAnimationConfiguration: Anima.AnimationConfiguration? {
+        animationConfigurationStack.current
+    }
 
     /// The preferred rame rate of the animations.
     @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
@@ -47,9 +50,9 @@ class AnimationController {
         precondition(Thread.isMainThread, "All Anima animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.")
 
         groupAnimationCompletionBlocks[configuration.groupID] = completion
-        animationSettingsStack.push(settings: configuration)
+        animationConfigurationStack.push(configuration)
         animations()
-        animationSettingsStack.pop()
+        animationConfigurationStack.pop()
     }
 
     public func runAnimation(_ animation: some _AnimationProviding) {
@@ -76,7 +79,7 @@ class AnimationController {
         guard displayLinkIsRunning else {
             fatalError("Can't update animations without a display link")
         }
-
+        
         CATransaction.begin()
         CATransaction.setDisableActions(true)
 
@@ -124,7 +127,7 @@ class AnimationController {
         displayLink != nil
     }
 
-    func executeHandler(uuid: UUID?, state: Anima.AnimationState) {
+    func executeGroupHandler(uuid: UUID?, state: Anima.AnimationState) {
         guard let uuid = uuid, let block = groupAnimationCompletionBlocks[uuid] else {
             return
         }
@@ -136,15 +139,15 @@ class AnimationController {
 }
 
 extension AnimationController {
-    class SettingsStack {
+    class ConfigurationStack {
         private var stack: [Anima.AnimationConfiguration] = []
         
-        var currentSettings: Anima.AnimationConfiguration? {
+        var current: Anima.AnimationConfiguration? {
             stack.last
         }
         
-        func push(settings: Anima.AnimationConfiguration) {
-            stack.append(settings)
+        func push(_ configuration: Anima.AnimationConfiguration) {
+            stack.append(configuration)
         }
         
         func pop() {

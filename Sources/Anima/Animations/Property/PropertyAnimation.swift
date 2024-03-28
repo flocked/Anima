@@ -143,8 +143,8 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, _An
     let animationType: AnimationType = .property
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: Anima.AnimationConfiguration) {
-        groupID = settings.groupID
+    func configure(with configuration: Anima.AnimationConfiguration) {
+        groupID = configuration.groupID
     }
 
     /**
