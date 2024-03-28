@@ -63,15 +63,11 @@ class ViewController: NSViewController {
         default:
             frameSize = view.bounds.size * 0.6
         }
-        Swift.print(sizeCheckButton.state == .on, frameCheckButton.state == .on)
         if sizeCheckButton.state == .on && frameCheckButton.state == .on {
-            Swift.print("11")
             animatedView.animator.frame.size = frameSize
             animateOrigin()
         } else if sizeCheckButton.state == .on {
-            Swift.print("22")
             animatedView.animator.size = frameSize
-            Swift.print("33")
         } else if frameCheckButton.state == .on {
             animateOrigin()
         }
