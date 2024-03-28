@@ -53,9 +53,9 @@ public extension AnimationProvider {
     
     func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> PropertyAnimationProviding<Value>? {
         guard let animation = _animation(for: keyPath) else { return nil }
-        if let animation: any _AnimationProviding<Value>  = animation._animation() {            
+        if let animation: any _AnimationProviding<Value> = animation._animation() {
             return animation.propertyAnimation
-        } else if type(of: Value.self) == type(of: Optional<NSUIColor>.self), let animation: any _AnimationProviding<Optional<CGColor>>  = animation._animation() {
+        } else if type(of: Value.self) == type(of: Optional<NSUIColor>.self), let animation: any _AnimationProviding<Optional<CGColor>> = animation._animation() {
             return ColorPropertyAnimationProviding(animation) as? PropertyAnimationProviding<Value>
         }
         return nil

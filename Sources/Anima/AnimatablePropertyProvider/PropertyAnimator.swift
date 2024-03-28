@@ -67,12 +67,14 @@
  }
  ```
 
- ### Accessing Animation velocity
-
- To access or change the animation velocity of a property that is currently animated,  use it's keypath on the `animator` using ``subscript(velocity:)``:
+ ### Accessing Animation value and velocity
+ 
+ The animation returned via ``subscript(animation:)`` provides the current animation value and velocity.
 
  ```swift
- car.animator[velocity: \.speed] = 120.0
+ if let speedAnimation = car.animator[animation: \.speed] {
+    speedAnimation.velocity = 120
+ }
  ```
  */
 open class PropertyAnimator<Provider: AnimatablePropertyProvider>: NSObject {
@@ -106,39 +108,16 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider>: NSObject {
 
      - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> AnimationProviding? {
-        animation(for: keyPath.stringValue, checkLayer: true)
-    }
-
-    /**
-     The current animation velocity of the property at the specified keypath, or `zero` if the property isn't animated or the animation doesn't support velocity values.
-
-     - Parameter keyPath: The keypath to the animatable property for the velocity.
-     */
-    public subscript<Value: AnimatableProperty>(animationVelocity keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        get { animation(for: keyPath, checkLayer: true)?.velocity ?? .zero }
-        set { animation(for: keyPath, checkLayer: true)?.velocity = newValue }
-    }
-    
-    /**
-     The current value of the animation for the specified property, or the property's value if it isn't animatin.
-     
-     - Parameter keyPath: The keypath to the animatable property.
-     */
-    public subscript<Value: AnimatableProperty>(animationValue keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        animation(for: keyPath, checkLayer: true)?.value ?? object[keyPath: keyPath]
+    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> PropertyAnimationProviding<Value>? {
+        animation(for: keyPath, checkLayer: true)?.propertyAnimation
     }
 
     var animationHandlers: [String: Any] = [:]
+    
     var lastAccessedProperty: String = ""
-
     var lastAccessedAnimation: AnimationProviding? {
         guard lastAccessedProperty != "" else { return nil }
         return animations[lastAccessedProperty]
-    }
-    
-    var settings: AnimationGroupConfiguration? {
-        AnimationController.shared.currentGroupConfiguration
     }
     
     deinit {
@@ -150,7 +129,7 @@ extension PropertyAnimator {
     
     /// The current value of the property at the keypath. If the property is currently animated, it returns the animation's target value.
     func value<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Provider, Value>) -> Value {
-        if let settingsType = settings?.type {
+        if let settingsType = Anima.currentSettings?.type {
             if settingsType == .animationVelocity || settingsType == .decayVelocity {
                 return animation(for: keyPath)?.velocity ?? .zero
             } else if settingsType == .animationValue {
@@ -164,7 +143,7 @@ extension PropertyAnimator {
     func setValue<Value: AnimatableProperty>(_ newValue: Value, for keyPath: ReferenceWritableKeyPath<Provider, Value>, completion: (() -> Void)? = nil) {
         guard let object = object else { return }
         let currentAnimation = animation(for: keyPath)
-        guard let settings = settings, settings.type != .nonAnimated else {
+        guard let settings = Anima.currentSettings, settings.type != .nonAnimated else {
             currentAnimation?.stop(at: .current, immediately: true)
             object[keyPath: keyPath] = newValue
             return

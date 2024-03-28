@@ -191,3 +191,9 @@ extension AnimationController {
         }
     }
 }
+
+extension Anima {
+    static var currentSettings: AnimationGroupConfiguration? {
+        AnimationController.shared.currentGroupConfiguration
+    }
+}
