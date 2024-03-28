@@ -168,7 +168,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, _Anim
     let animationType: AnimationType = .spring
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationGroupConfiguration) {
+    func configure(withSettings settings: Anima.AnimationConfiguration) {
         groupID = settings.groupID
         repeats = settings.options.repeats
         autoreverse = settings.options.autoreverse
@@ -215,7 +215,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, _Anim
                     isReversed = !isReversed
                 }
                 _value = isReversed ? _target : _startValue
-                _velocity = isReversed ? .zero : _startVelocity
+                velocity = isReversed ? .zero : startVelocity
             } else {
                 _value = _target
             }
@@ -308,6 +308,7 @@ open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, _Anim
     func reset() {
         runningTime = 0.0
         delayedStart?.cancel()
+        _startValue = _value
     }
 }
 

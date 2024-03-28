@@ -157,7 +157,7 @@ extension PropertyAnimator {
         var target = newValue
         updateValue(&value, target: &target)
 
-        AnimationController.shared.executeHandler(uuid: currentAnimation?.groupID, finished: false, retargeted: true)
+        AnimationController.shared.executeHandler(uuid: currentAnimation?.groupID, state: .retargeted)
         switch settings.type {
         case .spring:
             let animation = springAnimation(for: keyPath) ?? SpringAnimation(spring: .smooth, value: value, target: target)
@@ -181,7 +181,7 @@ extension PropertyAnimator {
     }
 
     /// Configurates an animation and starts it.
-    func configurateAnimation<Value>(_ animation: some _AnimationProviding<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, settings: AnimationGroupConfiguration, completion: (() -> Void)? = nil) {
+    func configurateAnimation<Value>(_ animation: some _AnimationProviding<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, settings: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
         
         var animation = animation
         animation.reset()
@@ -193,25 +193,21 @@ extension PropertyAnimator {
             animation.target = target
         }
 
-        animation.startValue = animation.value
         animation.configure(withSettings: settings)
         
         let animationKey = keyPath.stringValue
-        var handler: ((Value,Value, Bool)->())? {
-            if let handler: ((Value,Value, Bool)->()) = animationHandler(for: animationKey) {
-                return handler
-            }
-            return nil
+                
+        var animationHandler: ((Value,Value, Bool)->())? {
+            animationHandlers[animationKey] as? ((Value,Value, Bool)->())
         }
  
         animation.valueChanged = { [weak self] value in
-            guard let self = self else { return }
-            guard let object = self.object else {
+            guard let self = self, let object = self.object else {
                 AnimationController.shared.stopAnimation(animation)
                 return
             }
             object[keyPath: keyPath] = value
-            handler?(value, animation.velocity, false)
+            animationHandler?(value, animation.velocity, false)
         }
 
         #if os(iOS) || os(tvOS)
@@ -228,11 +224,11 @@ extension PropertyAnimator {
             case .finished:
                 completion?()
                 self?.animations[animationKey] = nil
-                handler?(animation.value, .zero, true)
+                animationHandler?(animation.value, animation.velocity, true)
                 #if os(iOS) || os(tvOS)
                     (self as? PropertyAnimator<UIView>)?.preventingUserInteractionAnimations.remove(animation.id)
                 #endif
-                AnimationController.shared.executeHandler(uuid: animation.groupID, finished: true, retargeted: false)
+                AnimationController.shared.executeHandler(uuid: animation.groupID, state: .finished)
             default:
                 break
             }
@@ -288,12 +284,5 @@ extension PropertyAnimator {
     /// The current spring animation for the property at the keypath, or `nil` if there isn't a spring animation for the keypath.
     func springAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> SpringAnimation<Value>? {
         animation(for: keyPath.stringValue) as? SpringAnimation<Value>
-    }
-    
-    func animationHandler<Value: AnimatableProperty>(for keyPath: String) -> ((Value, Value, Bool)->())? {
-        if let handler = animationHandlers[keyPath] as? ((Value, Value, Bool)->()) {
-            return handler
-        }
-        return nil
     }
 }

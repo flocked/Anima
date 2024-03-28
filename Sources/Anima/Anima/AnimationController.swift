@@ -14,19 +14,13 @@ import Combine
 
 /// Manages the animations of ``Anima``.
 class AnimationController {
+    
     public static let shared = AnimationController()
 
-    private var displayLink: AnyCancellable?
-
-    private var animations: [UUID: WeakANimation] = [:]
-    private var animationSettingsStack = SettingsStack()
-
-    typealias CompletionBlock = (_ finished: Bool, _ retargeted: Bool) -> Void
-    var groupAnimationCompletionBlocks: [UUID: CompletionBlock] = [:]
-
-    var currentGroupConfiguration: AnimationGroupConfiguration? {
-        animationSettingsStack.currentSettings
-    }
+    var displayLink: AnyCancellable?
+    var animations: [UUID: WeakAimation] = [:]
+    var animationSettingsStack = SettingsStack()
+    var groupAnimationCompletionBlocks: [UUID: ((_ state: Anima.AnimationState) -> Void)] = [:]
 
     /// The preferred rame rate of the animations.
     @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
@@ -47,14 +41,12 @@ class AnimationController {
     }
 
     func runAnimationGroup(
-        configuration: AnimationGroupConfiguration,
+        configuration: Anima.AnimationConfiguration,
         animations: () -> Void,
-        completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil) {
+        completion: ((_ state: Anima.AnimationState) -> Void)? = nil) {
         precondition(Thread.isMainThread, "All Anima animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.")
 
-        // Register the handler
         groupAnimationCompletionBlocks[configuration.groupID] = completion
-
         animationSettingsStack.push(settings: configuration)
         animations()
         animationSettingsStack.pop()
@@ -64,7 +56,7 @@ class AnimationController {
         if displayLinkIsRunning == false {
             startDisplayLink()
         }
-        animations[animation.id] = WeakANimation(animation)
+        animations[animation.id] = WeakAimation(animation)
         animation.updateAnimation(deltaTime: .zero)
     }
 
@@ -72,7 +64,7 @@ class AnimationController {
         animations[animation.id] = nil
     }
     
-    func stopAnimation(_ animation: WeakANimation) {
+    func stopAnimation(_ animation: WeakAimation) {
         animations[animation.id] = nil
     }
 
@@ -88,28 +80,17 @@ class AnimationController {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
 
-        #if os(macOS)
-            let deltaTime = frame.duration / 2.0
-        #else
-            let deltaTime = frame.duration
-        #endif
-
         let sortedAnimations = animations.values.sorted(by: \.relativePriority, .descending)
-
         for weak in sortedAnimations {
-            if let animation = weak.animation {
-                if animation.state != .running {
-                    stopAnimation(animation)
-                } else {
-                    animation.updateAnimation(deltaTime: deltaTime)
-                }
+            if let animation = weak.animation, animation.state == .running {
+                animation.updateAnimation(deltaTime: frame.duration)
             } else {
                 stopAnimation(weak)
             }
         }
 
         CATransaction.commit()
-
+        
         if animations.isEmpty {
             stopDisplayLink()
         }
@@ -143,26 +124,26 @@ class AnimationController {
         displayLink != nil
     }
 
-    func executeHandler(uuid: UUID?, finished: Bool, retargeted: Bool) {
+    func executeHandler(uuid: UUID?, state: Anima.AnimationState) {
         guard let uuid = uuid, let block = groupAnimationCompletionBlocks[uuid] else {
             return
         }
-        block(finished, retargeted)
-        if retargeted == false, finished {
+        block(state)
+        if state == .finished {
             groupAnimationCompletionBlocks[uuid] = nil
         }
     }
 }
 
 extension AnimationController {
-    private class SettingsStack {
-        private var stack: [AnimationGroupConfiguration] = []
+    class SettingsStack {
+        private var stack: [Anima.AnimationConfiguration] = []
         
-        var currentSettings: AnimationGroupConfiguration? {
+        var currentSettings: Anima.AnimationConfiguration? {
             stack.last
         }
         
-        func push(settings: AnimationGroupConfiguration) {
+        func push(settings: Anima.AnimationConfiguration) {
             stack.append(settings)
         }
         
@@ -171,29 +152,18 @@ extension AnimationController {
         }
     }
     
-    class WeakANimation {
+    class WeakAimation {
         let id: UUID
+        
         var relativePriority: Int {
             animation?.relativePriority ?? 0
         }
-        var animation: (any _AnimationProviding)? {
-            (_weakValue ?? _value) as? (any _AnimationProviding)
-        }
-        weak var _weakValue: AnyObject?
-        var _value: Any?
-        init(_ animation: any _AnimationProviding) {
+        
+        weak var animation: (any _AnimationProviding)?
+        
+        init(_ animation: some _AnimationProviding) {
             id = animation.id
-            if type(of: animation) is AnyClass {
-                _weakValue = animation as AnyObject
-            } else {
-                _value = animation
-            }
+            self.animation = animation
         }
-    }
-}
-
-extension Anima {
-    static var currentSettings: AnimationGroupConfiguration? {
-        AnimationController.shared.currentGroupConfiguration
     }
 }

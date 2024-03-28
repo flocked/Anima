@@ -235,12 +235,11 @@ open class DecayAnimation<Value: AnimatableProperty>: AnimationProviding, _Anima
     let animationType: AnimationType = .decay
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationGroupConfiguration) {
+    func configure(withSettings settings: Anima.AnimationConfiguration) {
         groupID = settings.groupID
         repeats = settings.options.repeats
         autoreverse = settings.options.autoreverse
         integralizeValues = settings.options.integralizeValues
-
         decelerationRate = settings.decay?.decelerationRate ?? decelerationRate
     }
 
@@ -341,14 +340,15 @@ open class DecayAnimation<Value: AnimatableProperty>: AnimationProviding, _Anima
             default: break
             }
             reset()
+            velocity = .zero
             completion?(.finished(at: value))
         }
     }
 
     func reset() {
         runningTime = 0.0
-        velocity = .zero
         delayedStart?.cancel()
+        _startValue = _value
     }
 }
 
@@ -380,7 +380,7 @@ extension DecayAnimation: CustomStringConvertible {
 }
 
 public extension Anima {
-    /// The mode how ``Anima`` should animate properties with a decaying animation.
+    /// The mode how `Anima` should animate properties with a decaying animation.
     enum DecayAnimationMode {
         /// The value of animated properties will increase or decrease (depending on the values applied) with a decelerating rate.  This essentially provides the same "decaying" that `UIScrollView` does when you drag and let go. The animation is seeded with velocity, and that velocity decays over time.
         case velocity

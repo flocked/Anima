@@ -71,7 +71,7 @@ public struct Spring: Sendable, Hashable {
 
      - Parameters:
         - duration: Defines the pace of the spring. This is approximately equal to the settling duration, but for springs with very large bounce values, will be the duration of the period of oscillation for the spring.
-        - bounce: How bouncy the spring should be. A value of 0 indicates no bounces (a critically damped spring), positive values indicate increasing amounts of bounciness up to a maximum of 1.0 (corresponding to undamped oscillation), and negative values indicate overdamped springs with a minimum value of -1.0.
+        - bounce: How bouncy the spring should be. A value of `0` indicates no bounces (a critically damped spring), positive values indicate increasing amounts of bounciness up to a maximum of `1.0` (corresponding to undamped oscillation), and negative values indicate overdamped springs with a minimum value of `-1.0`).
      */
     public init(duration: Double = 0.55, bounce: Double = 0.0) {
         if #available(macOS 14.0, iOS 17, tvOS 17, *) {
@@ -146,10 +146,24 @@ public struct Spring: Sendable, Hashable {
         let spring = SwiftUI.Spring(settlingDuration: settlingDuration, dampingRatio: dampingRatio, epsilon: epsilon)
         self.init(spring)
     }
+    
+    /**
+     Creates a spring with the specified duration and bounce.
+
+     - Parameters:
+        - settlingDuration: The approximate time it will take for the spring to come to rest.
+        - bounce: How bouncy the spring should be. A value of `0` indicates no bounces (a critically damped spring), positive values indicate increasing amounts of bounciness up to a maximum of `1.0` (corresponding to undamped oscillation), and negative values indicate overdamped springs with a minimum value of `-1.0`).
+        - epsilon: The threshold for how small all subsequent values need to be before the spring is considered to have settled. The default value is `0.001`.
+     */
+    @available(macOS 14.0, iOS 17, tvOS 17, *)
+    public init(settlingDuration: TimeInterval, bounce: Double, epsilon: Double = 0.0001) {
+        let spring = SwiftUI.Spring(settlingDuration: settlingDuration, dampingRatio: 1.0 - bounce, epsilon: epsilon)
+        self.init(spring)
+    }
 
     /// Creates a spring from a SwiftUI spring.
     @available(macOS 14.0, iOS 17, tvOS 17, *)
-    public init(_ spring: SwiftUI.Spring) {
+    init(_ spring: SwiftUI.Spring) {
         dampingRatio = spring.dampingRatio
         response = spring.response
         stiffness = spring.stiffness

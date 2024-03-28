@@ -143,7 +143,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, _An
     let animationType: AnimationType = .property
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationGroupConfiguration) {
+    func configure(withSettings settings: Anima.AnimationConfiguration) {
         groupID = settings.groupID
     }
 
@@ -234,8 +234,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, _An
     /// Resets the animation.
     func reset() {
         state = .inactive
-        _value = _startValue
-        valueChanged?(value)
+        _startValue = _value
     }
 }
 

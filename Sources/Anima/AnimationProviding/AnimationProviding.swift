@@ -70,13 +70,13 @@ protocol _AnimationProviding<Value>: AnimationProviding {
     associatedtype Value: AnimatableProperty
     var value: Value { get set }
     var target: Value { get set }
-    var startValue: Value { get set }
+    // var startValue: Value { get set }
     var completion: ((_ event: AnimationEvent<Value>) -> Void)? { get set }
     var valueChanged: ((_ currentValue: Value) -> Void)? { get set }
     var velocity: Value { get set }
     var _velocity: Value.AnimatableData { get set }
     var animationType: AnimationType { get }
-    func configure(withSettings settings: AnimationGroupConfiguration)
+    func configure(withSettings settings: Anima.AnimationConfiguration)
     func reset()
     func updateAnimation(deltaTime: TimeInterval)
 }

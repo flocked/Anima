@@ -1,5 +1,5 @@
 //
-//  AnimationOptions.swift
+//  Anima+AnimationOptions.swift
 //
 //
 //  Created by Florian Zand on 17.11.23.

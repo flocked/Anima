@@ -67,8 +67,10 @@ import Foundation
  - Note: To enable high frame-rate animations on ProMotion devices (i.e. 120 fps animation), you'll need to add a key/value pair in your Info.plist. Set the key `CADisableMinimumFrameDuration` to `true. Without this entry, animations will be capped at 60 fps.
  */
 public enum Anima {
+    // MARK: - Spring Animation
+    
     /**
-     Performs spring animations based on a ``Spring/snappy`` configuration.
+     Performs spring animations with a ``Spring/snappy`` spring configuration.
 
      Example usage:
      ```swift
@@ -81,24 +83,25 @@ public enum Anima {
      - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
 
      - Parameters:
-        - gestureVelocity: If provided, this value will be used to set the spring ``SpringAnimation/velocity`` of whatever underlying animations run in the `animations` block that animates the same type. This should be primarily used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations. If you apply a velocity of type `CGPoint` it's used for animating properties of type `GGPoint` and `CGRect`.
+        - duration: The animation duration.
         - delay: An optional delay, in seconds, after which to start the animation.
         - options: The options to apply to the animations. For a list of options, see ``AnimationOptions``. The default value is `[]`.
         - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself.
         - completion: An optional block to be executed when the specified animations have either finished or retargeted to a new value.
      */
     public static func animate(
+        duration: TimeInterval = 0.5,
         gestureVelocity: (any AnimatableProperty)? = nil,
         delay: TimeInterval = 0,
         options: AnimationOptions = [],
         animations: () -> Void,
-        completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
+        completion: ((_ state: AnimationState) -> Void)? = nil
     ) {
-        self.animate(withSpring: .snappy, delay: delay, options: options, animations: animations, completion: completion)
+        animate(withSpring: .snappy(duration: duration), delay: delay, options: options, animations: animations, completion: completion)
     }
-    
+        
     /**
-     Performs spring animations based on a ``Spring`` configuration.
+     Performs spring animations with the specified ``Spring`` configuration.
 
      Example usage:
      ```swift
@@ -119,21 +122,21 @@ public enum Anima {
         - completion: An optional block to be executed when the specified animations have either finished or retargeted to a new value.
      */
     public static func animate(
-        withSpring spring: Spring,
+        withSpring spring: Spring = .snappy,
         gestureVelocity: (any AnimatableProperty)? = nil,
         delay: TimeInterval = 0,
         options: AnimationOptions = [],
         animations: () -> Void,
-        completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
+        completion: ((_ state: AnimationState) -> Void)? = nil
     ) {
-        var configuration = AnimationGroupConfiguration(type: .spring, delay: delay, options: options, completion: completion)
-        configuration.spring = .init(spring: spring, gestureVelocity: gestureVelocity)
-    
+        let configuration = Anima.AnimationConfiguration(type: .spring, delay: delay, options: options, spring: .init(spring: spring, gestureVelocity: gestureVelocity))
         AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
+    
+    // MARK: - Easing Animation
 
     /**
-     Performs easing animations based on the specified ``TimingFunction``.
+     Performs easing animations with the specified ``TimingFunction``.
 
      Example usage:
      ```swift
@@ -159,13 +162,14 @@ public enum Anima {
         delay: TimeInterval = 0,
         options: AnimationOptions = [],
         animations: () -> Void,
-        completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
+        completion: ((_ state: AnimationState) -> Void)? = nil
     ) {
-        var configuration = AnimationGroupConfiguration(type: .easing, delay: delay, options: options, completion: completion)
-        configuration.easing = .init(timingFunction: timingFunction, duration: duration)
-    
+        let configuration = Anima.AnimationConfiguration(type: .easing, delay: delay, options: options, easing: .init(timingFunction: timingFunction, duration: duration))
         AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
+    
+    // MARK: - Decay Animation
+
 
     /**
      Performs animations with a decaying acceleration.
@@ -206,13 +210,13 @@ public enum Anima {
         delay: TimeInterval = 0,
         options: AnimationOptions = [],
         animations: () -> Void,
-        completion: ((_ finished: Bool, _ retargeted: Bool) -> Void)? = nil
+        completion: ((_ state: AnimationState) -> Void)? = nil
     ) {
-        var configuration = AnimationGroupConfiguration(type: mode == .velocity ? .decayVelocity : .decay, delay: delay, options: options, completion: completion)
-        configuration.decay = .init(decelerationRate: decelerationRate)
-        
+        let configuration = Anima.AnimationConfiguration(type: mode == .velocity ? .decayVelocity : .decay, delay: delay, options: options, decay: .init(decelerationRate: decelerationRate))
         AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
+    
+    // MARK: - Stop Animations
 
     /**
      Stops all animations.
@@ -222,6 +226,8 @@ public enum Anima {
     public static func stopAllAnimations(immediately: Bool = true) {
         AnimationController.shared.stopAllAnimations(immediately: immediately)
     }
+    
+    // MARK: - Animation Framerate
 
     /**
      The preferred framerate of the animations. The default value is `default` which uses the default frame rate of the display.
@@ -233,54 +239,8 @@ public enum Anima {
         get { AnimationController.shared.preferredFrameRateRange }
         set { AnimationController.shared.preferredFrameRateRange = newValue }
     }
-
-    /**
-     Updates the animation velocities for decay and spring animations.
-     
-     Changing the properties of an object animator updates their current animation velocities.
-
-     Example usage:
-     ```swift
-     Anima.updateVelocity() {
-        myView.animator.frame.origin.y += 1000
-     }
-     ```
-
-     - Parameter changes: A block containing the updated velocities.
-
-     - Note: For a list of all objects that provide animatable properties take a look at ``Anima``.
-     */
-    static func updateVelocity(changes: () -> Void) {
-        let configuration = AnimationGroupConfiguration(type: .animationVelocity)
-        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: changes, completion: nil)
-    }
-
-    /**
-     Performs the specified changes non animated.
-
-     Use it to immediately update values of properties. For properties that are currently animated, the animations stop. You can also update values non animated by using the ``AnimatablePropertyProvider/animator-54mpy`` outside of any ``Anima`` animation block.
-
-     ```swift
-     Anima.nonAnimate() {
-        myView.animator.center = newCenterPoint
-     }
-
-     // or outside an animation block
-     myView.animator.center = newCenterPoint
-     ```
-
-     - Note: For a list of all objects that provide animatable properties take a look at ``Anima``.
-
-     - Parameter changes: A block containing the changes to your objects animatable properties that get updated non animated.
-     */
-    static func nonAnimate(changes: () -> Void) {
-        let configuration = AnimationGroupConfiguration(type: .nonAnimated)
-        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: changes, completion: nil)
-    }
     
-    /// Updates the current animation value.
-    internal static func updateAnimationValue(changes: () -> Void) {
-        let configuration = AnimationGroupConfiguration(type: .animationValue)
-        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: changes, completion: nil)
+    static var currentSettings: Anima.AnimationConfiguration? {
+        AnimationController.shared.animationSettingsStack.currentSettings
     }
 }

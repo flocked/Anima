@@ -4,6 +4,7 @@
 
 ### Animations
 
+- ``animate(duration:gestureVelocity:delay:options:animations:completion:)``
 - ``animate(withDecay:decelerationRate:delay:options:animations:completion:)``
 - ``animate(withEasing:duration:delay:options:animations:completion:)``
 - ``animate(withSpring:gestureVelocity:delay:options:animations:completion:)``
@@ -20,3 +21,7 @@
 ### Animation options
 
 - ``Anima/AnimationOptions``
+
+### Animation state
+
+- ``Anima/AnimationState``

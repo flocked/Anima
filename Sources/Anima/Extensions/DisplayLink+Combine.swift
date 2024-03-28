@@ -7,7 +7,14 @@
 
 import Combine
 import Foundation
+import CoreVideo
 
+extension CVTimeStamp {
+    var duration: TimeInterval {
+        TimeInterval(videoTime) / TimeInterval(videoRefreshPeriod)
+    }
+}
+    
 private protocol DisplayLinkProvider: AnyObject {
     var isPaused: Bool { get set }
     var onFrame: ((DisplayLink.Frame) -> Void)? { get set }
@@ -257,10 +264,16 @@ extension DisplayLink {
 
             init() {
                 CVDisplayLinkSetOutputHandler(displayLink) { [weak self] _, inNow, inOutputTime, _, _ -> CVReturn in
-
+                    
+                    /*
+                    let duration = Double(inOutputTime.pointee.timeInterval) - Double(inNow.pointee.timeInterval)
+                    let duration1 = (inOutputTime.pointee.timeInterval - CACurrentMediaTime()) * 2.0
+                    let duration2 = inOutputTime.pointee.duration * 2.0
+                     */
+                    
                     let frame = Frame(
                         timestamp: inNow.pointee.timeInterval,
-                        duration: inOutputTime.pointee.timeInterval - inNow.pointee.timeInterval
+                        duration: (Double(inOutputTime.pointee.timeInterval) - Double(inNow.pointee.timeInterval)) / 2.0
                     )
 
                     DispatchQueue.main.async {

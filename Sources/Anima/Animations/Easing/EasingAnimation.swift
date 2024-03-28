@@ -159,12 +159,11 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, _Anim
     let animationType: AnimationType = .easing
 
     /// Configurates the animation with the specified settings.
-    func configure(withSettings settings: AnimationGroupConfiguration) {
+    func configure(withSettings settings: Anima.AnimationConfiguration) {
         groupID = settings.groupID
         repeats = settings.options.repeats
         autoreverse = settings.options.autoreverse
         integralizeValues = settings.options.integralizeValues
-
         timingFunction = settings.easing?.timingFunction ?? timingFunction
         duration = settings.easing?.duration ?? duration
     }
@@ -286,6 +285,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, _Anim
             default: break
             }
             reset()
+            velocity = .zero
             completion?(.finished(at: value))
         }
     }
@@ -294,7 +294,7 @@ open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, _Anim
     func reset() {
         delayedStart?.cancel()
         fractionComplete = 0.0
-        velocity = .zero
+        _startValue = _value
     }
 }
 
