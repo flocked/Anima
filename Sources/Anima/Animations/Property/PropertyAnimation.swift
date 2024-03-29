@@ -53,24 +53,14 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
     /// The delay (in seconds) after which the animations begin.
     open internal(set) var delay: TimeInterval = 0.0
-
-    /// A Boolean value indicating whether the animation repeats indefinitely.
-    open var repeats: Bool = false
-
-    /// A Boolean value indicating whether the animation is running backwards and forwards (must be combined with ``repeats`` `true`).
-    public var autoreverse: Bool = false
+    
+    /// Additional animation options.
+    open var options: Anima.AnimationOptions = []
 
     /// A Boolean value indicating whether the animation is running in the reverse direction.
-    open var isReversed: Bool = false
-
-    /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
-    open var integralizeValues: Bool = false
-
-    /// A Boolean value that indicates whether the animation automatically starts when the ``target`` value changes.
-    open var autoStarts: Bool = false
-        
+    var isReversed: Bool = false
+  
     var runningTime: TimeInterval = 0.0
-
 
     /// The _current_ value of the animation. This value will change as the animation executes.
     public var value: Value {
@@ -100,7 +90,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
             guard oldValue != _target else { return }
             if state == .running {
                 completion?(.retargeted(from: Value(oldValue), to: target))
-            } else if autoStarts, _target != _value {
+            } else if options.autoStarts, _target != _value {
                 start(afterDelay: 0.0)
             }
         }
@@ -167,9 +157,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     /// Configurates the animation with the specified settings.
     func configure(with configuration: Anima.AnimationConfiguration) {
         groupID = configuration.groupID
-        repeats = configuration.options.repeats
-        autoreverse = configuration.options.autoreverse
-        integralizeValues = configuration.options.integralizeValues
+        options = configuration.options
     }
 
     /**
@@ -179,7 +167,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
      */
     open func updateAnimation(deltaTime: TimeInterval) {
         guard state == .running else { return }
-        let callbackValue = integralizeValues ? value.scaledIntegral : value
+        let callbackValue = options.integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
 
         if _value == _target {
@@ -281,12 +269,12 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
             target: \(target)
             startValue: \(startValue)
             velocity: \(velocity)
-
+        
             isReversed: \(isReversed)
-            repeats: \(repeats)
-            autoreverse: \(autoreverse)
-            integralizeValues: \(integralizeValues)
-            autoStarts: \(autoStarts)
+            repeats: \(options.repeats)
+            autoreverse: \(options.autoreverse)
+            integralizeValues: \(options.integralizeValues)
+            autoStarts: \(options.autoStarts)
 
             valueChanged: \(valueChanged != nil)
             completion: \(completion != nil)

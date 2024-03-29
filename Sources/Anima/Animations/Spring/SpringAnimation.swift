@@ -81,8 +81,8 @@ open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
         let animationFinished = (runningTime >= settlingTime) || !isAnimated
 
         if animationFinished {
-            if repeats, isAnimated {
-                if autoreverse {
+            if options.repeats, isAnimated {
+                if options.autoreverse {
                     isReversed = !isReversed
                 }
                 _value = isReversed ? _target : _startValue
@@ -93,10 +93,10 @@ open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
             runningTime = 0.0
         }
 
-        let callbackValue = integralizeValues ? value.scaledIntegral : value
+        let callbackValue = options.integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
 
-        if animationFinished, !repeats || !isAnimated {
+        if animationFinished, !options.repeats || !isAnimated {
             stop(at: .current)
         }
     }
@@ -115,11 +115,12 @@ open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
 
             mode: \(spring.response > 0 ? "animated" : "nonAnimated")
             settlingTime: \(settlingTime)
+
             isReversed: \(isReversed)
-            repeats: \(repeats)
-            autoreverse: \(autoreverse)
-            integralizeValues: \(integralizeValues)
-            autoStarts: \(autoStarts)
+            repeats: \(options.repeats)
+            autoreverse: \(options.autoreverse)
+            integralizeValues: \(options.integralizeValues)
+            autoStarts: \(options.autoStarts)
 
             valueChanged: \(valueChanged != nil)
             completion: \(completion != nil)

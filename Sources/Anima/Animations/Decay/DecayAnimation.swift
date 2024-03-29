@@ -71,7 +71,7 @@ open class DecayAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
         didSet {
             guard state != .running, oldValue != _velocity else { return }
             _startVelocity = _velocity
-            if autoStarts, _velocity != .zero {
+            if options.autoStarts, _velocity != .zero {
                 start(afterDelay: 0.0)
             }
         }
@@ -155,17 +155,17 @@ open class DecayAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
 
         let animationFinished = _velocity.magnitudeSquared < 0.05
 
-        if animationFinished, repeats {
+        if animationFinished, options.repeats {
             _value = _startValue
             _velocity = _startVelocity
         }
 
         runningTime = runningTime + deltaTime
 
-        let callbackValue = integralizeValues ? value.scaledIntegral : value
+        let callbackValue = options.integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
 
-        if animationFinished, !repeats {
+        if animationFinished, !options.repeats {
             stop(at: .current)
         }
     }
@@ -184,10 +184,10 @@ open class DecayAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
 
             decelerationRate: \(decelerationRate)
             isReversed: \(isReversed)
-            repeats: \(repeats)
-            autoreverse: \(autoreverse)
-            integralizeValues: \(integralizeValues)
-            autoStarts: \(autoStarts)
+            repeats: \(options.repeats)
+            autoreverse: \(options.autoreverse)
+            integralizeValues: \(options.integralizeValues)
+            autoStarts: \(options.autoStarts)
 
             valueChanged: \(valueChanged != nil)
             completion: \(completion != nil)

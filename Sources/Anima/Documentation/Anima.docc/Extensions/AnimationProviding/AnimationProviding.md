@@ -15,3 +15,7 @@
 - ``stop(at:immediately:)``
 - ``pause()``
 - ``delay``
+
+### Updating the animation
+
+- ``updateAnimation(deltaTime:)``

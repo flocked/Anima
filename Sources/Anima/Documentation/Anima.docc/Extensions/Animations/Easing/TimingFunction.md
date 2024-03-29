@@ -26,3 +26,7 @@
 
 -  ``solve(at:epsilon:)``
 -  ``solve(at:duration:)``
+
+### Description
+
+- ``description``

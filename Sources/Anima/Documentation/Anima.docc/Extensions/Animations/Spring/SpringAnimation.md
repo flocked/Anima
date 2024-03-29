@@ -8,11 +8,11 @@
 
 ### Starting and stopping the animation
 
-- ``start(afterDelay:)``
-- ``stop(at:immediately:)``
-- ``pause()``
-- ``delay``
-- ``state``
+- ``Anima/PropertyAnimation/start(afterDelay:)``
+- ``Anima/PropertyAnimation/stop(at:immediately:)``
+- ``Anima/PropertyAnimation/pause()``
+- ``Anima/PropertyAnimation/delay``
+- ``Anima/PropertyAnimation/state``
 
 ### Accessing spring parameters
 
@@ -21,24 +21,23 @@
 
 ### Accessing value, velocity and target
 
-- ``target``
-- ``value``
-- ``velocity``
+- ``Anima/PropertyAnimation/target``
+- ``Anima/PropertyAnimation/value``
+- ``Anima/PropertyAnimation/velocity``
 
 ### Handling animation updates
 
-- ``completion``
+- ``Anima/PropertyAnimation/completion``
 - ``updateAnimation(deltaTime:)``
-- ``valueChanged``
+- ``Anima/PropertyAnimation/valueChanged``
 
 ### Accessing animation parameters
 
-- ``id``
-- ``groupID``
-- ``relativePriority``
+- ``Anima/PropertyAnimation/id``
+- ``Anima/PropertyAnimation/groupID``
+- ``Anima/PropertyAnimation/relativePriority``
+- ``Anima/PropertyAnimation/options``
 
-- ``integralizeValues``
-- ``autoreverse``
-- ``autoStarts``
-- ``isReversed``
-- ``repeats``
+### Description
+
+- ``description``

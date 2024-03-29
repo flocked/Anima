@@ -6,6 +6,7 @@
 
 - ``init(duration:bounce:)``
 - ``init(response:dampingRatio:mass:)``
+- ``init(settlingDuration:bounce:epsilon:)``
 - ``init(settlingDuration:dampingRatio:epsilon:)``
 - ``init(stiffness:dampingRatio:mass:)``
 

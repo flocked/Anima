@@ -21,7 +21,6 @@
 
 ### Accessing animation values
 
-- ``startValue``
 - ``value``
 - ``velocity``
 - ``target``
@@ -32,5 +31,8 @@
 - ``id``
 - ``groupID``
 - ``relativePriority``
-- ``integralizeValues``
+- ``options``
 
+### Description
+
+- ``description``

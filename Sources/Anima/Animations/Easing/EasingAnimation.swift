@@ -44,7 +44,7 @@ open class EasingAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
             if state == .running {
                 fractionComplete = 0.0
                 completion?(.retargeted(from: Value(oldValue), to: target))
-            } else if autoStarts, _target != _value {
+            } else if options.autoStarts, _target != _value {
                 start(afterDelay: 0.0)
             }
         }
@@ -96,8 +96,8 @@ open class EasingAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
         let animationFinished = (isReversed ? fractionComplete <= 0.0 : fractionComplete >= 1.0) || !isAnimated
 
         if animationFinished {
-            if repeats, isAnimated {
-                if autoreverse {
+            if options.repeats, isAnimated {
+                if options.autoreverse {
                     isReversed = !isReversed
                 }
                 fractionComplete = isReversed ? 1.0 : 0.0
@@ -107,10 +107,10 @@ open class EasingAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
             }
         }
 
-        let callbackValue = integralizeValues ? value.scaledIntegral : value
+        let callbackValue = options.integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
 
-        if (animationFinished && !repeats) || !isAnimated {
+        if (animationFinished && !options.repeats) || !isAnimated {
             stop(at: .current)
         }
     }
@@ -137,10 +137,10 @@ open class EasingAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
                     timingFunction: \(timingFunction.name)
                     duration: \(duration)
                     isReversed: \(isReversed)
-                    repeats: \(repeats)
-                    autoreverse: \(autoreverse)
-                    integralizeValues: \(integralizeValues)
-                    autoStarts: \(autoStarts)
+                    repeats: \(options.repeats)
+                    autoreverse: \(options.autoreverse)
+                    integralizeValues: \(options.integralizeValues)
+                    autoStarts: \(options.autoStarts)
 
                     valueChanged: \(valueChanged != nil)
                     completion: \(completion != nil)

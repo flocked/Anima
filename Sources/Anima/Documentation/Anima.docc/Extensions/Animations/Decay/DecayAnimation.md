@@ -9,34 +9,35 @@
 
 ### Starting and stopping the animation
 
-- ``start(afterDelay:)``
-- ``stop(at:immediately:)``
-- ``pause()``
-- ``delay``
-- ``state``
+- ``Anima/PropertyAnimation/start(afterDelay:)``
+- ``Anima/PropertyAnimation/stop(at:immediately:)``
+- ``Anima/PropertyAnimation/pause()``
+- ``Anima/PropertyAnimation/delay``
+- ``Anima/PropertyAnimation/state``
 
 ### Accessing value, velocity and target
 
 - ``target``
-- ``value``
+- ``Anima/PropertyAnimation/value``
 - ``velocity``
 
 ### Handling animation updates
 
-- ``completion``
+- ``Anima/PropertyAnimation/completion``
 - ``updateAnimation(deltaTime:)``
-- ``valueChanged``
+- ``Anima/PropertyAnimation/valueChanged``
 
 ### Accessing animation parameters
 
+- ``Anima/PropertyAnimation/id``
+- ``Anima/PropertyAnimation/groupID``
+- ``Anima/PropertyAnimation/relativePriority``
+- ``Anima/PropertyAnimation/options``
+
+### Accessing decay parameters
+
 - ``decelerationRate``
 
-- ``id``
-- ``groupID``
-- ``relativePriority``
+### Description
 
-- ``integralizeValues``
-- ``autoreverse``
-- ``autoStarts``
-- ``isReversed``
-- ``repeats``
+- ``description``
