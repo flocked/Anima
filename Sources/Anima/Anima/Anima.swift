@@ -122,7 +122,7 @@ public enum Anima {
         - completion: An optional block to be executed when the specified animations have either finished or retargeted to a new value.
      */
     public static func animate(
-        withSpring spring: Spring = .snappy,
+        withSpring spring: Spring,
         gestureVelocity: (any AnimatableProperty)? = nil,
         delay: TimeInterval = 0,
         options: AnimationOptions = [],

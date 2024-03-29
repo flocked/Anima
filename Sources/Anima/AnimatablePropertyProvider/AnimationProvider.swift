@@ -17,7 +17,7 @@ public protocol AnimationProvider: AnyObject {
     /// The animation provider.
     associatedtype AnimationProvider = Self
     
-    /// A dictionary containing the current animated property keys and associated animations.
+    /// A dictionary containing the currently animated property names and associated animations.
     var animations: [String: AnimationProviding] { get }
     
     /**
@@ -42,16 +42,8 @@ public protocol AnimationProvider: AnyObject {
 
 extension PropertyAnimator: AnimationProvider { }
 
-public extension AnimationProvider {
-    internal func _animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> AnimationProviding? {
-        guard let animator = self as? (any _PropertyAnimator) else { return nil }
-        animator.lastAccessedProperty = ""
-        animator.layerAnimator?.lastAccessedProperty = ""
-        _ = self[keyPath: keyPath]
-        return animator.layerAnimator?.lastAccessedAnimation ?? animator.lastAccessedAnimation ?? animator.animations[keyPath.stringValue]
-    }
-    
-    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> PropertyAnimationProviding<Value>? {
+extension AnimationProvider {
+    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> PropertyAnimationProviding<Value>? {
         guard let animation = _animation(for: keyPath) else { return nil }
         if let animation: any _AnimationProviding<Value> = animation._animation() {
             return animation.propertyAnimation
@@ -61,7 +53,15 @@ public extension AnimationProvider {
         return nil
     }
     
-    func setAnimationHandler<Value: AnimatableProperty>(_ keyPath: WritableKeyPath<Self, Value>, handler: ((_ value: Value,_ velocity: Value, _ isFinished: Bool)->())?) {
+    func _animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> AnimationProviding? {
+        guard let animator = self as? (any _PropertyAnimator) else { return nil }
+        animator.lastAccessedProperty = ""
+        animator.layerAnimator?.lastAccessedProperty = ""
+        _ = self[keyPath: keyPath]
+        return animator.layerAnimator?.lastAccessedAnimation ?? animator.lastAccessedAnimation ?? animator.animations[keyPath.stringValue]
+    }
+    
+    public func setAnimationHandler<Value: AnimatableProperty>(_ keyPath: WritableKeyPath<Self, Value>, handler: ((_ value: Value,_ velocity: Value, _ isFinished: Bool)->())?) {
         guard let animator = self as? (any _PropertyAnimator) else { return }
         _ = self.animation(for: keyPath)
         if animator.lastAccessedProperty != "" {

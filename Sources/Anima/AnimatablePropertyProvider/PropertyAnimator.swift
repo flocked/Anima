@@ -119,7 +119,7 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider>: NSObject {
         guard lastAccessedProperty != "" else { return nil }
         return animations[lastAccessedProperty]
     }
-    
+        
     deinit {
         animations.values.forEach({AnimationController.shared.stopAnimation($0)})
     }
