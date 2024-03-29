@@ -48,43 +48,13 @@ public protocol AnimationProviding: AnyObject {
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
      */
     func stop(at position: AnimationPosition, immediately: Bool)
-}
-
-extension AnimationProviding {
-    func _animation<Value: AnimatableProperty>() -> (any _AnimationProviding<Value>)? {
-        if #available(macOS 13.0, iOS 16.0, tvOS 16.0, *), let animation = self as? (any _AnimationProviding<Value>) {
-            return animation
-        } else if let animation = self as? SpringAnimation<Value> {
-            return animation
-        } else if let animation = self as? EasingAnimation<Value> {
-            return animation
-        } else if let animation = self as? DecayAnimation<Value> {
-            return animation
-        }
-        return nil
-    }
-}
-
-/// An internal protocol to `AnimationProviding` used for configurating the animation.
-protocol _AnimationProviding<Value>: AnimationProviding {
-    associatedtype Value: AnimatableProperty
-    var value: Value { get set }
-    var target: Value { get set }
-    // var startValue: Value { get set }
-    var completion: ((_ event: AnimationEvent<Value>) -> Void)? { get set }
-    var valueChanged: ((_ currentValue: Value) -> Void)? { get set }
-    var velocity: Value { get set }
-    var _velocity: Value.AnimatableData { get set }
-    var animationType: AnimationType { get }
-    func configure(with configuration: Anima.AnimationConfiguration)
-    func reset()
+    
+    /**
+     Updates the animation.
+          
+     - Parameter deltaTime: The time interval since the last update.
+     */
     func updateAnimation(deltaTime: TimeInterval)
-}
-
-extension _AnimationProviding {
-    var propertyAnimation: PropertyAnimationProviding<Value> {
-        getAssociatedValue(key: "propertyAnimation", object: self, initialValue: PropertyAnimationProviding(self))
-    }
 }
 
 enum AnimationType: Int {

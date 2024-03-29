@@ -25,7 +25,7 @@ public protocol AnimationProvider: AnyObject {
 
      - Parameter keyPath: The keypath to the property.
      */
-    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<AnimationProvider, Value>) -> PropertyAnimationProviding<Value>?
+    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<AnimationProvider, Value>) -> PropertyAnimation<Value>?
 
     /**
      Sets the handler that gets called when the specified property is animated and it's value changed.
@@ -43,12 +43,12 @@ public protocol AnimationProvider: AnyObject {
 extension PropertyAnimator: AnimationProvider { }
 
 extension AnimationProvider {
-    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> PropertyAnimationProviding<Value>? {
+    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> PropertyAnimation<Value>? {
         guard let animation = _animation(for: keyPath) else { return nil }
-        if let animation: any _AnimationProviding<Value> = animation._animation() {
-            return animation.propertyAnimation
-        } else if type(of: Value.self) == type(of: Optional<NSUIColor>.self), let animation: any _AnimationProviding<Optional<CGColor>> = animation._animation() {
-            return ColorPropertyAnimationProviding(animation) as? PropertyAnimationProviding<Value>
+        if let animation = animation as? PropertyAnimation<Value> {
+            return animation
+        } else if type(of: Value.self) == type(of: Optional<NSUIColor>.self), let animation = animation as? PropertyAnimation<Optional<CGColor>> {
+            return ColorAnimation(animation) as? PropertyAnimation<Value>
         }
         return nil
     }
@@ -58,6 +58,7 @@ extension AnimationProvider {
         animator.lastAccessedProperty = ""
         animator.layerAnimator?.lastAccessedProperty = ""
         _ = self[keyPath: keyPath]
+        
         return animator.layerAnimator?.lastAccessedAnimation ?? animator.lastAccessedAnimation ?? animator.animations[keyPath.stringValue]
     }
     

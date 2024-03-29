@@ -1,46 +1,33 @@
 //
-//  PropertyAnimation.swift
+//  Animation.swift
 //
-//
-//  Created by Florian Zand on 03.11.23.
+//  Modified by Florian Zand
+//  Original: Copyright (c) 2022 Janum Trivedi.
 //
 
 import Foundation
+#if os(macOS)
+    import AppKit
+#elseif canImport(UIKit)
+    import UIKit
+#endif
 
-
+/*
 /**
- Subclassing this class let's you create your own animations. the animation itself isn't animating and your have to provide your own animation implemention in your subclass.
+ An animation that animates a value using a physically-modeled spring.
 
- ## Start and stop the animation
-
- To start your animation, use ``start(afterDelay:)``. It  changes the ``state`` to `running` and updates ``delay``.
-
- To stop a running animation either use ``stop(at:immediately:)`` or change the `state` to `ended` or `inactive`.
-
- Calling ``pause()`` changes the `state` to `inactive`.
-
- If you overwrite ``start(afterDelay:)``, ``pause()`` or ``stop(at:immediately:)`` make sure to call super.
-
- - Note: Changing `state` itself isn't starting or stopping an animation. It only reflects the state of your animation. You have to use the above functions.
-
- ## Update animation values
-
- ``startValue`` is value when the animation starts. Make sure to update it on start as it's used as value when the position of ``stop(at:immediately:)`` is `start`.
-
- ``target`` is the target value of the animation. Your animation should stop when it reaches the animation by calling ``stop(at:immediately:)``.
-
- ``velocity`` is the velocity of the animation. If your animation doesn't use any velocity you can ignore this value. It's default value is `zero`.
-
- ``value`` is the current value of the animation.
-
- ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value.
+ Example usage:
+ ```swift
+ let springAnimation = SpringAnimation(spring: .bouncy, value: CGPoint(x: 0, y: 0), target: CGPoint(x: 50, y: 100))
+ springAnimation.valueChanged = { newValue in
+    view.frame.origin = newValue
+ }
+ springAnimation.start()
+ ```
  */
-open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, CustomStringConvertible {
+open class SpringAnimation<Value: AnimatableProperty>: AnimationProviding, _AnimationProviding {
     /// A unique identifier for the animation.
-    public var id: UUID {
-        _id
-    }
-    let _id = UUID()
+    public let id = UUID()
 
     /// A unique identifier that associates the animation with an grouped animation block.
     open internal(set) var groupID: UUID?
@@ -54,23 +41,28 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     /// The delay (in seconds) after which the animations begin.
     open internal(set) var delay: TimeInterval = 0.0
 
-    /// A Boolean value indicating whether the animation repeats indefinitely.
-    open var repeats: Bool = false
+    /// The spring model that determines the animation's motion.
+    open var spring: Spring
 
-    /// A Boolean value indicating whether the animation is running backwards and forwards (must be combined with ``repeats`` `true`).
-    public var autoreverse: Bool = false
-
-    /// A Boolean value indicating whether the animation is running in the reverse direction.
-    open var isReversed: Bool = false
+    /// The estimated duration required for the animation to complete, based off its `spring` property.
+    open var settlingTime: TimeInterval {
+        spring.settlingDuration
+    }
 
     /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
     open var integralizeValues: Bool = false
 
     /// A Boolean value that indicates whether the animation automatically starts when the ``target`` value changes.
     open var autoStarts: Bool = false
-        
-    var runningTime: TimeInterval = 0.0
 
+    /// A Boolean value indicating whether the animation repeats indefinitely.
+    open var repeats: Bool = false
+
+    /// A Boolean value indicating whether the animation is running backwards and forwards (must be combined with ``repeats`` `true`).
+    open var autoreverse: Bool = false
+
+    /// A Boolean value indicating whether the animation is running in the reverse direction.
+    open var isReversed: Bool = false
 
     /// The _current_ value of the animation. This value will change as the animation executes.
     public var value: Value {
@@ -86,7 +78,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     }
 
     /**
-     Thex target value of the animation.
+     The current target value of the animation.
 
      You may modify this value while the animation is in-flight to "retarget" to a new target value.
      */
@@ -99,6 +91,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         didSet {
             guard oldValue != _target else { return }
             if state == .running {
+                runningTime = 0.0
                 completion?(.retargeted(from: Value(oldValue), to: target))
             } else if autoStarts, _target != _value {
                 start(afterDelay: 0.0)
@@ -106,7 +99,23 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         }
     }
 
-    /// The start value of the animation.
+    /**
+     The current velocity of the animation.
+
+     If animating a view's `center` or `frame` with a gesture, you may want to set `velocity` to the gesture's final velocity on touch-up.
+     */
+    public var velocity: Value {
+        get { Value(_velocity) }
+        set { _velocity = newValue.animatableData }
+    }
+
+    var _velocity: Value.AnimatableData {
+        didSet {
+            guard state != .running else { return }
+            _startVelocity = _velocity
+        }
+    }
+
     var startValue: Value {
         get { Value(_startValue) }
         set { _startValue = newValue.animatableData }
@@ -114,23 +123,12 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
     var _startValue: Value.AnimatableData
 
-    /// The current velocity of the animation.
-    public var velocity: Value {
-        get { Value(_velocity) }
-        set { _velocity = newValue.animatableData }
-    }
-
-    var _velocity: Value.AnimatableData = .zero
-
     var startVelocity: Value {
-        get { Value(_startVelocity)  }
+        get { Value(_startVelocity) }
         set { _startVelocity = newValue.animatableData }
     }
-    
-    var _startVelocity: Value.AnimatableData = .zero
 
-    
-    
+    var _startVelocity: Value.AnimatableData
 
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
@@ -138,19 +136,25 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     /// The completion block to call when the animation either finishes, or "re-targets" to a new target value.
     open var completion: ((_ event: AnimationEvent<Value>) -> Void)?
 
+    /// The total running time of the animation.
+    var runningTime: TimeInterval = 0.0
+
     /**
-     Creates a new animation with the specified timing curve and duration, and optionally, an initial and target value.
+     Creates a new animation with a given ``Spring``, value, target and optional inital velocity.
 
      - Parameters:
-        - timingFunction: The timing curve of the animation.
-        - duration: The duration of the animation.
+        - spring: The spring that determines the animation's motion.
         - value: The initial, starting value of the animation.
         - target: The target value of the animation.
+        - initialVelocity: An optional inital velocity of the animtion.
      */
-    public init(value: Value, target: Value) {
+    public init(spring: Spring, value: Value, target: Value, initialVelocity: Value = .zero) {
         _value = value.animatableData
-        _startValue = _value
         _target = target.animatableData
+        _velocity = initialVelocity.animatableData
+        self.spring = spring
+        _startValue = _value
+        _startVelocity = _velocity
     }
 
     deinit {
@@ -162,7 +166,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    var animationType: AnimationType { .property }
+    let animationType: AnimationType = .spring
 
     /// Configurates the animation with the specified settings.
     func configure(with configuration: Anima.AnimationConfiguration) {
@@ -170,6 +174,19 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         repeats = configuration.options.repeats
         autoreverse = configuration.options.autoreverse
         integralizeValues = configuration.options.integralizeValues
+        spring = configuration.spring?.spring ?? spring
+
+        if configuration.options.resetSpringVelocity {
+            _velocity = .zero
+        }
+        
+        if let gestureVelocity = configuration.spring?.gestureVelocity {
+            if let gestureVelocity = gestureVelocity as? CGPoint, let animation = self as? SpringAnimation<CGRect> {
+                animation.velocity.origin = gestureVelocity
+            } else if let gestureVelocity = gestureVelocity as? Value {
+                velocity = gestureVelocity
+            }
+        }
     }
 
     /**
@@ -178,12 +195,39 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
      - parameter deltaTime: The delta time.
      */
     open func updateAnimation(deltaTime: TimeInterval) {
-        guard state == .running else { return }
+        state = .running
+
+        let isAnimated = spring.response > .zero
+
+        if isAnimated {
+            spring.update(value: &_value, velocity: &_velocity, target: isReversed ? _startValue : _target, deltaTime: deltaTime)
+        } else {
+            _value = _target
+            velocity = Value.zero
+        }
+
+        runningTime = runningTime + deltaTime
+
+        let animationFinished = (runningTime >= settlingTime) || !isAnimated
+
+        if animationFinished {
+            if repeats, isAnimated {
+                if autoreverse {
+                    isReversed = !isReversed
+                }
+                _value = isReversed ? _target : _startValue
+                velocity = isReversed ? .zero : startVelocity
+            } else {
+                _value = _target
+            }
+            runningTime = 0.0
+        }
+
         let callbackValue = integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
 
-        if _value == _target {
-            stop(at: .end)
+        if animationFinished, !repeats || !isAnimated {
+            stop(at: .current)
         }
     }
 
@@ -201,7 +245,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
             self.state = .running
             AnimationController.shared.runAnimation(self)
         }
-        
+
         delayedStart?.cancel()
         self.delay = delay
 
@@ -262,16 +306,17 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         }
     }
 
-    /// Resets the animation.
     func reset() {
+        runningTime = 0.0
         delayedStart?.cancel()
         _startValue = _value
-        runningTime = 0.0
     }
-    
+}
+
+extension SpringAnimation: CustomStringConvertible {
     public var description: String {
         """
-        PropertyAnimation<\(Value.self)>(
+        SpringAnimation<\(Value.self)>(
             uuid: \(id)
             groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
@@ -279,9 +324,10 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
             value: \(value)
             target: \(target)
-            startValue: \(startValue)
             velocity: \(velocity)
 
+            mode: \(spring.response > 0 ? "animated" : "nonAnimated")
+            settlingTime: \(settlingTime)
             isReversed: \(isReversed)
             repeats: \(repeats)
             autoreverse: \(autoreverse)
@@ -294,25 +340,4 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         """
     }
 }
-
-
-/*
- /**
-  A Boolean value indicating whether a paused animation scrubs linearly or uses its specified timing information.
-
-  The default value of this property is `true`, which causes the animator to use a linear timing function during scrubbing. Setting the property to `false` causes the animator to use its specified timing curve.
-  */
- var scrubsLinearly: Bool = false
- */
-
-/*
- func updateValue() {
-     guard state != .running else { return }
-     if scrubsLinearly {
-         _value = _startValue.interpolated(towards: _target, amount: fractionComplete)
-     } else {
-         _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
-     }
-     valueChanged?(value)
- }
- */
+*/

@@ -2,12 +2,11 @@
 //  PropertyAnimation.swift
 //
 //
-//  Created by Florian Zand on 03.11.23.
+//  Created by Florian Zand on 15.12.23.
 //
 
 import Foundation
-
-
+/*
 /**
  Subclassing this class let's you create your own animations. the animation itself isn't animating and your have to provide your own animation implemention in your subclass.
 
@@ -35,42 +34,30 @@ import Foundation
 
  ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value.
  */
-open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, CustomStringConvertible {
+open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, _AnimationProviding {
     /// A unique identifier for the animation.
-    public var id: UUID {
-        _id
-    }
-    let _id = UUID()
+    public let id = UUID()
 
-    /// A unique identifier that associates the animation with an grouped animation block.
-    open internal(set) var groupID: UUID?
+    /// A unique identifier that associates an animation with an grouped animation block.
+    open var groupID: UUID?
 
     /// The relative priority of the animation. The higher the number the higher the priority.
     open var relativePriority: Int = 0
 
-    /// The current state of the animation.
-    open internal(set) var state: AnimatingState = .inactive
+    /// The current state of the animation (`inactive`, `running`, or `ended`).
+    open var state: AnimatingState = .inactive {
+        didSet {
+            guard oldValue != state else { return }
+            if state == .running {
+                AnimationController.shared.runAnimation(self)
+            } else {
+                AnimationController.shared.stopAnimation(self)
+            }
+        }
+    }
 
     /// The delay (in seconds) after which the animations begin.
-    open internal(set) var delay: TimeInterval = 0.0
-
-    /// A Boolean value indicating whether the animation repeats indefinitely.
-    open var repeats: Bool = false
-
-    /// A Boolean value indicating whether the animation is running backwards and forwards (must be combined with ``repeats`` `true`).
-    public var autoreverse: Bool = false
-
-    /// A Boolean value indicating whether the animation is running in the reverse direction.
-    open var isReversed: Bool = false
-
-    /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
-    open var integralizeValues: Bool = false
-
-    /// A Boolean value that indicates whether the animation automatically starts when the ``target`` value changes.
-    open var autoStarts: Bool = false
-        
-    var runningTime: TimeInterval = 0.0
-
+    open var delay: TimeInterval = 0.0
 
     /// The _current_ value of the animation. This value will change as the animation executes.
     public var value: Value {
@@ -86,7 +73,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     }
 
     /**
-     Thex target value of the animation.
+     The target value of the animation.
 
      You may modify this value while the animation is in-flight to "retarget" to a new target value.
      */
@@ -100,21 +87,19 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
             guard oldValue != _target else { return }
             if state == .running {
                 completion?(.retargeted(from: Value(oldValue), to: target))
-            } else if autoStarts, _target != _value {
-                start(afterDelay: 0.0)
             }
         }
     }
 
     /// The start value of the animation.
-    var startValue: Value {
+    public var startValue: Value {
         get { Value(_startValue) }
         set { _startValue = newValue.animatableData }
     }
 
     var _startValue: Value.AnimatableData
 
-    /// The current velocity of the animation.
+    /// The velocity of the animation.
     public var velocity: Value {
         get { Value(_velocity) }
         set { _velocity = newValue.animatableData }
@@ -122,15 +107,10 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
     var _velocity: Value.AnimatableData = .zero
 
-    var startVelocity: Value {
-        get { Value(_startVelocity)  }
-        set { _startVelocity = newValue.animatableData }
-    }
-    
-    var _startVelocity: Value.AnimatableData = .zero
+    var startVelocity: Value = .zero
 
-    
-    
+    /// A Boolean value that indicates whether the value returned in ``valueChanged`` should be integralized to the screen's pixel boundaries. This helps prevent drawing frames between pixels, causing aliasing issues.
+    open var integralizeValues: Bool = false
 
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
@@ -139,11 +119,9 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     open var completion: ((_ event: AnimationEvent<Value>) -> Void)?
 
     /**
-     Creates a new animation with the specified timing curve and duration, and optionally, an initial and target value.
+     Creates a new animation with the specified initial and target value.
 
      - Parameters:
-        - timingFunction: The timing curve of the animation.
-        - duration: The duration of the animation.
         - value: The initial, starting value of the animation.
         - target: The target value of the animation.
      */
@@ -162,14 +140,11 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    var animationType: AnimationType { .property }
+    let animationType: AnimationType = .property
 
     /// Configurates the animation with the specified settings.
     func configure(with configuration: Anima.AnimationConfiguration) {
         groupID = configuration.groupID
-        repeats = configuration.options.repeats
-        autoreverse = configuration.options.autoreverse
-        integralizeValues = configuration.options.integralizeValues
     }
 
     /**
@@ -177,8 +152,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
      - parameter deltaTime: The delta time.
      */
-    open func updateAnimation(deltaTime: TimeInterval) {
-        guard state == .running else { return }
+    open func updateAnimation(deltaTime _: TimeInterval) {
         let callbackValue = integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
 
@@ -199,9 +173,8 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         let start = { [weak self] in
             guard let self = self else { return }
             self.state = .running
-            AnimationController.shared.runAnimation(self)
         }
-        
+
         delayedStart?.cancel()
         self.delay = delay
 
@@ -219,7 +192,6 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     /// Pauses the animation at the current position.
     open func pause() {
         guard state == .running else { return }
-        AnimationController.shared.stopAnimation(self)
         state = .inactive
         delayedStart?.cancel()
         delay = 0.0
@@ -233,60 +205,53 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
      */
     open func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
-        guard state == .running else { return }
         delayedStart?.cancel()
         delay = 0.0
         if immediately == false {
             switch position {
             case .start:
-                _target = _startValue
+                target = startValue
             case .current:
-                _target = _value
+                target = value
             default: break
             }
         } else {
-            AnimationController.shared.stopAnimation(self)
             state = .inactive
             switch position {
             case .start:
-                _value = _startValue
+                value = startValue
                 valueChanged?(value)
             case .end:
-                _value = _target
+                value = target
                 valueChanged?(value)
             default: break
             }
             reset()
-            velocity = .zero
             completion?(.finished(at: value))
         }
     }
 
     /// Resets the animation.
     func reset() {
-        delayedStart?.cancel()
+        state = .inactive
         _startValue = _value
-        runningTime = 0.0
     }
-    
+}
+
+extension PropertyAnimation: CustomStringConvertible {
     public var description: String {
         """
-        PropertyAnimation<\(Value.self)>(
+        SpringAnimation<\(Value.self)>(
             uuid: \(id)
             groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
             state: \(state.rawValue)
+            integralizeValues: \(integralizeValues)
 
             value: \(value)
-            target: \(target)
             startValue: \(startValue)
+            target: \(target)
             velocity: \(velocity)
-
-            isReversed: \(isReversed)
-            repeats: \(repeats)
-            autoreverse: \(autoreverse)
-            integralizeValues: \(integralizeValues)
-            autoStarts: \(autoStarts)
 
             valueChanged: \(valueChanged != nil)
             completion: \(completion != nil)
@@ -294,25 +259,4 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         """
     }
 }
-
-
-/*
- /**
-  A Boolean value indicating whether a paused animation scrubs linearly or uses its specified timing information.
-
-  The default value of this property is `true`, which causes the animator to use a linear timing function during scrubbing. Setting the property to `false` causes the animator to use its specified timing curve.
-  */
- var scrubsLinearly: Bool = false
- */
-
-/*
- func updateValue() {
-     guard state != .running else { return }
-     if scrubsLinearly {
-         _value = _startValue.interpolated(towards: _target, amount: fractionComplete)
-     } else {
-         _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
-     }
-     valueChanged?(value)
- }
- */
+*/

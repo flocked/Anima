@@ -55,7 +55,7 @@ class AnimationController {
         animationConfigurationStack.pop()
     }
 
-    public func runAnimation(_ animation: some _AnimationProviding) {
+    public func runAnimation(_ animation: some AnimationProviding) {
         if displayLinkIsRunning == false {
             startDisplayLink()
         }
@@ -159,9 +159,9 @@ extension AnimationController {
             animation?.relativePriority ?? 0
         }
         
-        weak var animation: (any _AnimationProviding)?
+        weak var animation: (any AnimationProviding)?
         
-        init(_ animation: some _AnimationProviding) {
+        init(_ animation: some AnimationProviding) {
             id = animation.id
             self.animation = animation
         }

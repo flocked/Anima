@@ -108,12 +108,11 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider>: NSObject {
 
      - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> PropertyAnimationProviding<Value>? {
-        animation(for: keyPath, checkLayer: true)?.propertyAnimation
+    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> PropertyAnimation<Value>? {
+        animation(for: keyPath, checkLayer: true)
     }
 
     var animationHandlers: [String: Any] = [:]
-    
     var lastAccessedProperty: String = ""
     var lastAccessedAnimation: AnimationProviding? {
         guard lastAccessedProperty != "" else { return nil }
@@ -183,7 +182,7 @@ extension PropertyAnimator {
     }
 
     /// Configurates an animation and starts it.
-    func configurateAnimation<Value>(_ animation: some _AnimationProviding<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, configuration: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
+    func configurateAnimation<Value>(_ animation: PropertyAnimation<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, configuration: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
         
         var animation = animation
         animation.reset()
@@ -260,13 +259,13 @@ extension PropertyAnimator {
 
 extension PropertyAnimator {
     /// The current animation for the specified property, or `nil` if there isn't an animation for the keypath.
-    func animation<Value: AnimatableProperty>(for keyPath: KeyPath<Provider, Value>, checkLayer: Bool = false) -> (any _AnimationProviding<Value>)? {
-        animation(for: keyPath.stringValue, checkLayer: checkLayer)?._animation()
+    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Provider, Value>, checkLayer: Bool = false) -> PropertyAnimation<Value>? {
+        animation(for: keyPath.stringValue, checkLayer: checkLayer) as? PropertyAnimation<Value>
     }
 
-    func animation(for keyPath: String, checkLayer: Bool = false) -> (any _AnimationProviding)? {
+    func animation(for keyPath: String, checkLayer: Bool = false) -> AnimationProviding? {
         lastAccessedProperty = keyPath
-        if let animation = animations[lastAccessedProperty] as? any _AnimationProviding {
+        if let animation = animations[lastAccessedProperty] {
             return animation
         }
         guard checkLayer else { return nil }
@@ -274,17 +273,17 @@ extension PropertyAnimator {
     }
 
     /// The current decay animation for the property at the keypath, or `nil` if there isn't a decay animation for the keypath.
-    func decayAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> DecayAnimation<Value>? {
-        animation(for: keyPath.stringValue) as? DecayAnimation<Value>
+    func decayAnimation<Value>(for keyPath: WritableKeyPath<Provider, Value>) -> DecayAnimation<Value>? {
+        animation(for: keyPath) as? DecayAnimation<Value>
     }
 
     /// The current easing animation for the property at the keypath, or `nil` if there isn't an easing animation for the keypath.
-    func easingAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> EasingAnimation<Value>? {
-        animation(for: keyPath.stringValue) as? EasingAnimation<Value>
+    func easingAnimation<Value>(for keyPath: WritableKeyPath<Provider, Value>) -> EasingAnimation<Value>? {
+        animation(for: keyPath) as? EasingAnimation<Value>
     }
 
     /// The current spring animation for the property at the keypath, or `nil` if there isn't a spring animation for the keypath.
-    func springAnimation<Value>(for keyPath: PartialKeyPath<Provider>) -> SpringAnimation<Value>? {
-        animation(for: keyPath.stringValue) as? SpringAnimation<Value>
+    func springAnimation<Value>(for keyPath: WritableKeyPath<Provider, Value>) -> SpringAnimation<Value>? {
+        animation(for: keyPath) as? SpringAnimation<Value>
     }
 }

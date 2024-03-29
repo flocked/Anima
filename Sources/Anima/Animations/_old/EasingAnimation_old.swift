@@ -1,5 +1,5 @@
 //
-//  PropertyAnimation.swift
+//  EasingAnimation.swift
 //
 //
 //  Created by Florian Zand on 03.11.23.
@@ -7,40 +7,22 @@
 
 import Foundation
 
-
+/*
 /**
- Subclassing this class let's you create your own animations. the animation itself isn't animating and your have to provide your own animation implemention in your subclass.
+ An animation that animates a value using an easing function (like `easeIn` or `linear`).
 
- ## Start and stop the animation
-
- To start your animation, use ``start(afterDelay:)``. It  changes the ``state`` to `running` and updates ``delay``.
-
- To stop a running animation either use ``stop(at:immediately:)`` or change the `state` to `ended` or `inactive`.
-
- Calling ``pause()`` changes the `state` to `inactive`.
-
- If you overwrite ``start(afterDelay:)``, ``pause()`` or ``stop(at:immediately:)`` make sure to call super.
-
- - Note: Changing `state` itself isn't starting or stopping an animation. It only reflects the state of your animation. You have to use the above functions.
-
- ## Update animation values
-
- ``startValue`` is value when the animation starts. Make sure to update it on start as it's used as value when the position of ``stop(at:immediately:)`` is `start`.
-
- ``target`` is the target value of the animation. Your animation should stop when it reaches the animation by calling ``stop(at:immediately:)``.
-
- ``velocity`` is the velocity of the animation. If your animation doesn't use any velocity you can ignore this value. It's default value is `zero`.
-
- ``value`` is the current value of the animation.
-
- ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value.
+ Example usage:
+ ```swift
+ let easingAnimation = EasingAnimation(timingFunction = .easeIn, duration: 3.0, value: CGPoint(x: 0, y: 0), target: CGPoint(x: 50, y: 100))
+ easingAnimation.valueChanged = { newValue in
+    view.frame.origin = newValue
+ }
+ easingAnimation.start()
+ ```
  */
-open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, CustomStringConvertible {
+open class EasingAnimation<Value: AnimatableProperty>: AnimationProviding, _AnimationProviding {
     /// A unique identifier for the animation.
-    public var id: UUID {
-        _id
-    }
-    let _id = UUID()
+    public let id = UUID()
 
     /// A unique identifier that associates the animation with an grouped animation block.
     open internal(set) var groupID: UUID?
@@ -53,6 +35,12 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
     /// The delay (in seconds) after which the animations begin.
     open internal(set) var delay: TimeInterval = 0.0
+
+    /// The timing function of the animation.
+    open var timingFunction: TimingFunction = .easeInEaseOut
+
+    /// The total duration (in seconds) of the animation.
+    open var duration: CGFloat = 0.0
 
     /// A Boolean value indicating whether the animation repeats indefinitely.
     open var repeats: Bool = false
@@ -68,9 +56,18 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
     /// A Boolean value that indicates whether the animation automatically starts when the ``target`` value changes.
     open var autoStarts: Bool = false
-        
-    var runningTime: TimeInterval = 0.0
 
+    /// The completion percentage of the animation.
+    open var fractionComplete: CGFloat = 0.0 {
+        didSet {
+            fractionComplete = fractionComplete.clamped(max: 1.0)
+        }
+    }
+
+    /// The resolved fraction complete using the timing function.
+    var resolvedFractionComplete: CGFloat {
+        timingFunction.solve(at: fractionComplete, duration: duration)
+    }
 
     /// The _current_ value of the animation. This value will change as the animation executes.
     public var value: Value {
@@ -99,6 +96,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         didSet {
             guard oldValue != _target else { return }
             if state == .running {
+                fractionComplete = 0.0
                 completion?(.retargeted(from: Value(oldValue), to: target))
             } else if autoStarts, _target != _value {
                 start(afterDelay: 0.0)
@@ -123,14 +121,9 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     var _velocity: Value.AnimatableData = .zero
 
     var startVelocity: Value {
-        get { Value(_startVelocity)  }
-        set { _startVelocity = newValue.animatableData }
+        get { .zero }
+        set {}
     }
-    
-    var _startVelocity: Value.AnimatableData = .zero
-
-    
-    
 
     /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
@@ -147,10 +140,12 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         - value: The initial, starting value of the animation.
         - target: The target value of the animation.
      */
-    public init(value: Value, target: Value) {
+    public init(timingFunction: TimingFunction, duration: CGFloat, value: Value, target: Value) {
         _value = value.animatableData
         _startValue = _value
         _target = target.animatableData
+        self.duration = duration
+        self.timingFunction = timingFunction
     }
 
     deinit {
@@ -162,7 +157,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     var delayedStart: DispatchWorkItem?
 
     /// The animation type.
-    var animationType: AnimationType { .property }
+    let animationType: AnimationType = .easing
 
     /// Configurates the animation with the specified settings.
     func configure(with configuration: Anima.AnimationConfiguration) {
@@ -170,6 +165,8 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         repeats = configuration.options.repeats
         autoreverse = configuration.options.autoreverse
         integralizeValues = configuration.options.integralizeValues
+        timingFunction = configuration.easing?.timingFunction ?? timingFunction
+        duration = configuration.easing?.duration ?? duration
     }
 
     /**
@@ -178,12 +175,44 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
      - parameter deltaTime: The delta time.
      */
     open func updateAnimation(deltaTime: TimeInterval) {
-        guard state == .running else { return }
+        state = .running
+
+        let isAnimated = duration > .zero
+
+        guard deltaTime > 0.0 else { return }
+
+        let previousValue = _value
+
+        if isAnimated {
+            let secondsElapsed = deltaTime / duration
+            fractionComplete = isReversed ? (fractionComplete - secondsElapsed) : (fractionComplete + secondsElapsed)
+            _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
+        } else {
+            fractionComplete = isReversed ? 0.0 : 1.0
+            _value = isReversed ? _startValue : _target
+        }
+
+        _velocity = (_value - previousValue).scaled(by: 1.0 / deltaTime)
+
+        let animationFinished = (isReversed ? fractionComplete <= 0.0 : fractionComplete >= 1.0) || !isAnimated
+
+        if animationFinished {
+            if repeats, isAnimated {
+                if autoreverse {
+                    isReversed = !isReversed
+                }
+                fractionComplete = isReversed ? 1.0 : 0.0
+                _value = isReversed ? _target : _value
+            } else {
+                _value = isReversed ? _startValue : _target
+            }
+        }
+
         let callbackValue = integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
 
-        if _value == _target {
-            stop(at: .end)
+        if (animationFinished && !repeats) || !isAnimated {
+            stop(at: .current)
         }
     }
 
@@ -265,13 +294,15 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     /// Resets the animation.
     func reset() {
         delayedStart?.cancel()
+        fractionComplete = 0.0
         _startValue = _value
-        runningTime = 0.0
     }
-    
+}
+
+extension EasingAnimation: CustomStringConvertible {
     public var description: String {
         """
-        PropertyAnimation<\(Value.self)>(
+        EasingAnimation<\(Value.self)>(
             uuid: \(id)
             groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
@@ -281,7 +312,10 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
             target: \(target)
             startValue: \(startValue)
             velocity: \(velocity)
+            fractionComplete: \(fractionComplete)
 
+            timingFunction: \(timingFunction.name)
+            duration: \(duration)
             isReversed: \(isReversed)
             repeats: \(repeats)
             autoreverse: \(autoreverse)
@@ -294,7 +328,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         """
     }
 }
-
+ */
 
 /*
  /**
