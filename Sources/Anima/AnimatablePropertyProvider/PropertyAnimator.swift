@@ -145,7 +145,9 @@ extension PropertyAnimator {
         let currentAnimation = animation(for: keyPath)
         guard let configuration = Anima.currentConfiguration, configuration.type != .nonAnimated else {
             currentAnimation?.stop(at: .current, immediately: true)
-            object[keyPath: keyPath] = newValue
+            DisableActions {
+                object[keyPath: keyPath] = newValue
+            }
             return
         }
         

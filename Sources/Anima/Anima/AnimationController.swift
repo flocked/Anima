@@ -80,19 +80,16 @@ class AnimationController {
             fatalError("Can't update animations without a display link")
         }
         
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-
-        let sortedAnimations = animations.values.sorted(by: \.relativePriority, .descending)
-        for weak in sortedAnimations {
-            if let animation = weak.animation, animation.state == .running {
-                animation.updateAnimation(deltaTime: frame.duration)
-            } else {
-                stopAnimation(weak)
+        DisableActions {
+            let sortedAnimations = animations.values.sorted(by: \.relativePriority, .descending)
+            for weak in sortedAnimations {
+                if let animation = weak.animation, animation.state == .running {
+                    animation.updateAnimation(deltaTime: frame.duration)
+                } else {
+                    stopAnimation(weak)
+                }
             }
         }
-
-        CATransaction.commit()
         
         if animations.isEmpty {
             stopDisplayLink()

@@ -108,8 +108,8 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
 
     /// Defines the anchor point of the layer's bounds rectangle.
     public var anchorPoint: CGPoint {
-        get { self[\.anchorPoint] }
-        set { self[\.anchorPoint] = newValue }
+        get { self[\._anchorPoint] }
+        set { self[\._anchorPoint] = newValue }
     }
 
     /// The anchor point for the layer’s position along the z axis.
@@ -156,8 +156,8 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
 
     /// The three-dimensional transform of the layer.
     public var transform: CATransform3D {
-        get { self[\._transform] }
-        set { self[\._transform] = newValue }
+        get { self[\.transform] }
+        set { self[\.transform] = newValue }
     }
 
     /// The scale transform of the layer.

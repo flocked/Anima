@@ -20,14 +20,30 @@ extension CALayer {
         removeFromSuperlayer()
         superlayer.addSublayer(self)
     }
+    
+    var _anchorPoint: CGPoint {
+        get { anchorPoint }
+        set { setAnchorPoint(newValue) }
+    }
+    
+    func setAnchorPoint(_ anchorPoint: CGPoint) {
+        guard self.anchorPoint != anchorPoint else { return }
+        var newPoint = CGPoint(bounds.size.width * anchorPoint.x, bounds.size.height * anchorPoint.y)
+        var oldPoint = CGPoint(bounds.size.width * self.anchorPoint.x, bounds.size.height * self.anchorPoint.y)
 
-    var _transform: CATransform3D {
-        get { transform }
-        set {
-            DisableActions {
-                transform = newValue
-            }
-        }
+        newPoint = newPoint.applying(affineTransform())
+        oldPoint = oldPoint.applying(affineTransform())
+
+        var position = position
+
+        position.x -= oldPoint.x
+        position.x += newPoint.x
+
+        position.y -= oldPoint.y
+        position.y += newPoint.y
+
+        self.position = position
+        self.anchorPoint = anchorPoint
     }
 
     /// Sends the layer to the back of it's superlayer.
