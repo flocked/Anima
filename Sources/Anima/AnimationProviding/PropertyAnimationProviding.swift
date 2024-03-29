@@ -95,41 +95,31 @@ public class PropertyAnimationProviding<Value: AnimatableProperty> {
 class ColorPropertyAnimationProviding: PropertyAnimationProviding<Optional<NSColor>> {
     
     public override var id: UUID { cgColorAnimation.id }
-    
     public override var groupID: UUID? { cgColorAnimation.groupID }
-    
     public override var relativePriority: Int {
         get { cgColorAnimation.relativePriority }
         set { cgColorAnimation.relativePriority = newValue }
     }
-    
     public override var state: AnimatingState { cgColorAnimation.state }
-    
     public override var delay: TimeInterval { cgColorAnimation.delay }
-    
     public override var value: NSColor? {
         get { cgColorAnimation.value?.nsUIColor }
       //  set { cgColorAnimation.value = newValue?.cgColor }
     }
-    
     public override var velocity: NSColor? {
         get { cgColorAnimation.velocity?.nsUIColor }
         set { cgColorAnimation.velocity = newValue?.cgColor }
     }
-    
     public override var target: NSColor? {
         get { cgColorAnimation.target?.nsUIColor }
       //  set { cgColorAnimation.target = newValue?.cgColor }
     }
-    
     public override func start(afterDelay delay: TimeInterval = 0.0) {
         cgColorAnimation.start(afterDelay: delay)
     }
-    
     public override func pause() {
         cgColorAnimation.pause()
     }
-    
     public override func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
         cgColorAnimation.stop(at: position, immediately: immediately)
     }
@@ -146,41 +136,31 @@ class ColorPropertyAnimationProviding: PropertyAnimationProviding<Optional<NSCol
 class ColorPropertyAnimationProviding: PropertyAnimationProviding<Optional<UIColor>> {
     
     public override var id: UUID { cgColorAnimation.id }
-    
     public override var groupID: UUID? { cgColorAnimation.groupID }
-    
     public override var relativePriority: Int {
         get { cgColorAnimation.relativePriority }
         set { cgColorAnimation.relativePriority = newValue }
     }
-    
     public override var state: AnimatingState { cgColorAnimation.state }
-    
     public override var delay: TimeInterval { cgColorAnimation.delay }
-    
     public override var value: UIColor? {
         get { cgColorAnimation.value?.nsUIColor }
       //  set { cgColorAnimation.value = newValue?.cgColor }
     }
-    
     public override var velocity: UIColor? {
         get { cgColorAnimation.velocity?.nsUIColor }
         set { cgColorAnimation.velocity = newValue?.cgColor }
     }
-    
     public override var target: UIColor? {
         get { cgColorAnimation.target?.nsUIColor }
       //  set { cgColorAnimation.target = newValue?.cgColor }
     }
-    
     public override func start(afterDelay delay: TimeInterval = 0.0) {
         cgColorAnimation.start(afterDelay: delay)
     }
-    
     public override func pause() {
         cgColorAnimation.pause()
     }
-    
     public override func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
         cgColorAnimation.stop(at: position, immediately: immediately)
     }
