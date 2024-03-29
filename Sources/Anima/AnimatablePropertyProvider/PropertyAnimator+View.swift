@@ -137,24 +137,6 @@ import Decomposed
             }
         }
 
-        /*
-         /// The border color of the view.
-         public var borderColor: NSUIColor? {
-             get { object.optionalLayer?.animator.borderColor?.nsUIColor }
-             set { object.optionalLayer?.animator.borderColor = newValue?.resolvedColor(for: object).cgColor
-                 #if os(macOS)
-                 object.dynamicColors.border = newValue
-                 #endif
-             }
-         }
-
-         /// The border width of the view.
-         public var borderWidth: CGFloat {
-             get { object.optionalLayer?.animator.borderWidth ?? 0.0 }
-             set { object.optionalLayer?.animator.borderWidth = newValue }
-         }
-          */
-
         /// The shadow of the view.
         public var shadow: ShadowConfiguration {
             get { object.optionalLayer?.animator.shadow ?? .none }

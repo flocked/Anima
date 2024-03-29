@@ -80,7 +80,12 @@ public enum Anima {
      }
      ```
 
-     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
+     - Note:
+     > To animate properties, you must set their values on its object's ``AnimatablePropertyProvider/animator``, not just the object itself.
+     >
+     > For example, to animate a view's alpha, use `view.animator.alpha = 1.0` instead of `view.alpha = 1.0`.
+     >
+     > For a list of all objects that provide animatable properties, take a look at ``Anima``.
 
      - Parameters:
         - duration: The animation duration.
@@ -111,14 +116,19 @@ public enum Anima {
      }
      ```
 
-     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
-
+     - Note:
+     > To animate properties, you must set their values on its object's ``AnimatablePropertyProvider/animator``, not just the object itself.
+     >
+     > For example, to animate a view's alpha, use `view.animator.alpha = 1.0` instead of `view.alpha = 1.0`.
+     >
+     > For a list of all objects that provide animatable properties, take a look at ``Anima``.
+     
      - Parameters:
         - spring: The ``Spring`` used to determine the timing curve and duration of the animation.
-        - gestureVelocity: If provided, this value will be used to set the spring ``SpringAnimation/velocity`` of whatever underlying animations run in the `animations` block that animates the same type. This should be primarily used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations. If you apply a velocity of type `CGPoint` it's used for animating properties of type `GGPoint` and `CGRect`.
+        - gestureVelocity: If provided, this value will be used to set the spring velocity of animations run in the `animations` block that animates the same type. This should be primarily used to "inject" the velocity of a gesture recognizer (when the gesture ends) into the animations. If you apply a velocity of type `CGPoint` it is used as velocity for animating properties of type `GGPoint` and `CGRect`.
         - delay: An optional delay, in seconds, after which to start the animation.
         - options: The options to apply to the animations. For a list of options, see ``AnimationOptions``. The default value is `[]`.
-        - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself.
+        - animations: A block containing the changes to your objects' animatable properties. Note that for animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator-94wn0``, not just the object itself.
         - completion: An optional block to be executed when the specified animations have either finished or retargeted to a new value.
      */
     public static func animate(
@@ -146,7 +156,12 @@ public enum Anima {
      }
      ```
 
-     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
+     - Note:
+     > To animate properties, you must set their values on its object's ``AnimatablePropertyProvider/animator``, not just the object itself.
+     >
+     > For example, to animate a view's alpha, use `view.animator.alpha = 1.0` instead of `view.alpha = 1.0`.
+     >
+     > For a list of all objects that provide animatable properties, take a look at ``Anima``.
 
      - Parameters:
         - timingFunction: The ``TimingFunction`` used to determine the timing curve.
@@ -192,7 +207,12 @@ public enum Anima {
      })
      ```
 
-     - Note: For animations to work correctly, you must set values on the object's ``AnimatablePropertyProvider/animator``, not just the object itself. For example, to animate a view's alpha, use `myView.animator.alpha = 1.0` instead of `myView.alpha = 1.0`. For a list of all objects that provide animatable properties take a look at ``Anima``.
+     - Note:
+     > To animate properties, you must set their values on its object's ``AnimatablePropertyProvider/animator``, not just the object itself.
+     >
+     > For example, to animate a view's alpha, use `view.animator.alpha = 1.0` instead of `view.alpha = 1.0`.
+     >
+     > For a list of all objects that provide animatable properties, take a look at ``Anima``.
 
      - Parameters:
         - mode: The mode how the animation should decay:

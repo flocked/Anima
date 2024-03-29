@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 /**
  Subclassing this class let's you create your own animations. the animation itself isn't animating and your have to provide your own animation implemention in your subclass.
 

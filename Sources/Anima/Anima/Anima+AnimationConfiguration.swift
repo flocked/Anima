@@ -13,7 +13,7 @@ extension Anima {
         let groupID: UUID
         let type: GroupType
         let delay: CGFloat
-        let options: Anima.AnimationOptions
+        let options: AnimationOptions
         var spring: SpringParameters?
         var easing: EasingParameters?
         var decay: DecayParameters?
@@ -58,7 +58,7 @@ extension Anima {
             let decelerationRate: Double
         }
         
-        init(type: GroupType, groupID: UUID = UUID(), delay: CGFloat = 0.0, options: Anima.AnimationOptions = [], spring: SpringParameters? = nil, easing: EasingParameters? = nil, decay: DecayParameters? = nil) {
+        init(type: GroupType, groupID: UUID = UUID(), delay: CGFloat = 0.0, options: AnimationOptions = [], spring: SpringParameters? = nil, easing: EasingParameters? = nil, decay: DecayParameters? = nil) {
             self.groupID = groupID
             self.delay = delay
             self.type = type

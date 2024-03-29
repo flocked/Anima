@@ -255,21 +255,8 @@ extension DisplayLink {
                 return dl!
             }()
 
-            /*
-             /// The framesPerSecond of the displaylink.
-             var framesPerSecond: CGFloat {
-                 1 / (displayLink.targetTimestamp - displayLink.timestamp)
-             }
-             */
-
             init() {
                 CVDisplayLinkSetOutputHandler(displayLink) { [weak self] _, inNow, inOutputTime, _, _ -> CVReturn in
-                    
-                    /*
-                    let duration = Double(inOutputTime.pointee.timeInterval) - Double(inNow.pointee.timeInterval)
-                    let duration1 = (inOutputTime.pointee.timeInterval - CACurrentMediaTime()) * 2.0
-                    let duration2 = inOutputTime.pointee.duration * 2.0
-                     */
                     
                     let frame = Frame(
                         timestamp: inNow.pointee.timeInterval,
@@ -391,3 +378,7 @@ extension DisplayLink {
         }
     }
 #endif
+
+// Double(inOutputTime.pointee.timeInterval) - Double(inNow.pointee.timeInterval)
+// (inOutputTime.pointee.timeInterval - CACurrentMediaTime()) * 2.0
+// inOutputTime.pointee.duration * 2.0

@@ -120,22 +120,22 @@ extension CALayer {
             layerObserver = KeyValueObserver(layer)
         }
 
-        layerObserver?[\.cornerRadius] = { old, new in
+        layerObserver?.add(\.cornerRadius) { old, new in
             guard old != new else { return }
             layerUpdate()
         }
 
-        layerObserver?[\.cornerCurve] = { old, new in
+        layerObserver?.add(\.cornerCurve) { old, new in
             guard old != new else { return }
             layerUpdate()
         }
 
-        layerObserver?[\.maskedCorners] = { old, new in
+        layerObserver?.add(\.maskedCorners) { old, new in
             guard old != new else { return }
             layerUpdate()
         }
 
-        layerObserver?[\.bounds] = { old, new in
+        layerObserver?.add(\.bounds) { old, new in
             guard old != new else { return }
             layerBoundsUpdate()
         }
