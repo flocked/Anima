@@ -49,13 +49,13 @@ open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
     
     override func configure(with configuration: Anima.AnimationConfiguration) {
         super.configure(with: configuration)
-        spring = configuration.spring?.spring ?? spring
+        spring = configuration.animation?.spring ?? spring
 
         if configuration.options.resetSpringVelocity {
             _velocity = .zero
         }
         
-        if let gestureVelocity = configuration.spring?.gestureVelocity {
+        if let gestureVelocity = configuration.animation?.gestureVelocity {
             if let gestureVelocity = gestureVelocity as? CGPoint, let animation = self as? SpringAnimation<CGRect> {
                 animation.velocity.origin = gestureVelocity
             } else if let gestureVelocity = gestureVelocity as? Value {
@@ -79,7 +79,7 @@ open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
         runningTime = runningTime + deltaTime
 
         let animationFinished = (runningTime >= settlingTime) || !isAnimated
-
+        
         if animationFinished {
             if options.repeats, isAnimated {
                 if options.autoreverse {

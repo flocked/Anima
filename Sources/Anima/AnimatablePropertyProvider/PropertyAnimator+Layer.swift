@@ -12,13 +12,13 @@
 #endif
 import Decomposed
 
-extension CALayer: AnimatablePropertyProvider {}
+extension CALayer: AnimatablePropertyProvider { }
 
 public extension AnimatablePropertyProvider where Self: CALayer {
     /**
      Provides animatable properties of the layer.
 
-     To animate the properties change their value inside an ``Anima`` animation block, To stop their animations and to change their values imminently, update their values outside an animation block.
+     To animate properties change their value inside an ``Anima`` animation block. To stop their animations and to change their values imminently, update their values outside an animation block.
 
      See ``LayerAnimator`` for more information about how to animate and all animatable properties.
      */
@@ -48,7 +48,7 @@ public extension AnimatablePropertyProvider where Self: CALayer {
 
  ### Accessing Animations
 
- To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-80x48``:
+ To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-6b22o``:
 
  ```swift
  if let animation = layer.animator.animation(for: \.frame) {
@@ -58,7 +58,7 @@ public extension AnimatablePropertyProvider where Self: CALayer {
  
  ### Accessing Animation Value and Velocity
  
- The animation returned via ``Anima/AnimationProvider/animation(for:)-80x48`` provides the current animation value and velocity.
+ The animation returned via ``Anima/AnimationProvider/animation(for:)-6b22o`` provides the current animation value and velocity.
 
  ```swift
  if let animation = layer.animator.animation(for: \.frame) {

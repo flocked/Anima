@@ -145,7 +145,7 @@ open class DecayAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
     
     override func configure(with configuration: Anima.AnimationConfiguration) {
         super.configure(with: configuration)
-        decelerationRate = configuration.decay?.decelerationRate ?? decelerationRate
+        decelerationRate = configuration.animation?.decelerationRate ?? decelerationRate
     }
     
     public override func updateAnimation(deltaTime: TimeInterval) {

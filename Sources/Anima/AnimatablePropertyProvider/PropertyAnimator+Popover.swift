@@ -36,7 +36,7 @@ extension NSPopover: AnimatablePropertyProvider {
 
  ### Accessing Animation
 
- To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-80x48``:
+ To access the animation for a property, use ``Anima/AnimationProvider/animation(for:)-6b22o``:
 
  ```swift
  if let animation = popover.animator.animation(for: \.contentSize) {
@@ -46,7 +46,7 @@ extension NSPopover: AnimatablePropertyProvider {
  
  ### Accessing Animation Value and Velocity
  
- The animation returned via ``Anima/AnimationProvider/animation(for:)-80x48`` provides the current animation value and velocity.
+ The animation returned via ``Anima/AnimationProvider/animation(for:)-6b22o`` provides the current animation value and velocity.
 
  ```swift
  if let animation = popover.animator.animation(for: \.contentSize) {

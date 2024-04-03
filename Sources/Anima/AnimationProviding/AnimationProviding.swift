@@ -62,4 +62,5 @@ enum AnimationType: Int {
     case easing
     case decay
     case property
+    case cubic
 }

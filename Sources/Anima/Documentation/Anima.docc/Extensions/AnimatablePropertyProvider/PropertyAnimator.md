@@ -5,8 +5,7 @@
 ### Accessing Animations
 
 - ``animations``
-- ``PropertyAnimator/animations``
-- ``Anima/AnimationProvider/animation(for:)-80x48``
+- ``Anima/AnimationProvider/animation(for:)-6b22o``
 - ``subscript(animation:)``
 
 ### Providing Animation Handlers

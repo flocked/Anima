@@ -10,6 +10,7 @@
 
 import Foundation
 import QuartzCore
+import Accelerate
 
 /**
  The timing function maps an input time normalized to the range `[0,1]` to an output time also in the range `[0,1]`. It's used to define the pacing of an animation as a timing curve.
@@ -17,8 +18,8 @@ import QuartzCore
  Example usage:
  ```swift
  let timingFunction = TimingFunction.easeIn
- let time = 0.3
- let solvedTime = timingFunction.solve(at: time)
+ let fractionComplete = 0.3
+ let solvedFractionComplete = timingFunction.solve(at: fractionComplete)
  // 0.13
  ```
 
@@ -58,26 +59,26 @@ public struct TimingFunction: CustomStringConvertible {
      Transforms the specified time.
 
      - Parameters:
-        - time: The input time (ranges between 0.0 and 1.0).
+        - fractionComplete: The fraction complete (between `0.0` and `1.0`).
         - epsilon: The required precision of the result (where `x * epsilon` is the maximum time segment to be evaluated). The default value is `0.0001`.
      
      - Returns: The resulting output time.
      */
-    public func solve(at time: Double, epsilon: Double = 0.0001) -> Double {
-        function(time, epsilon)
+    public func solve(at fractionComplete: Double, epsilon: Double = 0.0001) -> Double {
+        function(fractionComplete, epsilon)
     }
 
     /**
      Transforms the specified time.
 
      - Parameters:
-        - time: The input time (ranges between 0.0 and 1.0).
+        - fractionComplete: The fraction complete (between `0.0` and `1.0`).
         - duration: The duration of the solving value. It is used to calculate the required precision of the result.
      
      - Returns: The resulting output time.
      */
-    public func solve(at time: Double, duration: Double) -> Double {
-        function(time, (1.0 / (duration * 1000.0)))
+    public func solve(at fractionComplete: Double, duration: Double) -> Double {
+        function(fractionComplete, (1.0 / (duration * 1000.0)))
     }
     
     public var description: String {
@@ -96,22 +97,22 @@ public extension TimingFunction {
         TimingFunction("`default`", x1: 0.25, y1: 0.1, x2: 0.25, y2: 1.0)
     }
 
-    /// A `easeIn` timing function.
+    /// An `easeIn` timing function.
     static var easeIn: TimingFunction {
         TimingFunction("easeIn", x1: 0.42, y1: 0.0, x2: 1.0, y2: 1.0)
     }
 
-    /// A `easeOut` timing function.
+    /// An `easeOut` timing function.
     static var easeOut: TimingFunction {
         TimingFunction("easeOut", x1: 0.0, y1: 0.0, x2: 0.58, y2: 1.0)
     }
 
-    /// A `easeInEaseOut` timing function.
+    /// An `easeInEaseOut` timing function.
     static var easeInEaseOut: TimingFunction {
         TimingFunction("easeInEaseOut", x1: 0.42, y1: 0.0, x2: 0.58, y2: 1.0)
     }
 
-    /// A `swiftOut` timing function, inspired by the default curve in Google Material Design.
+    /// An `swiftOut` timing function, inspired by the default curve in Google Material Design.
     static var swiftOut: TimingFunction {
         TimingFunction("swiftOut", x1: 0.4, y1: 0.0, x2: 0.2, y2: 1.0)
     }
@@ -123,170 +124,170 @@ public extension TimingFunction {
     enum Easing {
         // MARK: Quadratic
 
-        /// A `easeInQuad` timing function.
-        public static var easeInQuad = TimingFunction("easeInQuad") { x in
-            Easing.easeInQuad(x)
+        /// An `easeInQuadic` timing function.
+        public static var easeInQuadic = TimingFunction("easeInQuadic") { x in
+            Easing.easeInQuadic(x)
         }
 
-        /// A `easeOutQuad` timing function.
-        public static var easeOutQuad = TimingFunction("easeOutQuad") { x in
-            Easing.easeOutQuad(x)
+        /// An `easeOutQuadic` timing function.
+        public static var easeOutQuadic = TimingFunction("easeOutQuadic") { x in
+            Easing.easeOutQuadic(x)
         }
 
-        /// A `easeInEaseOutQuad` timing function.
-        public static var easeInEaseOutQuad = TimingFunction("easeInEaseOutQuad") { x in
-            Easing.easeInEaseOutQuad(x)
+        /// An `easeInEaseOutQuadic` timing function.
+        public static var easeInEaseOutQuadic = TimingFunction("easeInEaseOutQuadic") { x in
+            Easing.easeInEaseOutQuadic(x)
         }
 
         // MARK: Cubic
 
-        /// A `easeInCubic` timing function.
+        /// An `easeInCubic` timing function.
         public static var easeInCubic = TimingFunction("easeInCubic") { x in
             Easing.easeInCubic(x)
         }
 
-        /// A `easeOutCubic` timing function.
+        /// An `easeOutCubic` timing function.
         public static var easeOutCubic = TimingFunction("easeOutCubic") { x in
             Easing.easeOutCubic(x)
         }
 
-        /// A `easeInEaseOutCubic` timing function.
+        /// An `easeInEaseOutCubic` timing function.
         public static var easeInEaseOutCubic = TimingFunction("easeInEaseOutCubic") { x in
             Easing.easeInEaseOutCubic(x)
         }
 
         // MARK: Quartic
 
-        /// A `easeInQuart` timing function.
-        public static var easeInQuart = TimingFunction("easeInQuart") { x in
-            Easing.easeInQuart(x)
+        /// An `easeInQuartic` timing function.
+        public static var easeInQuartic = TimingFunction("easeInQuartic") { x in
+            Easing.easeInQuartic(x)
         }
 
-        /// A `easeOutQuart` timing function.
-        public static var easeOutQuart = TimingFunction("easeOutQuart") { x in
-            Easing.easeOutQuart(x)
+        /// An `easeOutQuartic` timing function.
+        public static var easeOutQuartic = TimingFunction("easeOutQuartic") { x in
+            Easing.easeOutQuartic(x)
         }
 
-        /// A `easeInEaseOutQuart` timing function.
-        public static var easeInEaseOutQuart = TimingFunction("easeInEaseOutQuart") { x in
-            Easing.easeInEaseOutQuart(x)
+        /// An `easeInEaseOutQuartic` timing function.
+        public static var easeInEaseOutQuartic = TimingFunction("easeInEaseOutQuartic") { x in
+            Easing.easeInEaseOutQuartic(x)
         }
 
         // MARK: Quintic
 
-        /// A `easeInQuint` timing function.
-        public static var easeInQuint = TimingFunction("easeInQuint") { x in
-            Easing.easeInQuint(x)
+        /// An `easeInQuintic` timing function.
+        public static var easeInQuintic = TimingFunction("easeInQuintic") { x in
+            Easing.easeInQuintic(x)
         }
 
-        /// A `easeOutQuint` timing function.
-        public static var easeOutQuint = TimingFunction("easeOutQuint") { x in
-            Easing.easeOutQuint(x)
+        /// An `easeOutQuintic` timing function.
+        public static var easeOutQuintic = TimingFunction("easeOutQuintic") { x in
+            Easing.easeOutQuintic(x)
         }
 
-        /// A `easeInEaseOutQuint` timing function.
-        public static var easeInEaseOutQuint = TimingFunction("easeInEaseOutQuint") { x in
-            Easing.easeInEaseOutQuint(x)
+        /// An `easeInEaseOutQuintic` timing function.
+        public static var easeInEaseOutQuintic = TimingFunction("easeInEaseOutQuintic") { x in
+            Easing.easeInEaseOutQuintic(x)
         }
 
         // MARK: Sinusoidal
 
-        /// A `easeInSine` timing function.
+        /// An `easeInSine` timing function.
         public static var easeInSine = TimingFunction("easeInSine") { x in
             Easing.easeInSine(x)
         }
 
-        /// A `easeOutSine` timing function.
+        /// An `easeOutSine` timing function.
         public static var easeOutSine = TimingFunction("easeOutSine") { x in
             Easing.easeOutSine(x)
         }
 
-        /// A `easeInEaseOutSine` timing function.
+        /// An `easeInEaseOutSine` timing function.
         public static var easeInEaseOutSine = TimingFunction("easeInEaseOutSine") { x in
             Easing.easeInEaseOutSine(x)
         }
 
         // MARK: Exponential
 
-        /// A `easeInExpo` timing function.
-        public static var easeInExpo = TimingFunction("easeInExpo") { x in
-            Easing.easeInExpo(x)
+        /// An `easeInExpo` timing function.
+        public static var easeInExponential = TimingFunction("easeInExponential") { x in
+            Easing.easeInExponential(x)
         }
 
-        /// A `easeOutExpo` timing function.
-        public static var easeOutExpo = TimingFunction("easeOutExpo") { x in
-            Easing.easeOutExpo(x)
+        /// An `easeOutExponential` timing function.
+        public static var easeOutExponential = TimingFunction("easeOutExponential") { x in
+            Easing.easeOutExponential(x)
         }
 
-        /// A `easeInEaseOutExpo` timing function.
-        public static var easeInEaseOutExpo = TimingFunction("easeInEaseOutExpo") { x in
-            Easing.easeInEaseOutExpo(x)
+        /// An `easeInEaseOutExponential` timing function.
+        public static var easeInEaseOutExponential = TimingFunction("easeInEaseOutExponential") { x in
+            Easing.easeInEaseOutExponential(x)
         }
 
         // MARK: Circular
 
-        /// A `easeInCirc` timing function.
-        public static var easeInCirc = TimingFunction("easeInCirc") { x in
-            Easing.easeInCirc(x)
+        /// An `easeInCircular` timing function.
+        public static var easeInCircular = TimingFunction("easeInCircular") { x in
+            Easing.easeInCircular(x)
         }
 
-        /// A `easeOutCirc` timing function.
-        public static var easeOutCirc = TimingFunction("easeOutCirc") { x in
-            Easing.easeOutCirc(x)
+        /// An `easeOutCircular` timing function.
+        public static var easeOutCircular = TimingFunction("easeOutCircullar") { x in
+            Easing.easeOutCircular(x)
         }
 
-        /// A `easeInEaseOutCirc` timing function.
-        public static var easeInEaseOutCirc = TimingFunction("easeInEaseOutCirc") { x in
-            Easing.easeInEaseOutCirc(x)
+        /// An `easeInEaseOutCircular` timing function.
+        public static var easeInEaseOutCircular = TimingFunction("easeInEaseOutCircular") { x in
+            Easing.easeInEaseOutCircular(x)
         }
 
         // MARK: Bounce
 
-        /// A `easeInBounce` timing function.
+        /// An `easeInBounce` timing function.
         public static var easeInBounce = TimingFunction("easeInBounce") { x in
             Easing.easeInBounce(x)
         }
 
-        /// A `easeOutBounce` timing function.
+        /// An `easeOutBounce` timing function.
         public static var easeOutBounce = TimingFunction("easeOutBounce") { x in
             Easing.easeOutBounce(x)
         }
 
-        /// A `easeInEaseOutBounce` timing function.
+        /// An `easeInEaseOutBounce` timing function.
         public static var easeInEaseOutBounce = TimingFunction("easeInEaseOutBounce") { x in
             Easing.easeInEaseOutBounce(x)
         }
 
         // MARK: Elastic
 
-        /// A `easeInElastic` timing function.
+        /// An `easeInElastic` timing function.
         public static var easeInElastic = TimingFunction("easeInElastic") { x in
             Easing.easeInElastic(x)
         }
 
-        /// A `easeOutElastic` timing function.
+        /// An `easeOutElastic` timing function.
         public static var easeOutElastic = TimingFunction("easeOutElastic") { x in
             Easing.easeOutElastic(x)
         }
 
-        /// A `easeInEaseOutElastic` timing function.
+        /// An `easeInEaseOutElastic` timing function.
         public static var easeInEaseOutElastic = TimingFunction("easeInEaseOutElastic") { x in
             Easing.easeInEaseOutElastic(x)
         }
 
         // MARK: Back
 
-        /// A `easeInBack` timing function.
+        /// An `easeInBack` timing function.
         public static var easeInBack = TimingFunction("easeInBack") { x in
             Easing.easeInBack(x)
         }
 
-        /// A `easeOutBack` timing function.
+        /// An `easeOutBack` timing function.
         public static var easeOutBack = TimingFunction("easeOutBack") { x in
             Easing.easeOutBack(x)
         }
 
-        /// A `easeInEaseOutBack` timing function.
+        /// An `easeInEaseOutBack` timing function.
         public static var easeInEaseOutBack = TimingFunction("easeInEaseOutBack") { x in
             Easing.easeInEaseOutBack(x)
         }
@@ -296,15 +297,15 @@ public extension TimingFunction {
 extension TimingFunction.Easing {
     // MARK: Quadratic
 
-    static func easeInQuad(_ t: Double) -> Double {
+    static func easeInQuadic(_ t: Double) -> Double {
         t * t
     }
 
-    static func easeOutQuad(_ t: Double) -> Double {
+    static func easeOutQuadic(_ t: Double) -> Double {
         -t * (t - 2)
     }
 
-    static func easeInEaseOutQuad(_ t: Double) -> Double {
+    static func easeInEaseOutQuadic(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * _t * _t
@@ -335,16 +336,16 @@ extension TimingFunction.Easing {
 
     // MARK: Quartic
 
-    static func easeInQuart(_ t: Double) -> Double {
+    static func easeInQuartic(_ t: Double) -> Double {
         t * t * t * t
     }
 
-    static func easeOutQuart(_ t: Double) -> Double {
+    static func easeOutQuartic(_ t: Double) -> Double {
         let _t = t - 1.0
         return -(_t * _t * _t * _t + 1)
     }
 
-    static func easeInEaseOutQuart(_ t: Double) -> Double {
+    static func easeInEaseOutQuartic(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * _t * _t * _t * _t
@@ -355,16 +356,16 @@ extension TimingFunction.Easing {
 
     // MARK: Quintic
 
-    static func easeInQuint(_ t: Double) -> Double {
+    static func easeInQuintic(_ t: Double) -> Double {
         t * t * t * t * t
     }
 
-    static func easeOutQuint(_ t: Double) -> Double {
+    static func easeOutQuintic(_ t: Double) -> Double {
         let _t = t - 1.0
         return _t * _t * _t * _t * _t + 1
     }
 
-    static func easeInEaseOutQuint(_ t: Double) -> Double {
+    static func easeInEaseOutQuintic(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * _t * _t * _t * _t * _t
@@ -389,15 +390,15 @@ extension TimingFunction.Easing {
 
     // MARK: Exponential
 
-    static func easeInExpo(_ t: Double) -> Double {
+    static func easeInExponential(_ t: Double) -> Double {
         pow(2.0, 10.0 * (t - 1.0))
     }
 
-    static func easeOutExpo(_ t: Double) -> Double {
+    static func easeOutExponential(_ t: Double) -> Double {
         -pow(2.0, -10.0 * t) + 1.0
     }
 
-    static func easeInEaseOutExpo(_ t: Double) -> Double {
+    static func easeInEaseOutExponential(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return 0.5 * pow(2.0, 10.0 * (_t - 1.0))
@@ -408,16 +409,16 @@ extension TimingFunction.Easing {
 
     // MARK: Circular
 
-    static func easeInCirc(_ t: Double) -> Double {
+    static func easeInCircular(_ t: Double) -> Double {
         -(sqrt(1.0 - t * t) - 1.0)
     }
 
-    static func easeOutCirc(_ t: Double) -> Double {
+    static func easeOutCircular(_ t: Double) -> Double {
         let _t = t - 1.0
         return sqrt(1.0 - _t * _t)
     }
 
-    static func easeInEaseOutCirc(_ t: Double) -> Double {
+    static func easeInEaseOutCircular(_ t: Double) -> Double {
         var _t = t / 0.5
         if _t < 1.0 {
             return -0.5 * (sqrt(1.0 - _t * _t) - 1.0)
@@ -502,5 +503,149 @@ extension TimingFunction.Easing {
         } else {
             return (pow(2 * x - 2, 2) * (3.5949095 * (x * 2 - 2) + 2.5949095) + 2) / 2
         }
+    }
+}
+
+extension TimingFunction {
+    /// A bezier curve that can be used to calculate timing functions.
+    struct UnitBezier: Hashable, Sendable, CustomStringConvertible {
+        /// The first point of the bezier.
+        public var first: CGPoint {
+            didSet {
+                first = CGPoint(first.x.clamped(max: 1.0), first.y.clamped(max: 1.0))
+            }
+        }
+
+        /// The second point of the bezier.
+        public var second: CGPoint {
+            didSet {
+                second = CGPoint(second.x.clamped(max: 1.0), second.y.clamped(max: 1.0))
+            }
+        }
+
+        /// Creates a new `UnitBezier` instance with the specified points.
+        public init(first: CGPoint, second: CGPoint) {
+            self.first = CGPoint(first.x.clamped(max: 1.0), first.y.clamped(max: 1.0))
+            self.second = CGPoint(second.x.clamped(max: 1.0), second.y.clamped(max: 1.0))
+        }
+
+        /// Creates a new `UnitBezier` instance with the specified points.
+        public init(x1: Double, y1: Double, x2: Double, y2: Double) {
+            self.init(first: CGPoint(x1, y1), second: CGPoint(x2, y2))
+        }
+
+        /**
+         Calculates the resulting `y` for given `x`.
+
+         - Parameters:
+         - x: The value to solve for.
+         - epsilon: The required precision of the result (where `x * epsilon` is the maximum time segment to be evaluated).
+         - Returns: The solved `y` value.
+         */
+        public func solve(x: Double, epsilon: Double) -> Double {
+            UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: epsilon)
+        }
+
+        /**
+         Calculates the resulting `y` for given `x`.
+
+         - Parameters:
+         - x: The value to solve for.
+         - duration: The duration of the solving value. It is used to calculate the required precision of the result.
+         - Returns: The solved `y` value.
+         */
+        public func solve(x: Double, duration: Double) -> Double {
+            UnitBezierSolver(p1x: first.x, p1y: first.y, p2x: second.x, p2y: second.y).solve(x: x, eps: 1.0 / (duration * 1000.0))
+        }
+        
+        public var description: String {
+            "((\(first.x), \(first.y)), (\(second.x), \(second.y)))"
+        }
+    }
+}
+
+private struct UnitBezierSolver {
+    private let ax: Double
+    private let bx: Double
+    private let cx: Double
+
+    private let ay: Double
+    private let by: Double
+    private let cy: Double
+
+    init(p1x: Double, p1y: Double, p2x: Double, p2y: Double) {
+        // Calculate the polynomial coefficients, implicit first and last control points are (0,0) and (1,1).
+        cx = 3.0 * p1x
+        bx = 3.0 * (p2x - p1x) - cx
+        ax = 1.0 - cx - bx
+
+        cy = 3.0 * p1y
+        by = 3.0 * (p2y - p1y) - cy
+        ay = 1.0 - cy - by
+    }
+
+    func solve(x: Double, eps: Double) -> Double {
+        sampleCurveY(t: solveCurveX(x: x, eps: eps))
+    }
+
+    private func sampleCurveX(t: Double) -> Double {
+        ((ax * t + bx) * t + cx) * t
+    }
+
+    private func sampleCurveY(t: Double) -> Double {
+        ((ay * t + by) * t + cy) * t
+    }
+
+    private func sampleCurveDerivativeX(t: Double) -> Double {
+        (3.0 * ax * t + 2.0 * bx) * t + cx
+    }
+
+    private func solveCurveX(x: Double, eps: Double) -> Double {
+        var t0 = 0.0
+        var t1 = 0.0
+        var t2 = 0.0
+        var x2 = 0.0
+        var d2 = 0.0
+
+        // First try a few iterations of Newton's method -- normally very fast.
+        t2 = x
+        for _ in 0 ..< 8 {
+            x2 = sampleCurveX(t: t2) - x
+            if abs(x2) < eps {
+                return t2
+            }
+            d2 = sampleCurveDerivativeX(t: t2)
+            if abs(d2) < 1e-6 {
+                break
+            }
+            t2 = t2 - x2 / d2
+        }
+
+        // Fall back to the bisection method for reliability.
+        t0 = 0.0
+        t1 = 1.0
+        t2 = x
+
+        if t2 < t0 {
+            return t0
+        }
+        if t2 > t1 {
+            return t1
+        }
+
+        while t0 < t1 {
+            x2 = sampleCurveX(t: t2)
+            if abs(x2 - x) < eps {
+                return t2
+            }
+            if x > x2 {
+                t0 = t2
+            } else {
+                t1 = t2
+            }
+            t2 = (t1 - t0) * 0.5 + t0
+        }
+
+        return t2
     }
 }

@@ -163,6 +163,7 @@ extension PropertyAnimator {
         case .spring:
             let animation = springAnimation(for: keyPath) ?? SpringAnimation(spring: .smooth, value: value, target: target)
             if currentAnimation?.id != animation.id, let velocity = currentAnimation?._velocity as? Value.AnimatableData {
+                animation._startVelocity = velocity
                 animation._velocity = velocity
             }
             configurateAnimation(animation, target: target, keyPath: keyPath, configuration: configuration, completion: completion)
@@ -171,6 +172,18 @@ extension PropertyAnimator {
             configurateAnimation(animation, target: target, keyPath: keyPath, configuration: configuration, completion: completion)
         case .decay, .decayVelocity:
             let animation = decayAnimation(for: keyPath) ?? DecayAnimation(value: value, target: target)
+            configurateAnimation(animation, target: target, keyPath: keyPath, configuration: configuration, completion: completion)
+        case .cubic:
+            let animation = cubicAnimation(for: keyPath) ?? CubicAnimation(duration: 1.0, value: value, target: target)
+            if let current = currentAnimation as? CubicAnimation<Value> {
+                animation._startValue = animation._velocity
+            }
+            /*
+            if currentAnimation?.id != animation.id, let velocity = currentAnimation?._velocity as? Value.AnimatableData {
+                animation._startVelocity = velocity
+                animation._velocity = velocity
+            }
+             */
             configurateAnimation(animation, target: target, keyPath: keyPath, configuration: configuration, completion: completion)
         case .animationVelocity:
             animation(for: keyPath)?.velocity = newValue
@@ -285,5 +298,10 @@ extension PropertyAnimator {
     /// The current spring animation for the property at the keypath, or `nil` if there isn't a spring animation for the keypath.
     func springAnimation<Value>(for keyPath: WritableKeyPath<Provider, Value>) -> SpringAnimation<Value>? {
         animation(for: keyPath) as? SpringAnimation<Value>
+    }
+    
+    /// The current cubic animation for the property at the keypath, or `nil` if there isn't a spring animation for the keypath.
+    func cubicAnimation<Value>(for keyPath: WritableKeyPath<Provider, Value>) -> CubicAnimation<Value>? {
+        animation(for: keyPath) as? CubicAnimation<Value>
     }
 }

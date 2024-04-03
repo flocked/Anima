@@ -14,15 +14,14 @@ extension Anima {
         let type: GroupType
         let delay: CGFloat
         let options: AnimationOptions
-        var spring: SpringParameters?
-        var easing: EasingParameters?
-        var decay: DecayParameters?
+        var animation: AnimationParameters?
         
         var animationType: AnimationType? {
             switch type {
             case .spring: return .spring
             case .easing: return .easing
             case .decay, .decayVelocity: return .decay
+            case .cubic: return .cubic
             default: return nil
             }
         }
@@ -42,30 +41,24 @@ extension Anima {
             case animationVelocity
             /// Animation value updates.
             case animationValue
+            /// Cubic animation.
+            case cubic
         }
-        
-        struct SpringParameters {
-            let spring: Spring
-            let gestureVelocity: (any AnimatableProperty)?
+                
+        struct AnimationParameters {
+            var duration: TimeInterval? = nil
+            var timingFunction: TimingFunction? = nil
+            var spring: Spring? = nil
+            var gestureVelocity: (any AnimatableProperty)? = nil
+            var decelerationRate: Double? = nil
         }
-        
-        struct EasingParameters {
-            let timingFunction: TimingFunction
-            let duration: TimeInterval
-        }
-        
-        struct DecayParameters {
-            let decelerationRate: Double
-        }
-        
-        init(type: GroupType, groupID: UUID = UUID(), delay: CGFloat = 0.0, options: AnimationOptions = [], spring: SpringParameters? = nil, easing: EasingParameters? = nil, decay: DecayParameters? = nil) {
+                
+        init(type: GroupType, groupID: UUID = UUID(), delay: CGFloat = 0.0, options: AnimationOptions = [], animation: AnimationParameters? = nil) {
             self.groupID = groupID
             self.delay = delay
             self.type = type
             self.options = options
-            self.spring = spring
-            self.easing = easing
-            self.decay = decay
+            self.animation = animation
         }
     }
 }

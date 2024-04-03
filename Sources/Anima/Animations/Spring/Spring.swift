@@ -421,6 +421,7 @@ extension Spring: CustomStringConvertible {
     }
 }
 
+/// Provides `Animatable` conformance to an `AnimatableProperty`.
 struct AnimatableProxy<Value: AnimatableProperty>: Animatable {
     var animatableData: Value.AnimatableData
 

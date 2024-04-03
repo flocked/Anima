@@ -139,7 +139,7 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ state: AnimationState) -> Void)? = nil
     ) {
-        let configuration = Anima.AnimationConfiguration(type: .spring, delay: delay, options: options, spring: .init(spring: spring, gestureVelocity: gestureVelocity))
+        let configuration = Anima.AnimationConfiguration(type: .spring, delay: delay, options: options, animation: .init(spring: spring, gestureVelocity: gestureVelocity))
         AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
     
@@ -179,7 +179,7 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ state: AnimationState) -> Void)? = nil
     ) {
-        let configuration = Anima.AnimationConfiguration(type: .easing, delay: delay, options: options, easing: .init(timingFunction: timingFunction, duration: duration))
+        let configuration = Anima.AnimationConfiguration(type: .easing, delay: delay, options: options, animation: .init(duration: duration, timingFunction: timingFunction))
         AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
     
@@ -232,7 +232,7 @@ public enum Anima {
         animations: () -> Void,
         completion: ((_ state: AnimationState) -> Void)? = nil
     ) {
-        let configuration = Anima.AnimationConfiguration(type: mode == .velocity ? .decayVelocity : .decay, delay: delay, options: options, decay: .init(decelerationRate: decelerationRate))
+        let configuration = Anima.AnimationConfiguration(type: mode == .velocity ? .decayVelocity : .decay, delay: delay, options: options, animation: .init(decelerationRate: decelerationRate))
         AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
     
@@ -262,5 +262,17 @@ public enum Anima {
     
     static var currentConfiguration: Anima.AnimationConfiguration? {
         AnimationController.shared.currentAnimationConfiguration
+    }
+    
+    /// Performs cubic animations.
+    public static func animate(
+        withCubic duration: TimeInterval,
+        delay: TimeInterval = 0,
+        options: AnimationOptions = [],
+        animations: () -> Void,
+        completion: ((_ state: AnimationState) -> Void)? = nil
+    ) {
+        let configuration = Anima.AnimationConfiguration(type: .cubic, delay: delay, options: options, animation: .init(duration: duration))
+        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
     }
 }
