@@ -68,7 +68,7 @@ class CubicAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
             // (p0 - p1) * 2
             let start = (_startValue - _target) * 0.5
             let last = (_target - _startValue) * 0.5
-            _value = Spline.catmullRom(p0: start, p1: _startValue, p2: _target, p3: last, t: fractionComplete)
+            _value = CubicFunction.catmullRom(p0: start, p1: _startValue, p2: _target, p3: last, t: fractionComplete)
         } else {
             fractionComplete = isReversed ? 0.0 : 1.0
             _value = isReversed ? _startValue : _target
