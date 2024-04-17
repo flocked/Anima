@@ -19,7 +19,7 @@ class AnimationController {
 
     private var displayLink: AnyCancellable?
     private var animations: [UUID: WeakAimation] = [:]
-    private var groupAnimationCompletionBlocks: [UUID: ((_ state: Anima.AnimationState) -> Void)] = [:]
+    private var groupAnimationCompletionBlocks: [UUID: (handler: ((_ state: Anima.AnimationState) -> Void), count: Int)] = [:]
     var animationConfigurationStack = ConfigurationStack()
     var currentAnimationConfiguration: Anima.AnimationConfiguration? {
         animationConfigurationStack.current
@@ -49,7 +49,9 @@ class AnimationController {
         completion: ((_ state: Anima.AnimationState) -> Void)? = nil) {
         precondition(Thread.isMainThread, "All Anima animations are to run and be interfaced with on the main thread only. There is no support for threading of any kind.")
 
-        groupAnimationCompletionBlocks[configuration.groupID] = completion
+        if let completion = completion {
+            groupAnimationCompletionBlocks[configuration.groupID] = (completion, 0)
+        }
         animationConfigurationStack.push(configuration)
         animations()
         animationConfigurationStack.pop()
@@ -123,13 +125,26 @@ class AnimationController {
     private var displayLinkIsRunning: Bool {
         displayLink != nil
     }
-
-    func executeGroupHandler(uuid: UUID?, state: Anima.AnimationState) {
-        guard let uuid = uuid, let block = groupAnimationCompletionBlocks[uuid] else {
+    
+    func addAnimationCount(uuid: UUID?) {
+        guard let uuid = uuid, var block = groupAnimationCompletionBlocks[uuid] else {
             return
         }
-        block(state)
-        if state == .finished {
+        block.count += 1
+        groupAnimationCompletionBlocks[uuid] = block
+    }
+
+    func executeGroupHandler(uuid: UUID?, state: Anima.AnimationState) {
+        guard let uuid = uuid, var block = groupAnimationCompletionBlocks[uuid] else {
+            return
+        }
+        Swift.print(block.count)
+        block.count -= 1
+        groupAnimationCompletionBlocks[uuid] = block
+        if state == .retargeted {
+            block.handler(state)
+        } else if block.count <= 0 {
+            block.handler(state)
             groupAnimationCompletionBlocks[uuid] = nil
         }
     }

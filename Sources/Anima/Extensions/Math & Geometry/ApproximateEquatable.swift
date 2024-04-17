@@ -23,19 +23,19 @@ protocol ApproximateEquatable {
 }
 
 extension Float: ApproximateEquatable {
-    public func isApproximatelyEqual(to other: Float, epsilon: Float) -> Bool {
+    public func isApproximatelyEqual(to other: Float, epsilon: Float = 0.001) -> Bool {
         isApproximatelyEqual(to: other, absoluteTolerance: epsilon)
     }
 }
 
 extension Double: ApproximateEquatable {
-    public func isApproximatelyEqual(to other: Double, epsilon: Double) -> Bool {
+    public func isApproximatelyEqual(to other: Double, epsilon: Double = 0.001) -> Bool {
         isApproximatelyEqual(to: other, absoluteTolerance: epsilon)
     }
 }
 
 extension CGFloat: ApproximateEquatable {
-    public func isApproximatelyEqual(to other: CGFloat, epsilon: CGFloat) -> Bool {
+    public func isApproximatelyEqual(to other: CGFloat, epsilon: CGFloat = 0.001) -> Bool {
         isApproximatelyEqual(to: other, absoluteTolerance: epsilon)
     }
 }
@@ -94,17 +94,28 @@ extension Numeric where Magnitude: FloatingPoint {
         - norm: The norm to use for the comparison. Defaults to `\.magnitude`.
      */
     @inlinable @inline(__always)
-    func isApproximatelyEqual(
-        to other: Self,
-        absoluteTolerance: Magnitude,
-        relativeTolerance: Magnitude = 0
-    ) -> Bool {
+    func isApproximatelyEqual(to other: Self, 
+                              absoluteTolerance: Magnitude,
+                              relativeTolerance: Magnitude = 0) -> Bool {
         isApproximatelyEqual(
             to: other,
             absoluteTolerance: absoluteTolerance,
             relativeTolerance: relativeTolerance,
             norm: \.magnitude
         )
+    }
+    
+    /**
+     A Boolean value that indicates whether `self` and the specified `other` value are approximately equal.
+
+     - Parameters:
+        - other: The value to compare.
+        - epsilon: The margin by which both values can differ and still be considered the same value.
+     */
+    @inlinable @inline(__always)
+    func isApproximatelyEqual(to other: Self, 
+                              epsilon: Magnitude) -> Bool {
+        isApproximatelyEqual(to: other, absoluteTolerance: epsilon)
     }
 }
 

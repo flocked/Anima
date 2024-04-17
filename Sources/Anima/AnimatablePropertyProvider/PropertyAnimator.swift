@@ -208,6 +208,7 @@ extension PropertyAnimator {
         }
 
         animation.configure(with: configuration)
+        AnimationController.shared.addAnimationCount(uuid: animation.groupID)
         
         let animationKey = keyPath.stringValue
                 

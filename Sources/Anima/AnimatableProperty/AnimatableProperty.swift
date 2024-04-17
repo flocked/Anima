@@ -454,3 +454,6 @@ extension Array: AnimatableCollection where Self: AnimatableProperty {
         return diff > 0 ? (self + Array(repeating: .zero, count: diff)) : self
     }
 }
+
+typealias AnimatablePairCGFloat = AnimatablePair<CGFloat, CGFloat>
+typealias AnimatablePairCGRect = AnimatablePair<AnimatablePair<CGFloat, CGFloat>, AnimatablePair<CGFloat, CGFloat>>

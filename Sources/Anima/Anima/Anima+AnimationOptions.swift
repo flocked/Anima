@@ -31,9 +31,12 @@ public extension Anima {
          */
         public static let resetSpringVelocity = AnimationOptions(rawValue: 1 << 4)
         
+        /// The spring animation is stopped if it's value is approximately equal to the target value.
+        public static let useApproximatelyEqual = AnimationOptions(rawValue: 1 << 5)
+                
         #if os(iOS) || os(tvOS)
             /// Prevents the user to interact with views while they are being animated.
-            public static let preventUserInteraction = AnimationOptions(rawValue: 1 << 5)
+            public static let preventUserInteraction = AnimationOptions(rawValue: 1 << 6)
         #endif
 
         /// Creates a structure that represents animation options.
@@ -53,6 +56,7 @@ extension Anima.AnimationOptions: CustomStringConvertible {
                 autoreverse: \(autoreverse)
                 autoStarts: \(autoStarts)
                 resetSpringVelocity: \(resetSpringVelocity)
+                useApproximatelyEqual: \(usesApproximatelyEqual)
                 preventUserInteraction: \(preventUserInteraction)
             )
             """
@@ -64,6 +68,7 @@ extension Anima.AnimationOptions: CustomStringConvertible {
                 autoreverse: \(autoreverse)
                 autoStarts: \(autoStarts)
                 resetSpringVelocity: \(resetSpringVelocity)
+                useApproximatelyEqual: \(usesApproximatelyEqual)
             )
             """
         #endif
@@ -76,6 +81,8 @@ extension Anima.AnimationOptions {
     var autoreverse: Bool { contains(.autoreverse) }
     var resetSpringVelocity: Bool { contains(.resetSpringVelocity) }
     var autoStarts: Bool { contains(.autoStart) }
+    var usesApproximatelyEqual: Bool { contains(.useApproximatelyEqual) }
+    
     #if os(iOS) || os(tvOS)
     var preventUserInteraction: Bool { contains(.preventUserInteraction) }
     #endif

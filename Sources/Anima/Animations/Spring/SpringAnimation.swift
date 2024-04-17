@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /**
  An animation that animates a value using a physically-modeled spring.
@@ -78,7 +79,27 @@ open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
 
         runningTime = runningTime + deltaTime
 
-        let animationFinished = (runningTime >= settlingTime) || !isAnimated
+        var animationFinished = (runningTime >= settlingTime) || !isAnimated
+
+        if options.usesApproximatelyEqual {
+            if let value = _value as? AnimatableArray<Double>, let target = _target as? AnimatableArray<Double> {
+                if value.isApproximatelyEqual(to: target, epsilon: 0.01) {
+                    animationFinished = true
+                }
+            } else if let value = _value as? CGFloat, let target = _target as? CGFloat {
+                if value.isApproximatelyEqual(to: target, epsilon: 0.01) {
+                    animationFinished = true
+                }
+            } else if let value = _value as? AnimatablePairCGFloat, let target = _target  as? AnimatablePairCGFloat {
+                if value.isApproximatelyEqual(to: target, epsilon: 0.01) {
+                    animationFinished = true
+                }
+            } else if let value = _value as? AnimatablePairCGRect, let target = _target  as? AnimatablePairCGRect {
+                if value.isApproximatelyEqual(to: target, epsilon: 0.01) {
+                    animationFinished = true
+                }
+            }
+        }
         
         if animationFinished {
             if options.repeats, isAnimated {
