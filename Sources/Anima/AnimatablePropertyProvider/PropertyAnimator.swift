@@ -175,9 +175,6 @@ extension PropertyAnimator {
             configurateAnimation(animation, target: target, keyPath: keyPath, configuration: configuration, completion: completion)
         case .cubic:
             let animation = cubicAnimation(for: keyPath) ?? CubicAnimation(duration: 1.0, value: value, target: target)
-            if let current = currentAnimation as? CubicAnimation<Value> {
-                animation._startValue = animation._velocity
-            }
             /*
             if currentAnimation?.id != animation.id, let velocity = currentAnimation?._velocity as? Value.AnimatableData {
                 animation._startVelocity = velocity

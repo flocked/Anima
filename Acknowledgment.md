@@ -18,7 +18,7 @@ DisplayLink
 - Tim Donnelly
 - https://github.com/timdonnelly/DisplayLink
 
-AnimationController, Spring, SpringAnimation
+Spring, SpringAnimation
 - Janum Trivedi
 - https://github.com/jtrivedi/Wave/
 

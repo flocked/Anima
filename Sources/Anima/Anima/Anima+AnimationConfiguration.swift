@@ -1,5 +1,5 @@
 //
-//  Anima.AnimationConfiguration.swift
+//  Anima+AnimationConfiguration.swift
 //  
 //
 //  Created by Florian Zand on 23.03.24.

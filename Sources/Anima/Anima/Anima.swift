@@ -1,8 +1,8 @@
 //
 //  Anima.swift
 //
-//  Modified by Florian Zand
-//  Original: Copyright (c) 2022 Janum Trivedi.
+//
+//  Created by Florian Zand on 23.03.24.
 //
 
 import CoreGraphics

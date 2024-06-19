@@ -1,8 +1,8 @@
 //
 //  AnimationProviding.swift
 //
-//  Modified by Florian Zand
-//  Original: Copyright (c) 2022 Janum Trivedi.
+//
+//  Created by Florian Zand on 28.03.24.
 //
 
 import Foundation
