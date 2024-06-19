@@ -194,7 +194,6 @@ extension PropertyAnimator {
     /// Configurates an animation and starts it.
     func configurateAnimation<Value>(_ animation: PropertyAnimation<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, configuration: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
         
-        var animation = animation
         animation.reset()
 
         if configuration.type == .decayVelocity, let animation = animation as? DecayAnimation<Value> {
