@@ -42,7 +42,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     let _id = UUID()
 
     /// A unique identifier that associates the animation with an grouped animation block.
-    var groupID: UUID?
+    open internal(set) var groupID: UUID?
 
     /// The relative priority of the animation. The higher the number the higher the priority.
     open var relativePriority: Int = 0
@@ -116,7 +116,10 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         set { _startVelocity = newValue.animatableData }
     }
     
-    var _startVelocity: Value.AnimatableData = .zero    
+    var _startVelocity: Value.AnimatableData = .zero
+
+    
+    
 
     /// The callback block to call when the animation's ``PropertyAnimation/value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?

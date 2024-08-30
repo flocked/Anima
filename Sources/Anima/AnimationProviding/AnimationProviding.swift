@@ -12,6 +12,9 @@ public protocol AnimationProviding: AnyObject {
     /// An unique identifier for the animation.
     var id: UUID { get }
 
+    /// An unique identifier that associates the animation with an grouped animation block.
+    var groupID: UUID? { get }
+
     /// The relative priority of the animation. The higher the number the higher the priority.
     var relativePriority: Int { get set }
 
