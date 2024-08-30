@@ -94,6 +94,23 @@ extension CGColor: CAKeyframeAnimationValueConvertible {
         }
     }
 #endif
+extension NSRange: CAKeyframeAnimationValueConvertible {
+    public func toKeyframeValue() -> AnyObject {
+        NSValue(range: self)
+    }
+}
+
+extension ClosedRange: CAKeyframeAnimationValueConvertible where Bound: BinaryInteger {
+    public func toKeyframeValue() -> AnyObject {
+        NSValue(range: NSRange(location: Int(lowerBound), length: Int(upperBound - lowerBound - 1)))
+    }
+}
+
+extension Range: CAKeyframeAnimationValueConvertible where Bound: BinaryInteger {
+    public func toKeyframeValue() -> AnyObject {
+        NSValue(range: NSRange(location: Int(lowerBound), length: Int(upperBound - lowerBound)))
+    }
+}
 
 extension CATransform3D: CAKeyframeAnimationValueConvertible {
     public func toKeyframeValue() -> AnyObject {

@@ -399,6 +399,34 @@ extension Array: AnimatableProperty, AdditiveArithmetic, VectorArithmetic where 
     }
 }
 
+extension Range: AnimatableProperty where Bound: VectorArithmetic {
+    public var animatableData: AnimatableArray<Bound> {
+        [lowerBound, upperBound]
+    }
+    
+    public init(_ animatableData: AnimatableArray<Bound>) {
+        self = animatableData[0]..<animatableData[1]
+    }
+    
+    public static var zero: Range {
+        Bound.zero..<Bound.zero
+    }
+}
+
+extension ClosedRange: AnimatableProperty where Bound: VectorArithmetic {
+    public var animatableData: AnimatableArray<Bound> {
+        [lowerBound, upperBound]
+    }
+    
+    public init(_ animatableData: AnimatableArray<Bound>) {
+        self = animatableData[0]...animatableData[1]
+    }
+    
+    public static var zero: ClosedRange {
+        Bound.zero...Bound.zero
+    }
+}
+
 // MARK: - AnimatableColor
 
 // Updates colors for better interpolation/animations.
@@ -406,9 +434,6 @@ protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableA
     var alpha: CGFloat { get }
     func animatable(to other: any AnimatableColor) -> Self
 }
-
-
-
 
 extension AnimatableColor {
     func animatable(to other: any AnimatableColor) -> Self {
