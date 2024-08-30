@@ -153,3 +153,20 @@ extension AdditiveArithmetic {
         return delta.isFinite && delta <= bound
     }
 }
+
+extension ApproximateEquatable {
+    func isApproximatelyEqual(toAny other: any ApproximateEquatable, epsilon: Double) -> Bool {
+        guard let other = other as? Self else { return false }
+        return self.isApproximatelyEqual(to: other, epsilon: Epsilon(epsilon))
+    }
+    
+    func isApproximatelyEqual(toAny other: any ApproximateEquatable, epsilon: Float) -> Bool {
+        guard let other = other as? Self else { return false }
+        return self.isApproximatelyEqual(to: other, epsilon: Epsilon(epsilon))
+    }
+    
+    func isApproximatelyEqual(toAny other: any ApproximateEquatable, epsilon: CGFloat) -> Bool {
+        guard let other = other as? Self else { return false }
+        return self.isApproximatelyEqual(to: other, epsilon: Epsilon(epsilon))
+    }
+}

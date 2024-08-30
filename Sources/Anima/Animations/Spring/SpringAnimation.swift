@@ -80,25 +80,9 @@ open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
         runningTime = runningTime + deltaTime
 
         var animationFinished = (runningTime >= settlingTime) || !isAnimated
-
-        if options.usesApproximatelyEqual {
-            if let value = _value as? AnimatableArray<Double>, let target = _target as? AnimatableArray<Double> {
-                if value.isApproximatelyEqual(to: target, epsilon: 0.01) {
-                    animationFinished = true
-                }
-            } else if let value = _value as? CGFloat, let target = _target as? CGFloat {
-                if value.isApproximatelyEqual(to: target, epsilon: 0.01) {
-                    animationFinished = true
-                }
-            } else if let value = _value as? AnimatablePairCGFloat, let target = _target  as? AnimatablePairCGFloat {
-                if value.isApproximatelyEqual(to: target, epsilon: 0.01) {
-                    animationFinished = true
-                }
-            } else if let value = _value as? AnimatablePairCGRect, let target = _target  as? AnimatablePairCGRect {
-                if value.isApproximatelyEqual(to: target, epsilon: 0.01) {
-                    animationFinished = true
-                }
-            }
+        
+        if options.usesApproximatelyEqual, let value = _value as? (any ApproximateEquatable), let target = _target as? (any ApproximateEquatable), value.isApproximatelyEqual(toAny: target, epsilon: 0.01) {
+            animationFinished = true
         }
         
         if animationFinished {

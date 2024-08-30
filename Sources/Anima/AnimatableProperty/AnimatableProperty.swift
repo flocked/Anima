@@ -356,7 +356,7 @@ extension CGVector4: AnimatableProperty, Animatable {
     }
 }
 
-extension Array: AnimatableProperty where Element: AnimatableProperty {
+extension Array: AnimatableProperty, AdditiveArithmetic, VectorArithmetic where Element: AnimatableProperty {
     public init(_ animatableData: AnimatableArray<Element.AnimatableData>) {
         self.init(animatableData.elements.compactMap { Element($0) })
     }
@@ -365,6 +365,30 @@ extension Array: AnimatableProperty where Element: AnimatableProperty {
 
     public static var zero: [Element] {
         Self()
+    }
+    
+    public static func + (lhs: Array, rhs: Array) -> Array {
+        .init(lhs.animatableData + rhs.animatableData)
+    }
+    public static func - (lhs: Array, rhs: Array) -> Array {
+        .init(lhs.animatableData - rhs.animatableData)
+    }
+    public mutating func scale(by rhs: Double) {
+        self = .init(animatableData.scaled(by: rhs))
+    }
+    public var magnitudeSquared: Double {
+        self.animatableData.magnitudeSquared
+    }
+    
+    subscript(safe index: Index) -> Element? {
+        get {
+            guard !isEmpty, index >= 0, index < count else { return nil }
+            return self[index]
+        }
+        set {
+            guard !isEmpty, index >= 0, index < count, let newValue = newValue else { return }
+            self[index] = newValue
+        }
     }
 }
 
