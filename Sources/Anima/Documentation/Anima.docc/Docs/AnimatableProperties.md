@@ -28,27 +28,27 @@ To conform to ``AnimatableProperty`` you have to provide:
 
 `animatableData` is used by `Anima` to calculate the interpolation of the values while animating.
 
-The easist way to provide animatableData,  is to use ``Anima/AnimatableArray``.
+The easist way to provide animatableData,  is to use an array with elements conformning to ``Anima/AnimatableProperty`` (e.g. `Double`, `Float` or `CGFloat`).
 
 Example:
 
 ```swift
-struct MyStruct {
+struct AnimatableStruct {
    let value: Double
    let point: CGPoint
 }
 
-extension MyStruct: AnimatableProperty {
-   init(_ animatableData: AnimatableArray<Double>) {
+extension AnimatableStruct: AnimatableProperty {
+   init(_ animatableData: [Double]) {
        value = animatableData[0]
        point = CGPoint(x: animatableData[1], y: animatableData[2])
    }
 
-   var animatableData: AnimatableArray<Double> {
+   var animatableData: [Double] {
        [value, point.x, point.y]
    }
 
-   static let zero = MyStruct(value: 0, point: .zero)
+   static let zero = AnimatableStruct(value: 0, point: .zero)
 }
 ```
 

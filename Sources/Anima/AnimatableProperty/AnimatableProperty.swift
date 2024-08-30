@@ -20,26 +20,26 @@ import SwiftUI
 
  `Anima` can animate any type conforming to this protocol. It uses `animatableData` to calculate new values in an animation.
 
- If the type you want to conform has many properties, consider using ``AnimatableArray`` as `animatableData`. It lets you combine a collection of values.
+ If the type you want to conform has many properties, consider using an array with elements conforming to ``AnimatableProperty`` (e.g. `Double`, `Float` or `CGFloat`).
 
  Example conformance:
  ```swift
- struct MyStruct {
+ struct AnimatableStruct {
     let value: Double
     let point: CGPoint
  }
 
- extension MyStruct: AnimatableProperty {
-    init(_ animatableData: AnimatableArray<Double>) {
+ extension AnimatableStruct: AnimatableProperty {
+    init(_ animatableData: [Double]) {
         value = animatableData[0]
         point = CGPoint(x: animatableData[1], y: animatableData[2])
     }
 
-    var animatableData: AnimatableArray<Double> {
+    var animatableData: [Double] {
         [value, point.x, point.y]
     }
 
-    static let zero = MyStruct(value: 0, point: .zero)
+    static let zero = AnimatableStruct(value: 0, point: .zero)
  }
  ```
  */
@@ -370,14 +370,21 @@ extension Array: AnimatableProperty, AdditiveArithmetic, VectorArithmetic where 
     public static func + (lhs: Array, rhs: Array) -> Array {
         .init(lhs.animatableData + rhs.animatableData)
     }
+    
     public static func - (lhs: Array, rhs: Array) -> Array {
         .init(lhs.animatableData - rhs.animatableData)
     }
+    
     public mutating func scale(by rhs: Double) {
         self = .init(animatableData.scaled(by: rhs))
     }
+    
     public var magnitudeSquared: Double {
         self.animatableData.magnitudeSquared
+    }
+    
+    public var scaledIntegral: Array {
+        self.compactMap({$0.scaledIntegral})
     }
     
     subscript(safe index: Index) -> Element? {
