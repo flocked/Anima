@@ -23,7 +23,7 @@ public extension AnimatablePropertyProvider where Self: CALayer {
      See ``LayerAnimator`` for more information about how to animate and all animatable properties.
      */
     var animator: LayerAnimator<Self> { 
-        getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayerAnimator(self))
+        getAssociatedValue("PropertyAnimator", initialValue: LayerAnimator(self))
     }
 }
 

@@ -16,7 +16,7 @@
 
          See ``WindowAnimator`` for more information about how to animate and all animatable properties.
          */
-        public var animator: WindowAnimator { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: WindowAnimator(self)) }
+        public var animator: WindowAnimator { getAssociatedValue("PropertyAnimator", initialValue: WindowAnimator(self)) }
     }
 
     /**

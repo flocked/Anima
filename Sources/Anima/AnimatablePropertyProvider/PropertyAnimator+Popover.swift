@@ -15,7 +15,7 @@ extension NSPopover: AnimatablePropertyProvider {
 
      To animate the property change it's value inside an ``Anima`` animation block, To stop its animation and to change the value imminently, update it outside an animation block.
      */
-    public var animator: PopoverAnimator { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: PopoverAnimator(self)) }
+    public var animator: PopoverAnimator { getAssociatedValue("PropertyAnimator", initialValue: PopoverAnimator(self)) }
 }
 
 /**

@@ -23,7 +23,7 @@ import Decomposed
 
          See ``ViewAnimator`` for more information about how to animate and all animatable properties.
          */
-        var animator: ViewAnimator<Self> { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: ViewAnimator(self)) }
+        var animator: ViewAnimator<Self> { getAssociatedValue("PropertyAnimator", initialValue: ViewAnimator(self)) }
     }
 
     /**
@@ -109,6 +109,9 @@ import Decomposed
         public var backgroundColor: NSColor? {
             get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
             set {
+                if let layer = object.optionalLayer, layer.animator.backgroundColor == nil || layer.animator.backgroundColor?.alpha == 0.0 {
+                    layer.backgroundColor = newValue?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
+                }
                 object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
                 object.dynamicColors.background = newValue
             }
@@ -131,6 +134,9 @@ import Decomposed
             get { object.optionalLayer?.animator.border ?? .zero }
             set {
                 object.dynamicColors.border = newValue.color
+                if let layer = object.optionalLayer, layer.borderColor == nil || layer.borderColor.alpha == 0.0 {
+                    layer.borderColor = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
+                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.border = newValue
@@ -142,6 +148,9 @@ import Decomposed
             get { object.optionalLayer?.animator.shadow ?? .none }
             set {
                 object.dynamicColors.shadow = newValue.color
+                if let layer = object.optionalLayer, layer.shadowColor == nil || layer.shadowColor.alpha == 0.0 {
+                    layer.shadowColor = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
+                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.shadow = newValue
@@ -153,6 +162,9 @@ import Decomposed
             get { object.optionalLayer?.animator.innerShadow ?? .none }
             set {
                 object.dynamicColors.innerShadow = newValue.color
+                if let layer = object.optionalLayer, layer.innerShadow.color == nil || layer.innerShadow.color?.alphaComponent == 0.0 {
+                    layer.innerShadow.color = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0)
+                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.innerShadow = newValue
@@ -213,7 +225,7 @@ import Decomposed
 
          See ``ViewAnimator`` for more information about how to animate and all animatable properties.
          */
-        var animator: ViewAnimator<Self> { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: ViewAnimator(self)) }
+        var animator: ViewAnimator<Self> { getAssociatedValue("PropertyAnimator", initialValue: ViewAnimator(self)) }
     }
 
     /**
@@ -299,6 +311,9 @@ import Decomposed
         public var backgroundColor: UIColor? {
             get { object.optionalLayer?.animator.backgroundColor?.nsUIColor }
             set {
+                if let layer = object.optionalLayer, layer.animator.backgroundColor == nil || layer.animator.backgroundColor?.alpha == 0.0 {
+                    layer.backgroundColor = newValue?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
+                }
                 object.optionalLayer?.animator.backgroundColor = newValue?.resolvedColor(for: object).cgColor
             }
         }
@@ -325,6 +340,9 @@ import Decomposed
         public var border: BorderConfiguration {
             get { object.optionalLayer?.animator.border ?? .zero }
             set {
+                if let layer = object.optionalLayer, layer.borderColor == nil || layer.borderColor.alpha == 0.0 {
+                    layer.borderColor = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
+                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.border = newValue
@@ -353,6 +371,9 @@ import Decomposed
         public var shadow: ShadowConfiguration {
             get { object.optionalLayer?.animator.shadow ?? .none }
             set {
+                if let layer = object.optionalLayer, layer.shadowColor == nil || layer.shadowColor.alpha == 0.0 {
+                    layer.shadowColor = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
+                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.shadow = newValue
@@ -363,6 +384,9 @@ import Decomposed
         public var innerShadow: ShadowConfiguration {
             get { object.optionalLayer?.animator.innerShadow ?? .none }
             set {
+                if let layer = object.optionalLayer, layer.innerShadow.color == nil || layer.innerShadow.color?.alphaComponent == 0.0 {
+                    layer.innerShadow.color = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0)
+                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.innerShadow = newValue
@@ -651,8 +675,8 @@ import Decomposed
         }
 
         var animationCenterPoint: CGPoint? {
-            get { getAssociatedValue(key: "animationCenterPoint", object: self, initialValue: nil) }
-            set { set(associatedValue: newValue, key: "animationCenterPoint", object: self) }
+            get { getAssociatedValue("animationCenterPoint") }
+            set { setAssociatedValue(newValue, key: "animationCenterPoint") }
         }
     }
 
@@ -745,14 +769,14 @@ import Decomposed
 
     extension PropertyAnimator<UIView> {
         var preventsUserInteractions: Bool {
-            get { getAssociatedValue(key: "preventsUserInteractions", object: self, initialValue: false) }
-            set { set(associatedValue: newValue, key: "preventsUserInteractions", object: self) }
+            get { getAssociatedValue("preventsUserInteractions", initialValue: false) }
+            set { setAssociatedValue(newValue, key: "preventsUserInteractions") }
         }
 
         /// Collects the animations that are configurated to prevent user interactions. If the set isn't empty the user interactions get disabled. When all animations finishes and the collection is empty, user interaction gets enabled again.
         var preventingUserInteractionAnimations: Set<UUID> {
-            get { getAssociatedValue(key: "preventingAnimations", object: self, initialValue: []) }
-            set { set(associatedValue: newValue, key: "preventingAnimations", object: self)
+            get { getAssociatedValue("preventingAnimations", initialValue: []) }
+            set { setAssociatedValue(newValue, key: "preventingAnimations")
                 if !preventingUserInteractionAnimations.isEmpty, object.isUserInteractionEnabled, !preventsUserInteractions {
                     object.isUserInteractionEnabled = false
                     preventsUserInteractions = true
@@ -826,8 +850,8 @@ import Decomposed
         }
 
         var animationCenterPoint: CGPoint? {
-            get { getAssociatedValue(key: "animationCenterPoint", object: self, initialValue: nil) }
-            set { set(associatedValue: newValue, key: "animationCenterPoint", object: self) }
+            get { getAssociatedValue("animationCenterPoint") }
+            set { setAssociatedValue(newValue, key: "animationCenterPoint") }
         }
 
         func setZoomScale(_ scale: CGFloat, centeredAt point: CGPoint) {

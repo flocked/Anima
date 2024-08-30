@@ -149,8 +149,8 @@ extension CALayer {
     }
 
     var layerObserver: KeyValueObserver<CALayer>? {
-        get { getAssociatedValue(key: "CALayer.boundsObserver", object: self, initialValue: nil) }
-        set { set(associatedValue: newValue, key: "CALayer.boundsObserver", object: self) }
+        get { getAssociatedValue("CALayer.boundsObserver") }
+        set { setAssociatedValue(newValue, key: "CALayer.boundsObserver") }
     }
 
     /// The associated view using the layer.

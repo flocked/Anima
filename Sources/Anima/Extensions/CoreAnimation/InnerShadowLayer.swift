@@ -16,8 +16,9 @@ import Foundation
 class InnerShadowLayer: CALayer {
     /// The configuration of the inner shadow.
     public var configuration: ShadowConfiguration {
-        get { ShadowConfiguration(color: shadowColor?.nsUIColor, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point) }
+        get { ShadowConfiguration(color: color, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point) }
         set {
+            color = newValue.color
             shadowColor = newValue.color?.cgColor
             shadowOpacity = Float(newValue.opacity)
             let needsUpdate = shadowOffset != newValue.offset.size || shadowRadius != newValue.radius
@@ -28,6 +29,8 @@ class InnerShadowLayer: CALayer {
             }
         }
     }
+    
+    var color: NSUIColor? = nil
 
     /**
      Initalizes an inner shadow layer with the specified configuration.

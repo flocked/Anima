@@ -19,7 +19,7 @@ extension NSLayoutConstraint: AnimatablePropertyProvider {
 
      See ``LayoutAnimator`` for more information about how to animate and all animatable properties.
      */
-    public var animator: LayoutAnimator { getAssociatedValue(key: "PropertyAnimator", object: self, initialValue: LayoutAnimator(self)) }
+    public var animator: LayoutAnimator { getAssociatedValue("PropertyAnimator", initialValue: LayoutAnimator(self)) }
 }
 
 /**
