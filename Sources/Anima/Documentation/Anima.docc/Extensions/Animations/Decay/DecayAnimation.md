@@ -17,7 +17,7 @@
 
 ### Accessing value, velocity and target
 
-- ``target``
+- ``PropertyAnimation/target``
 - ``Anima/PropertyAnimation/value``
 - ``velocity``
 

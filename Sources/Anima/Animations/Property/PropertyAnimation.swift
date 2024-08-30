@@ -96,7 +96,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     }
 
     /// The start value of the animation.
-    var startValue: Value {
+    public var startValue: Value {
         get { Value(_startValue) }
         set { _startValue = newValue.animatableData }
     }
@@ -121,7 +121,7 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     
     
 
-    /// The callback block to call when the animation's ``value`` changes as it executes. Use the `currentValue` to drive your application's animations.
+    /// The callback block to call when the animation's ``PropertyAnimation/value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
 
     /// The completion block to call when the animation either finishes, or "re-targets" to a new target value.

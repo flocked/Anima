@@ -63,7 +63,7 @@ There are three types of animations:
 - ``EasingAnimation``
 - ``SpringAnimation``
 
-To create an animation you provide an initial value, target value and ``SpringAnimation/valueChanged``, a block that gets called whenever the animation's current value changes.
+To create an animation you provide an initial value, target value and ``PropertyAnimation/valueChanged``, a block that gets called whenever the animation's current value changes.
 
 Example of a spring animation:
 ```swift
@@ -93,7 +93,6 @@ Subclassing ``PropertyAnimation`` let's you create your own animations. Itself i
 
 - <doc:AnimatableProperties>
 - ``AnimatableProperty``
-- ``AnimatableArray``
 
 ### Animatable Property Provider
 
@@ -135,10 +134,11 @@ Subclassing ``PropertyAnimation`` let's you create your own animations. Itself i
 ### Additions
 
 - ``AnimationProvider``
-- ``PropertyAnimationProviding``
+- ``AnimationProviding``
 - ``CAKeyframeAnimationEmittable``
 - ``CAKeyframeAnimationValueConvertible``
 - ``BorderConfiguration``
 - ``ShadowConfiguration``
 - ``FloatingPointInitializable``
 - ``Rubberband``
+- ``AnimatableArray``

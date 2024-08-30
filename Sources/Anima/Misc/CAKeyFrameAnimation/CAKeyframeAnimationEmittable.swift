@@ -115,7 +115,7 @@ public extension CAKeyframeAnimationEmittable {
 }
 
 extension DecayAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
-    /// Generates and populates the `values` and `keyTimes` for a given `DecayAnimation` animating from its ``value`` to its ``target`` by ticking it by `deltaTime` until it resolves.
+    /// Generates and populates the `values` and `keyTimes` for a given `DecayAnimation` animating from its ``PropertyAnimation/value`` to its ``PropertyAnimation/target`` by ticking it by `deltaTime` until it resolves.
     public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
         var value = _value
         var velocity = _velocity
@@ -131,7 +131,7 @@ extension DecayAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAn
 }
 
 extension EasingAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
-    /// Generates and populates the `values` and `keyTimes` for a given `EasingAnimation` animating from its ``value`` to its ``target`` by ticking it by `deltaTime` until it resolves.
+    /// Generates and populates the `values` and `keyTimes` for a given `EasingAnimation` animating from its ``PropertyAnimation/value`` to its ``PropertyAnimation/target`` by ticking it by `deltaTime` until it resolves.
     public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
         var fractionComplete: CGFloat = isReversed ? 1.0 : 0.0
         let secondsElapsed = deltaTime / duration
@@ -153,7 +153,7 @@ extension EasingAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeA
 }
 
 extension SpringAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
-    /// Generates and populates the `values` and `keyTimes` for a given `SpringAnimation` animating from its ``value`` to its ``target`` by ticking it by `deltaTime` until it resolves.
+    /// Generates and populates the `values` and `keyTimes` for a given `SpringAnimation` animating from its ``PropertyAnimation/value`` to its ``PropertyAnimation/target`` by ticking it by `deltaTime` until it resolves.
     public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
         var velocity = velocity
 

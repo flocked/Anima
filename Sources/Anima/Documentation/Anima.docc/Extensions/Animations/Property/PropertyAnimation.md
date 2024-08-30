@@ -21,9 +21,9 @@
 
 ### Accessing animation values
 
-- ``value``
+- ``PropertyAnimation/value``
 - ``velocity``
-- ``target``
+- ``PropertyAnimation/target``
 - ``valueChanged``
 
 ### Accessing animation parameters
