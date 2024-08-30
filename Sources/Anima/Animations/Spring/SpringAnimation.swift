@@ -25,7 +25,7 @@ open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> 
     /// The spring model that determines the animation's motion.
     open var spring: Spring
 
-    /// The estimated duration required for the animation to complete, based off its `spring` property.
+    /// The estimated duration required for the animation to complete, based off its ``spring`` property.
     open var settlingTime: TimeInterval {
         spring.settlingDuration
     }
