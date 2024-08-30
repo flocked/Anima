@@ -16,16 +16,6 @@ extension Anima {
         let options: AnimationOptions
         var animation: AnimationParameters?
         
-        var animationType: AnimationType? {
-            switch type {
-            case .spring: return .spring
-            case .easing: return .easing
-            case .decay, .decayVelocity: return .decay
-            case .cubic: return .cubic
-            default: return nil
-            }
-        }
-        
         enum GroupType: Int {
             /// Spring animation.
             case spring
@@ -43,6 +33,16 @@ extension Anima {
             case animationValue
             /// Cubic animation.
             case cubic
+            
+            var animation: AnimationType? {
+                switch self {
+                case .spring: return .spring
+                case .easing: return .easing
+                case .decay, .decayVelocity: return .decay
+                case .cubic: return .cubic
+                default: return nil
+                }
+            }
         }
                 
         struct AnimationParameters {

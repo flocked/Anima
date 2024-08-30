@@ -150,7 +150,7 @@ extension PropertyAnimator {
             return
         }
         
-        guard value(for: keyPath) != newValue || configuration.animationType != currentAnimation?.animationType else {
+        guard value(for: keyPath) != newValue || configuration.type.animation != currentAnimation?.animationType else {
             return
         }
 
@@ -190,7 +190,7 @@ extension PropertyAnimator {
             break
         }
     }
-
+    
     /// Configurates an animation and starts it.
     func configurateAnimation<Value>(_ animation: PropertyAnimation<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, configuration: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
         
