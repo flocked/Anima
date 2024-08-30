@@ -34,7 +34,7 @@ public protocol CAKeyframeAnimationEmittable {
      Generates a `CAKeyframeAnimation` from the animation.
      
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
-     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     - Note: You need to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to work.
      */
     func keyframeAnimation() -> CAKeyframeAnimation
     
@@ -43,7 +43,7 @@ public protocol CAKeyframeAnimationEmittable {
      
      - Parameter framerate: The framerate the `CAKeyframeAnimation` should be targeting. If nil, the device's default framerate will be used.
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
-     - Note: You need to change the `keyPath` of the returned animation in order for it to work ``QuartzCore/CALayer/add(_:forKey:keyPath:)-50cq8``
+     - Note: You need to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to work.
      */
     func keyframeAnimation(forFramerate framerate: Int) -> CAKeyframeAnimation
 }
@@ -78,7 +78,7 @@ public extension CAKeyframeAnimationEmittable {
      
      - Parameter screen: The screen where the animation is displayed.
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
-     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     - Note: You need to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to work.
      */
     func keyframeAnimation(for screen: NSScreen) -> CAKeyframeAnimation {
         keyframeAnimation(forFramerate: screen.preferredFramesPerSecond)
@@ -89,7 +89,7 @@ public extension CAKeyframeAnimationEmittable {
      
      - Parameter window: The window where the animation is displayed.
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
-     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     - Note: You need to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to work.
      */
     func keyframeAnimation(for window: NSWindow) -> CAKeyframeAnimation {
         keyframeAnimation(forFramerate: window.screen?.preferredFramesPerSecond)
@@ -100,7 +100,7 @@ public extension CAKeyframeAnimationEmittable {
      
      - Parameter view: The view where the animation is displayed.
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
-     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     - Note: You need to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to work.
      */
     func keyframeAnimation(for view: NSView) -> CAKeyframeAnimation {
         keyframeAnimation(forFramerate: view.window?.screen?.preferredFramesPerSecond)
@@ -111,7 +111,7 @@ public extension CAKeyframeAnimationEmittable {
      
      - Parameter screen: The screen where the animation is displayed.
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
-     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     - Note: You need to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to work.
      */
     func keyframeAnimation(for screen: UIScreen) -> CAKeyframeAnimation {
         keyframeAnimation(forFramerate: screen.preferredFramesPerSecond)
@@ -122,7 +122,7 @@ public extension CAKeyframeAnimationEmittable {
      
      - Parameter window: The window where the animation is displayed.
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
-     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     - Note: You need to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to work.
      */
     func keyframeAnimation(for window: UIWindow) -> CAKeyframeAnimation {
         keyframeAnimation(forFramerate: window.screen.preferredFramesPerSecond)
@@ -133,7 +133,7 @@ public extension CAKeyframeAnimationEmittable {
      
      - Parameter view: The view where the animation is displayed.
      - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
-     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     - Note: You need to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to work.
      */
     func keyframeAnimation(for view: UIView) -> CAKeyframeAnimation {
         keyframeAnimation(forFramerate: view.window?.screen.preferredFramesPerSecond)
