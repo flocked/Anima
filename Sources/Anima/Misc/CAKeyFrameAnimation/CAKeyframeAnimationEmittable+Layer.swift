@@ -11,71 +11,60 @@ import QuartzCore
 
 public extension CALayer {
     /**
-     Adds a supported animation conforming to `CAKeyframeAnimationEmittable` to the layer.
+     Adds an animation to the layer.
 
-     This method generates a pre-configured `CAKeyframeAnimation` from the supplied animation and adds it to the supplied layer, animating the given key path.
+     This method generates a pre-configured `CAKeyframeAnimation` from the supplied animation and adds it to the layer, animating the given key path.
 
      - Parameters:
-        - animation: An animation that conforms to `CAKeyframeAnimationEmittable`.
-        - key: The key to be associated with the generated `CAKeyframeAnimation` when added to the layer.
+        - animation: The animation to add.
         - keyPath: The key path to animate. The key path is relative to the layer.
      */
-    func add(_ animation: CAKeyframeAnimationEmittable, forKey key: String, keyPath: String) {
-        if keyPath.isEmpty {
-            assertionFailure("The keyPath must not be nil.")
-            return
-        }
-
-        let keyframeAnimation = animation.keyframeAnimation(forFramerate: nil)
+    func add(_ animation: CAKeyframeAnimationEmittable, for keyPath: String) {
+        #if os(macOS)
+        let keyframeAnimation = animation.keyframeAnimation(forFramerate: parentView?.window?.screen?.preferredFramesPerSecond)
+        #else
+        let keyframeAnimation = animation.keyframeAnimation(forFramerate: parentView?.window?.screen.preferredFramesPerSecond)
+        #endif
         keyframeAnimation.keyPath = keyPath
-        add(keyframeAnimation, forKey: key)
+        add(keyframeAnimation, forKey: keyPath)
     }
 
     /**
-     Adds a decay animation to the layer.
+     Adds an animation to the layer.
 
-     This method generates a pre-configured `CAKeyframeAnimation` from the supplied spring animator and adds it to the supplied layer, animating the given key path.
+     This method generates a pre-configured `CAKeyframeAnimation` from the supplied animation and adds it to the layer, animating the given key path.
 
      - Parameters:
-        - decayAnimation: The decay animation.
-        - key: The key to be associated with the generated `CAKeyframeAnimation` when added to the layer. The default value is `nil` which uses the keypath as key.
+        - animation: The animation to add.
         - keyPath: The key path to animate.
      */
-    func add<T: AnimatableProperty & CAKeyframeAnimationValueConvertible>(_ decayAnimation: DecayAnimation<T>, forKey key: String? = nil, keyPath: WritableKeyPath<CALayer, T>) {
-        let keyframeAnimation = decayAnimation.keyframeAnimation(forFramerate: nil)
-        keyframeAnimation.keyPath = keyPath.stringValue
-        add(keyframeAnimation, forKey: key)
+    func add<T: AnimatableProperty & CAKeyframeAnimationValueConvertible>(_ animation: DecayAnimation<T>, for keyPath: WritableKeyPath<CALayer, T>) {
+        add(animation, for: keyPath.stringValue)
     }
 
     /**
-     Adds an easing animation to the layer.
+     Adds an animation to the layer.
 
-     This method generates a pre-configured `CAKeyframeAnimation` from the supplied spring animator and adds it to the supplied layer, animating the given key path.
+     This method generates a pre-configured `CAKeyframeAnimation` from the supplied animation and adds it to the layer, animating the given key path.
 
      - Parameters:
-        - easingAnimation: The easing animation.
-        - key: The key to be associated with the generated `CAKeyframeAnimation` when added to the layer. The default value is `nil` which uses the keypath as key.
+        - animation: The animation to add.
         - keyPath: The key path to animate.
      */
-    func add<T: AnimatableProperty & CAKeyframeAnimationValueConvertible>(_ easingAnimation: EasingAnimation<T>, forKey key: String? = nil, keyPath: WritableKeyPath<CALayer, T>) {
-        let keyframeAnimation = easingAnimation.keyframeAnimation(forFramerate: nil)
-        keyframeAnimation.keyPath = keyPath.stringValue
-        add(keyframeAnimation, forKey: key ?? keyPath.stringValue)
+    func add<T: AnimatableProperty & CAKeyframeAnimationValueConvertible>(_ animation: EasingAnimation<T>, for keyPath: WritableKeyPath<CALayer, T>) {
+        add(animation, for: keyPath.stringValue)
     }
-
+    
     /**
-     Adds a spring animation to the layer.
+     Adds an animation to the layer.
 
-     This method generates a pre-configured `CAKeyframeAnimation` from the supplied spring animator and adds it to the supplied layer, animating the given key path.
+     This method generates a pre-configured `CAKeyframeAnimation` from the supplied animation and adds it to the layer, animating the given key path.
 
      - Parameters:
-        - springAnimation: The spring animation.
-        - key: The key to be associated with the generated `CAKeyframeAnimation` when added to the layer. The default value is `nil` which uses the keypath as key.
+        - animation: The animation to add.
         - keyPath: The key path to animate.
      */
-    func add<T: AnimatableProperty & CAKeyframeAnimationValueConvertible>(_ springAnimation: SpringAnimation<T>, forKey key: String? = nil, keyPath: WritableKeyPath<CALayer, T>) {
-        let keyframeAnimation = springAnimation.keyframeAnimation(forFramerate: nil)
-        keyframeAnimation.keyPath = keyPath.stringValue
-        add(keyframeAnimation, forKey: key ?? keyPath.stringValue)
+    func add<T: AnimatableProperty & CAKeyframeAnimationValueConvertible>(_ animation: SpringAnimation<T>, forKey key: String? = nil, keyPath: WritableKeyPath<CALayer, T>) {
+        add(animation, for: keyPath.stringValue)
     }
 }

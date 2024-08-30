@@ -191,7 +191,7 @@ extension DisplayLink {
                 displayLink = CADisplayLink(target: target, selector: #selector(DisplayLinkTarget.frame(_:)))
 
                 if #available(iOS 15.0, tvOS 15.0, *) {
-                    let maximumFramesPerSecond = Float(UIScreen.main.maximumFramesPerSecond)
+                    let maximumFramesPerSecond = Float(UIScreen.main?.maximumFramesPerSecond ?? 60)
                     let highFPSEnabled = maximumFramesPerSecond > 60
                     let minimumFPS: Float = Swift.min(highFPSEnabled ? 80 : 60, maximumFramesPerSecond)
                     displayLink.preferredFrameRateRange = .init(minimum: minimumFPS, maximum: maximumFramesPerSecond, preferred: maximumFramesPerSecond)

@@ -95,7 +95,7 @@ extension Float: AnimatableProperty {
         #if os(macOS)
             let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
         #elseif os(iOS) || os(tvOS)
-            let scale = Float(UIScreen.main.scale)
+        let scale = Float(UIScreen.main?.scale ?? 1.0)
         #else
             let scale: Float = 1.0
         #endif
@@ -116,7 +116,7 @@ extension Double: AnimatableProperty {
         #if os(macOS)
             let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
         #elseif os(iOS) || os(tvOS)
-            let scale = UIScreen.main.scale
+        let scale = UIScreen.main?.scale ?? 1.0
         #else
             let scale = 1.0
         #endif
@@ -137,7 +137,7 @@ extension CGFloat: AnimatableProperty {
         #if os(macOS)
             let scale = NSScreen.main?.backingScaleFactor ?? 1.0
         #elseif os(iOS) || os(tvOS)
-            let scale = UIScreen.main.scale
+        let scale = UIScreen.main?.scale ?? 1.0
         #else
             let scale = 1.0
         #endif
