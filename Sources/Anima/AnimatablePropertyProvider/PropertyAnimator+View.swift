@@ -134,9 +134,7 @@ import Decomposed
             get { object.optionalLayer?.animator.border ?? .zero }
             set {
                 object.dynamicColors.border = newValue.color
-                if let layer = object.optionalLayer, layer.borderColor == nil || layer.borderColor.alpha == 0.0 {
-                    layer.borderColor = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
-                }
+
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.border = newValue
@@ -148,9 +146,6 @@ import Decomposed
             get { object.optionalLayer?.animator.shadow ?? .none }
             set {
                 object.dynamicColors.shadow = newValue.color
-                if let layer = object.optionalLayer, layer.shadowColor == nil || layer.shadowColor.alpha == 0.0 {
-                    layer.shadowColor = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
-                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.shadow = newValue
@@ -162,9 +157,6 @@ import Decomposed
             get { object.optionalLayer?.animator.innerShadow ?? .none }
             set {
                 object.dynamicColors.innerShadow = newValue.color
-                if let layer = object.optionalLayer, layer.innerShadow.color == nil || layer.innerShadow.color?.alphaComponent == 0.0 {
-                    layer.innerShadow.color = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0)
-                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.innerShadow = newValue
@@ -340,9 +332,6 @@ import Decomposed
         public var border: BorderConfiguration {
             get { object.optionalLayer?.animator.border ?? .zero }
             set {
-                if let layer = object.optionalLayer, layer.borderColor == nil || layer.borderColor.alpha == 0.0 {
-                    layer.borderColor = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
-                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.border = newValue
@@ -371,9 +360,6 @@ import Decomposed
         public var shadow: ShadowConfiguration {
             get { object.optionalLayer?.animator.shadow ?? .none }
             set {
-                if let layer = object.optionalLayer, layer.shadowColor == nil || layer.shadowColor.alpha == 0.0 {
-                    layer.shadowColor = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0).cgColor
-                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.shadow = newValue
@@ -384,9 +370,6 @@ import Decomposed
         public var innerShadow: ShadowConfiguration {
             get { object.optionalLayer?.animator.innerShadow ?? .none }
             set {
-                if let layer = object.optionalLayer, layer.innerShadow.color == nil || layer.innerShadow.color?.alphaComponent == 0.0 {
-                    layer.innerShadow.color = newValue.color?.resolvedColor(for: object).withAlphaComponent(0.0)
-                }
                 var newValue = newValue
                 newValue.color = newValue.color?.resolvedColor(for: object)
                 object.optionalLayer?.animator.innerShadow = newValue
@@ -433,6 +416,18 @@ import Decomposed
         public var skew: Skew {
             get { object.optionalLayer?.animator.skew ?? .zero }
             set { object.optionalLayer?.animator.skew = newValue }
+        }
+        
+        /// The default spacing to use when laying out content in a view,
+        public var directionalLayoutMargins: NSDirectionalEdgeInsets {
+            get { self[\.directionalLayoutMargins] }
+            set { self[\.directionalLayoutMargins] = newValue }
+        }
+
+        /// The default spacing to use when laying out content in the view.
+        public var layoutMargins: UIEdgeInsets {
+            get { self[\.layoutMargins] }
+            set { self[\.layoutMargins] = newValue }
         }
     }
 #endif
@@ -566,7 +561,7 @@ import Decomposed
         }
 
         /// Magnify the content by the given amount and center the result on the given point.
-        func setMagnification(_ magnification: CGFloat, centeredAt point: CGPoint) {
+        func magnification(_ magnification: CGFloat, centeredAt point: CGPoint) {
             object.animationCenterPoint = point
             self[\.magnificationCentered] = magnification
         }
@@ -650,36 +645,6 @@ import Decomposed
         }
     }
 
-    extension NSView {
-        func insertSubview(_ view: NSUIView, aboveSubview siblingSubview: NSUIView) {
-            guard subviews.contains(siblingSubview) else { return }
-            addSubview(view, positioned: .above, relativeTo: siblingSubview)
-        }
-
-        func insertSubview(_ view: NSUIView, belowSubview siblingSubview: NSUIView) {
-            guard subviews.contains(siblingSubview) else { return }
-            addSubview(view, positioned: .below, relativeTo: siblingSubview)
-        }
-    }
-
-    extension NSUIScrollView {
-        var magnificationCentered: CGFloat {
-            get { magnification }
-            set {
-                if let animationCenterPoint = animationCenterPoint {
-                    setMagnification(newValue, centeredAt: animationCenterPoint)
-                } else {
-                    magnification = newValue
-                }
-            }
-        }
-
-        var animationCenterPoint: CGPoint? {
-            get { getAssociatedValue("animationCenterPoint") }
-            set { setAssociatedValue(newValue, key: "animationCenterPoint") }
-        }
-    }
-
     extension NSBox {
         var titleFontSize: CGFloat {
             get { titleFont.pointSize }
@@ -737,6 +702,12 @@ import Decomposed
                 self[\.zoomScaleCentered] = newValue
             }
         }
+        
+        /// Magnify the content by the given amount and center the result on the given point.
+        func zoomScale(_ zoomScale: CGFloat, centerAt center: CGPoint) {
+            object.animationCenterPoint = center
+            self[\.zoomScaleCentered] = zoomScale
+        }
 
         /// The custom distance that the content view is inset from the safe area or scroll view edges.
         var contentInset: UIEdgeInsets {
@@ -750,41 +721,6 @@ import Decomposed
         var spacing: CGFloat {
             get { self[\.spacing] }
             set { self[\.spacing] = newValue }
-        }
-    }
-
-    public extension ViewAnimator where View: UIView {
-        /// The default spacing to use when laying out content in a view,
-        var directionalLayoutMargins: NSDirectionalEdgeInsets {
-            get { self[\.directionalLayoutMargins] }
-            set { self[\.directionalLayoutMargins] = newValue }
-        }
-
-        /// The default spacing to use when laying out content in the view.
-        var layoutMargins: UIEdgeInsets {
-            get { self[\.layoutMargins] }
-            set { self[\.layoutMargins] = newValue }
-        }
-    }
-
-    extension PropertyAnimator<UIView> {
-        var preventsUserInteractions: Bool {
-            get { getAssociatedValue("preventsUserInteractions", initialValue: false) }
-            set { setAssociatedValue(newValue, key: "preventsUserInteractions") }
-        }
-
-        /// Collects the animations that are configurated to prevent user interactions. If the set isn't empty the user interactions get disabled. When all animations finishes and the collection is empty, user interaction gets enabled again.
-        var preventingUserInteractionAnimations: Set<UUID> {
-            get { getAssociatedValue("preventingAnimations", initialValue: []) }
-            set { setAssociatedValue(newValue, key: "preventingAnimations")
-                if !preventingUserInteractionAnimations.isEmpty, object.isUserInteractionEnabled, !preventsUserInteractions {
-                    object.isUserInteractionEnabled = false
-                    preventsUserInteractions = true
-                } else if preventingUserInteractionAnimations.isEmpty, preventsUserInteractions {
-                    object.isUserInteractionEnabled = true
-                    preventsUserInteractions = false
-                }
-            }
         }
     }
 
@@ -837,42 +773,25 @@ import Decomposed
         }
     }
 
-    extension UIScrollView {
-        var zoomScaleCentered: CGFloat {
-            get { zoomScale }
+    extension PropertyAnimator<UIView> {
+        var preventsUserInteractions: Bool {
+            get { getAssociatedValue("preventsUserInteractions", initialValue: false) }
+            set { setAssociatedValue(newValue, key: "preventsUserInteractions") }
+        }
+
+        /// Collects the animations that are configurated to prevent user interactions. If the set isn't empty the user interactions get disabled. When all animations finishes and the collection is empty, user interaction gets enabled again.
+        var preventingUserInteractionAnimations: Set<UUID> {
+            get { getAssociatedValue("preventingAnimations", initialValue: []) }
             set {
-                if let animationCenterPoint = animationCenterPoint {
-                    setZoomScale(newValue, centeredAt: animationCenterPoint)
-                } else {
-                    zoomScale = newValue
+                setAssociatedValue(newValue, key: "preventingAnimations")
+                if !preventingUserInteractionAnimations.isEmpty, object.isUserInteractionEnabled, !preventsUserInteractions {
+                    object.isUserInteractionEnabled = false
+                    preventsUserInteractions = true
+                } else if preventingUserInteractionAnimations.isEmpty, preventsUserInteractions {
+                    object.isUserInteractionEnabled = true
+                    preventsUserInteractions = false
                 }
             }
-        }
-
-        var animationCenterPoint: CGPoint? {
-            get { getAssociatedValue("animationCenterPoint") }
-            set { setAssociatedValue(newValue, key: "animationCenterPoint") }
-        }
-
-        func setZoomScale(_ scale: CGFloat, centeredAt point: CGPoint) {
-            var scale = CGFloat.minimum(scale, maximumZoomScale)
-            scale = CGFloat.maximum(scale, minimumZoomScale)
-            var translatedZoomPoint: CGPoint = .zero
-            translatedZoomPoint.x = point.x + contentOffset.x
-            translatedZoomPoint.y = point.y + contentOffset.y
-
-            let zoomFactor = 1.0 / zoomScale
-
-            translatedZoomPoint.x *= zoomFactor
-            translatedZoomPoint.y *= zoomFactor
-
-            var destinationRect: CGRect = .zero
-            destinationRect.size.width = frame.width / scale
-            destinationRect.size.height = frame.height / scale
-            destinationRect.origin.x = translatedZoomPoint.x - destinationRect.width * 0.5
-            destinationRect.origin.y = translatedZoomPoint.y - destinationRect.height * 0.5
-
-            zoom(to: destinationRect, animated: false)
         }
     }
 #endif

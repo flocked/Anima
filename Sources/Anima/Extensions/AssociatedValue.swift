@@ -10,29 +10,6 @@
 import Foundation
 import ObjectiveC.runtime
 
-private extension String {
-    var address: UnsafeRawPointer {
-        UnsafeRawPointer(bitPattern: abs(hashValue))!
-    }
-}
-
-private class AssociatedValue {
-    weak var _weakValue: AnyObject?
-    var _value: Any?
-
-    var value: Any? {
-        _weakValue ?? _value
-    }
-
-    init(_ value: Any?) {
-        _value = value
-    }
-
-    init(weak: AnyObject?) {
-        _weakValue = weak
-    }
-}
-
 extension NSObjectProtocol where Self: NSObject {
     /**
      Returns the associated value for the specified key.
@@ -100,4 +77,27 @@ func setAssociatedValue<T>(_ value: T?, key: String, object: AnyObject) {
 
 private func setAssociatedValue(_ value: AssociatedValue, key: String, object: AnyObject) {
     objc_setAssociatedObject(object, key.address, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+}
+
+private class AssociatedValue {
+    weak var _weakValue: AnyObject?
+    var _value: Any?
+
+    var value: Any? {
+        _weakValue ?? _value
+    }
+
+    init(_ value: Any?) {
+        _value = value
+    }
+
+    init(weak: AnyObject?) {
+        _weakValue = weak
+    }
+}
+
+private extension String {
+    var address: UnsafeRawPointer {
+        UnsafeRawPointer(bitPattern: abs(hashValue))!
+    }
 }

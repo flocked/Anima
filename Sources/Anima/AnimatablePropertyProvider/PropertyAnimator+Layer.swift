@@ -139,19 +139,34 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     /// The border of the layer.
     public var border: BorderConfiguration {
         get { self[\.border] }
-        set { self[\.border] = newValue }
+        set { 
+            if object.borderColor == nil || object.borderColor.alpha == 0.0 {
+                object.borderColor = newValue.color?.withAlphaComponent(0.0).cgColor
+            }
+            self[\.border] = newValue
+        }
     }
 
     /// The shadow of the layer.
     public var shadow: ShadowConfiguration {
         get { self[\.shadow] }
-        set { self[\.shadow] = newValue }
+        set { 
+            if object.shadowColor == nil || object.shadowColor.alpha == 0.0 {
+                object.shadowColor = newValue.color?.withAlphaComponent(0.0).cgColor
+            }
+            self[\.shadow] = newValue
+        }
     }
 
     /// The inner shadow of the layer.
     public var innerShadow: ShadowConfiguration {
         get { self[\.innerShadow] }
-        set { self[\.innerShadow] = newValue }
+        set { 
+            if object.innerShadow.color == nil || object.innerShadow.color?.alphaComponent == 0.0 {
+                object.innerShadow.color = newValue.color?.withAlphaComponent(0.0)
+            }
+            self[\.innerShadow] = newValue
+        }
     }
 
     /// The three-dimensional transform of the layer.

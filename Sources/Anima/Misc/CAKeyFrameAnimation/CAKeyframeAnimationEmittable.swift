@@ -9,114 +9,142 @@
 import Foundation
 import QuartzCore
 #if os(macOS)
-    import AppKit
+import AppKit
 #elseif canImport(UIKit)
-    import UIKit
+import UIKit
 #endif
 import SwiftUI
 
 // MARK: - CAKeyframeAnimationEmittable
 
 /**
- A type that defines the ability to generate a `CAKeyframeAnimation` from an animation.
-
+ An animation that can generate a `CAKeyframeAnimation`.
+ 
  Example usage:
  ```
  let animation = SpringAnimation(spring: .bouncy, value: 0.0, target: 100.0)
-
+ 
  let keyframeAnimation = animation.keyframeAnimation()
  keyFrameAnimation.keyPath = "position.y"
- layer.add(keyFrameAnimation, forKey: "animation")
+ layer.add(keyFrameAnimation, forKey: "position")
  ```
  */
 public protocol CAKeyframeAnimationEmittable {
     /**
-     Generates a `CAKeyframeAnimation` based on the animation's current value and target.
-
-     - Parameters:
-        - framerate: The framerate the `CAKeyframeAnimation` should be targeting. If nil, the device's default framerate will be used.
-     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from the current animation's state to its resolved state.
-     - Note: You will be required to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to be useful.
+     Generates a `CAKeyframeAnimation` from the animation.
+     
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
+     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
      */
-    func keyframeAnimation(forFramerate framerate: Int?) -> CAKeyframeAnimation
-
+    func keyframeAnimation() -> CAKeyframeAnimation
+    
     /**
-     Generates and returns the values and keyTimes for a `CAKeyframeAnimation`. This is called by default from `keyframeAnimation(forFramerate:)`.
-
-     - Parameters:
-        - deltaTime: The target delta time. Typically you'd want 1.0 / targetFramerate`
-        - values: A preinitialized array that should be populated with the values to align with the given keyTimes.
-        - keyTimes: A preinitialized array that should be populated with the keyTimes to align with the given values.
-
-     - Returns: The total duration of the `CAKeyframeAnimation`.
-
-     - Note: Returning values and keyTimes with different lengths will result in undefined behaviour.
+     Generates a `CAKeyframeAnimation` from the animation.
+     
+     - Parameter framerate: The framerate the `CAKeyframeAnimation` should be targeting. If nil, the device's default framerate will be used.
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
+     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
      */
-    func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval
+    func keyframeAnimation(forFramerate framerate: Int) -> CAKeyframeAnimation
+}
+
+protocol _CAKeyframeAnimationEmittable {
+    func keyframeAnimationData(for deltaTime: TimeInterval) -> (duration: TimeInterval, values: [AnyObject], keyTimes: [NSNumber])
 }
 
 public extension CAKeyframeAnimationEmittable {
-    /**
-     Generates a `CAKeyframeAnimation` based on the animation's current value and target.
-
-     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from the current animation's state to its resolved state.
-     - Note: You will be required to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to be useful.
-     */
     func keyframeAnimation() -> CAKeyframeAnimation {
-        keyframeAnimation(forFramerate: nil)
+        keyframeAnimation(forFramerate: NSUIScreen.main?.preferredFramesPerSecond ?? 60)
     }
-
-    func keyframeAnimation(forFramerate framerate: Int?) -> CAKeyframeAnimation {
-        let deltaTime: TimeInterval
-        if let framerate = framerate {
-            deltaTime = 1.0 / TimeInterval(framerate)
-        } else {
-            deltaTime = 1.0 / TimeInterval(NSUIScreen.current?.preferredFramesPerSecond ?? 60)
-        }
-
-        var values = [AnyObject]()
-        var keyTimes = [NSNumber]()
-
-        let duration = populateKeyframeAnimationData(deltaTime: deltaTime, values: &values, keyTimes: &keyTimes)
-
+    
+    func keyframeAnimation(forFramerate framerate: Int) -> CAKeyframeAnimation {
+        let deltaTime = 1.0 / TimeInterval(framerate)
+        let keyframeAnimationData = (self as! _CAKeyframeAnimationEmittable).keyframeAnimationData(for: deltaTime)
         let keyframeAnimation = CAKeyframeAnimation()
         keyframeAnimation.calculationMode = .discrete
-        keyframeAnimation.values = values
-        keyframeAnimation.keyTimes = keyTimes
-        keyframeAnimation.duration = duration
+        keyframeAnimation.values = keyframeAnimationData.values
+        keyframeAnimation.keyTimes = keyframeAnimationData.keyTimes
+        keyframeAnimation.duration = keyframeAnimationData.duration
         return keyframeAnimation
     }
-
-    #if os(macOS)
-        /**
-         Generates a `CAKeyframeAnimation` based on the animation's current value and target.
-
-         - Parameters:
-            - screen: The screen where the animation is displayed.
-         - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from the current animation's state to its resolved state.
-         - Note: You will be required to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to be useful.
-         */
-        func keyframeAnimation(forScreen screen: NSScreen) -> CAKeyframeAnimation {
-            keyframeAnimation(forFramerate: screen.preferredFramesPerSecond)
-        }
-    #else
-        /**
-         Generates a `CAKeyframeAnimation` based on the animation's current value and target.
-
-         - Parameters:
-            - screen: The screen where the animation is displayed.
-         - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from the current animation's state to its resolved state.
-         - Note: You will be required to change the `keyPath` of the `CAKeyFrameAnimation` in order for it to be useful.
-         */
-        func keyframeAnimation(forScreen screen: UIScreen) -> CAKeyframeAnimation {
-            keyframeAnimation(forFramerate: screen.preferredFramesPerSecond)
-        }
-    #endif
+    
+    internal func keyframeAnimation(forFramerate framerate: Int?) -> CAKeyframeAnimation {
+        keyframeAnimation(forFramerate: framerate ?? NSUIScreen.main?.preferredFramesPerSecond ?? 60)
+    }
+    
+#if os(macOS)
+    /**
+     Generates a `CAKeyframeAnimation` from the animation.
+     
+     - Parameter screen: The screen where the animation is displayed.
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
+     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     */
+    func keyframeAnimation(for screen: NSScreen) -> CAKeyframeAnimation {
+        keyframeAnimation(forFramerate: screen.preferredFramesPerSecond)
+    }
+    
+    /**
+     Generates a `CAKeyframeAnimation` from the animation.
+     
+     - Parameter window: The window where the animation is displayed.
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
+     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     */
+    func keyframeAnimation(for window: NSWindow) -> CAKeyframeAnimation {
+        keyframeAnimation(forFramerate: window.screen?.preferredFramesPerSecond)
+    }
+    
+    /**
+     Generates a `CAKeyframeAnimation` from the animation.
+     
+     - Parameter view: The view where the animation is displayed.
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
+     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     */
+    func keyframeAnimation(for view: NSView) -> CAKeyframeAnimation {
+        keyframeAnimation(forFramerate: view.window?.screen?.preferredFramesPerSecond)
+    }
+#else
+    /**
+     Generates a `CAKeyframeAnimation` from the animation.
+     
+     - Parameter screen: The screen where the animation is displayed.
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
+     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     */
+    func keyframeAnimation(for screen: UIScreen) -> CAKeyframeAnimation {
+        keyframeAnimation(forFramerate: screen.preferredFramesPerSecond)
+    }
+    
+    /**
+     Generates a `CAKeyframeAnimation` from the animation.
+     
+     - Parameter window: The window where the animation is displayed.
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
+     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     */
+    func keyframeAnimation(for window: UIWindow) -> CAKeyframeAnimation {
+        keyframeAnimation(forFramerate: window.screen.preferredFramesPerSecond)
+    }
+    
+    /**
+     Generates a `CAKeyframeAnimation` from the animation.
+     
+     - Parameter view: The view where the animation is displayed.
+     - Returns: A fully configured `CAKeyframeAnimation` which represents the animation from it's current value to it's target value.
+     - Note: You need to change the `keyPath` of the returned animation in order for it to work.
+     */
+    func keyframeAnimation(for view: UIView) -> CAKeyframeAnimation {
+        keyframeAnimation(forFramerate: view.window?.screen.preferredFramesPerSecond)
+    }
+#endif
 }
 
-extension DecayAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
-    /// Generates and populates the `values` and `keyTimes` for a given `DecayAnimation` animating from its ``PropertyAnimation/value`` to its ``PropertyAnimation/target`` by ticking it by `deltaTime` until it resolves.
-    public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
+extension DecayAnimation: CAKeyframeAnimationEmittable, _CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
+    func keyframeAnimationData(for deltaTime: TimeInterval) -> (duration: TimeInterval, values: [AnyObject], keyTimes: [NSNumber]) {
+        var values: [AnyObject] = []
+        var keyTimes: [NSNumber] = []
         var value = _value
         var velocity = _velocity
         var runningTime: TimeInterval = 0.0
@@ -126,13 +154,14 @@ extension DecayAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAn
             keyTimes.append(runningTime as NSNumber)
             runningTime += deltaTime
         }
-        return runningTime
+        return (runningTime, values, keyTimes)
     }
 }
 
-extension EasingAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
-    /// Generates and populates the `values` and `keyTimes` for a given `EasingAnimation` animating from its ``PropertyAnimation/value`` to its ``PropertyAnimation/target`` by ticking it by `deltaTime` until it resolves.
-    public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
+extension EasingAnimation: CAKeyframeAnimationEmittable, _CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
+    func keyframeAnimationData(for deltaTime: TimeInterval) -> (duration: TimeInterval, values: [AnyObject], keyTimes: [NSNumber]) {
+        var values: [AnyObject] = []
+        var keyTimes: [NSNumber] = []
         var fractionComplete: CGFloat = isReversed ? 1.0 : 0.0
         let secondsElapsed = deltaTime / duration
         var value = isReversed ? target : startValue
@@ -145,75 +174,59 @@ extension EasingAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeA
             keyTimes.append(runningTime as NSNumber)
             runningTime += deltaTime
         }
-
+        
         values.append(isReversed ? startValue.toKeyframeValue() : target.toKeyframeValue())
         keyTimes.append(duration as NSNumber)
-        return runningTime
+        return (runningTime, values, keyTimes)
     }
 }
 
-extension SpringAnimation: CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
-    /// Generates and populates the `values` and `keyTimes` for a given `SpringAnimation` animating from its ``PropertyAnimation/value`` to its ``PropertyAnimation/target`` by ticking it by `deltaTime` until it resolves.
-    public func populateKeyframeAnimationData(deltaTime: TimeInterval, values: inout [AnyObject], keyTimes: inout [NSNumber]) -> TimeInterval {
+extension SpringAnimation: CAKeyframeAnimationEmittable, _CAKeyframeAnimationEmittable where Value: CAKeyframeAnimationValueConvertible {
+    func keyframeAnimationData(for deltaTime: TimeInterval) -> (duration: TimeInterval, values: [AnyObject], keyTimes: [NSNumber]) {
+        var values: [AnyObject] = []
+        var keyTimes: [NSNumber] = []
         var velocity = velocity
-
         var t = 0.0
         var hasResolved = false
         while !hasResolved {
             spring.update(value: &value, velocity: &velocity, target: target, deltaTime: deltaTime)
-
+            
             values.append(value.toKeyframeValue())
             keyTimes.append(t as NSNumber)
-
+            
             t += deltaTime
-
+            
             let isAnimated = spring.response > .zero
             hasResolved = (t >= settlingTime) || !isAnimated
         }
-
+        
         values.append(target.toKeyframeValue())
         keyTimes.append(t as NSNumber)
-
-        return t
+        return (t, values, keyTimes)
     }
 }
 
 #if os(macOS)
-    fileprivate extension NSScreen {
-        var preferredFramesPerSecond: Int {
-            guard #available(macOS 12.0, *) else { return 60 }
-            let fps = maximumFramesPerSecond
-            guard fps > 0 else { return 60 }
-            return fps
-        }
-
-        static var current: NSScreen? {
-            NSScreen.main
-        }
+fileprivate extension NSScreen {
+    var preferredFramesPerSecond: Int {
+        guard #available(macOS 12.0, *) else { return 60 }
+        return maximumFramesPerSecond > 0 ? maximumFramesPerSecond : 60
     }
-
+}
 #elseif canImport(UIKit)
-    fileprivate extension UIScreen {
-        static var current: UIScreen? {
-            UIWindow.current?.screen
-        }
-
-        var preferredFramesPerSecond: Int {
-            let fps = maximumFramesPerSecond
-            guard fps > 0 else { return 60 }
-            return fps
-        }
-    }
-
-    fileprivate extension UIWindow {
-        static var current: UIWindow? {
-            for scene in UIApplication.shared.connectedScenes {
-                guard let windowScene = scene as? UIWindowScene else { continue }
-                for window in windowScene.windows {
-                    if window.isKeyWindow { return window }
-                }
+fileprivate extension UIScreen {
+    static var main: UIScreen? {
+        for scene in UIApplication.shared.connectedScenes {
+            guard let windowScene = scene as? UIWindowScene else { continue }
+            if let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                return window.screen
             }
-            return nil
         }
+        return nil
     }
+    
+    var preferredFramesPerSecond: Int {
+        maximumFramesPerSecond > 0 ? maximumFramesPerSecond : 60
+    }
+}
 #endif

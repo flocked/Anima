@@ -12,45 +12,19 @@
 #endif
 
 extension NSUITextField {
-    #if os(macOS)
-        /**
-         The font size of the text.
-
-         The value can be animated via `animator()`.
-         */
-        @objc var fontSize: CGFloat {
-            get { font?.pointSize ?? 0.0 }
-            set { font = font?.withSize(newValue) }
-        }
-
-    #elseif canImport(UIKit)
-        /// The font size of the text.
-        @objc var fontSize: CGFloat {
-            get { font?.pointSize ?? 0.0 }
-            set { font = font?.withSize(newValue) }
-        }
-    #endif
+    /// The font size of the text filed.
+    @objc var fontSize: CGFloat {
+        get { font?.pointSize ?? 0.0 }
+        set { font = font?.withSize(newValue) }
+    }
 }
 
 extension NSUITextView {
-    #if os(macOS)
-        /**
-         The font size of the text.
-
-         The value can be animated via `animator()`.
-         */
-        @objc var fontSize: CGFloat {
-            get { font?.pointSize ?? 0.0 }
-            set { font = font?.withSize(newValue) }
-        }
-
-    #elseif canImport(UIKit)
-        /// The font size of the text.
-        @objc var fontSize: CGFloat {
-            get { font?.pointSize ?? 0.0 }
-            set { font = font?.withSize(newValue) }
-        }
-    #endif
+    /// The font size of the text view.
+    @objc var fontSize: CGFloat {
+        get { font?.pointSize ?? 0.0 }
+        set { font = font?.withSize(newValue) }
+    }
 }
 
 #if os(iOS) || os(tvOS)
