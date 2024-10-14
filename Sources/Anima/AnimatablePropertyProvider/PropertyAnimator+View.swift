@@ -98,6 +98,12 @@ import Decomposed
             get { frame.center }
             set { frame.center = newValue }
         }
+        
+        /// The view’s position on the z axis.
+        public var zPosition: CGFloat {
+            get { object.optionalLayer?.animator.zPosition ?? .zero }
+            set { object.optionalLayer?.animator.zPosition = newValue }
+        }
 
         /// The anchor point of the view.
         public var anchorPoint: CGPoint {
@@ -204,8 +210,38 @@ import Decomposed
             get { object.optionalLayer?.animator.skew ?? .zero }
             set { object.optionalLayer?.animator.skew = newValue }
         }
-
+        
+        /// Adds the view animated by fading it in.
+        public func addSubview(_ view: NSView) {
+            view.animator.removeSuperview = nil
+            if view.superview != object {
+                Anima.nonAnimated {
+                    view.animator.alpha = 0.0
+                }
+                object.addSubview(view)
+            }
+            view.animator.alpha = 1.0
+        }
+        
+        /**
+         Removes the view from it's superview by fading it out.
+         
+         The view is removed after the fade out animation finishes.
+         */
+        public func removeFromSuperview() {
+            if let superview = object.superview {
+                (object as! NSView).animator.removeSuperview = superview
+                object.animator.alpha = 0.0
+            }
+        }
     }
+
+extension PropertyAnimator<NSView> {
+    var removeSuperview: NSView? {
+        get { getAssociatedValue("removeSuperview", initialValue: nil) }
+        set { setAssociatedValue(weak: newValue, key: "removeSuperview") }
+    }
+}
 #else
     extension UIView: AnimatablePropertyProvider {}
 
@@ -428,6 +464,30 @@ import Decomposed
         public var layoutMargins: UIEdgeInsets {
             get { self[\.layoutMargins] }
             set { self[\.layoutMargins] = newValue }
+        }
+        
+        /// Adds the view animated by fading it in.
+        public func addSubview(_ view: UIView) {
+            view.animator.removeSuperview = nil
+            if view.superview != object {
+                Anima.nonAnimated {
+                    view.animator.alpha = 0.0
+                }
+                object.addSubview(view)
+            }
+            view.animator.alpha = 1.0
+        }
+        
+        /**
+         Removes the view from it's superview by fading it out.
+         
+         The view is removed after the fade out animation finishes.
+         */
+        public func removeFromSuperview() {
+            if let superview = object.superview {
+                (object as! UIView).animator.removeSuperview = superview
+                object.animator.alpha = 0.0
+            }
         }
     }
 #endif
@@ -774,6 +834,11 @@ import Decomposed
     }
 
     extension PropertyAnimator<UIView> {
+        var removeSuperview: UIView? {
+            get { getAssociatedValue("removeSuperview", initialValue: nil) }
+            set { setAssociatedValue(weak: newValue, key: "removeSuperview") }
+        }
+        
         var preventsUserInteractions: Bool {
             get { getAssociatedValue("preventsUserInteractions", initialValue: false) }
             set { setAssociatedValue(newValue, key: "preventsUserInteractions") }

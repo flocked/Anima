@@ -233,6 +233,20 @@ extension PropertyAnimator {
         animation.completion = { [weak self] event in
             switch event {
             case .finished:
+                #if os(macOS) || os(iOS) || os(tvOS)
+                if let animator = (self as? PropertyAnimator<CALayer>) {
+                    if let layer = animator.removeSuperlayer, let superlayer = animator.object.superlayer, layer == superlayer {
+                        animator.object.removeFromSuperlayer()
+                    }
+                    animator.removeSuperlayer = nil
+                    if let viewAnimator = animator.object.parentView?.animator {
+                        if let view = viewAnimator.removeSuperview, viewAnimator.object.superview == view {
+                            viewAnimator.object.removeFromSuperview()
+                        }
+                        viewAnimator.removeSuperview = nil
+                    }
+                }
+                #endif                
                 completion?()
                 self?.animations[animationKey] = nil
                 animationHandler?(animation.value, animation.velocity, true)

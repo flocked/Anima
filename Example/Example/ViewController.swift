@@ -94,7 +94,7 @@ class ViewController: NSViewController {
     
     override func viewDidAppear() {
         super.viewDidAppear()
-        
+                
         setupKeyDownMonitor()
         
         animatedView.backgroundColor = .controlAccentColor

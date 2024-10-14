@@ -391,6 +391,37 @@ public extension LayerAnimator where Layer: CAEmitterLayer {
         get { CGFloat(self[\.lifetime]) }
         set { self[\.lifetime] = Float(newValue) }
     }
+    
+    /// Adds the layer animated by fading it in.
+    public func addSublayer(_ layer: CALayer) {
+        layer.animator.removeSuperlayer = nil
+        if layer.superlayer != object {
+            Anima.nonAnimated {
+                layer.animator.opacity = 0.0
+            }
+            object.addSublayer(layer)
+        }
+        layer.animator.opacity = 1.0
+    }
+    
+    /**
+     Removes the layer from it's superlayer by fading it out.
+     
+     The layer is removed after the fade out animation finishes.
+     */
+    public func removeFromSuperlayer() {
+        if let superlayer = object.superlayer {
+            (object as! CALayer).animator.removeSuperlayer = superlayer
+            object.animator.opacity = 0.0
+        }
+    }
+}
+
+extension PropertyAnimator<CALayer> {
+    var removeSuperlayer: CALayer? {
+        get { getAssociatedValue("removeSuperlayer", initialValue: nil) }
+        set { setAssociatedValue(weak: newValue, key: "removeSuperlayer") }
+    }
 }
 
 extension CAGradientLayer {
