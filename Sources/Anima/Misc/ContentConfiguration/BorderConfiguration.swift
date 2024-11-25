@@ -72,6 +72,11 @@ public struct BorderConfiguration: Hashable {
             Self(color: color, width: width)
         }
     #endif
+    func resolved(for view: NSUIView) -> Self {
+        var border = self
+        border.color = border.color?.resolvedColor(for: view)
+        return border
+    }
 }
 
 extension CALayer {

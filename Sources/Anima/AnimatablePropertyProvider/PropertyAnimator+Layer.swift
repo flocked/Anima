@@ -10,7 +10,6 @@
 #elseif canImport(UIKit)
     import UIKit
 #endif
-import Decomposed
 
 extension CALayer: AnimatablePropertyProvider { }
 
@@ -176,9 +175,9 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     }
 
     /// The scale transform of the layer.
-    public var scale: CGPoint {
-        get { CGPoint(transform.scale.x, transform.scale.y) }
-        set { transform.scale = Scale(newValue.x, newValue.y, transform.scale.z) }
+    public var scale: Scale {
+        get { transform.scale.scale }
+        set { transform.scale = newValue.vector }
     }
 
     /// The translation transform of the layer.
@@ -189,15 +188,15 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     }
 
     /// The rotation of the layer's transform as euler angles in degrees.
-    public var rotation: CGVector3 {
-        get { transform.eulerAnglesDegrees }
-        set { transform.eulerAnglesDegrees = newValue }
+    public var rotation: Rotation {
+        get { transform.eulerAnglesDegrees.rotation }
+        set { transform.eulerAnglesDegrees = newValue.vector }
     }
 
     /// The rotation of the layer's transform as euler angles in radians.
-    public var rotationInRadians: CGVector3 {
-        get { transform.eulerAngles }
-        set { transform.eulerAngles = newValue }
+    public var rotationInRadians: Rotation {
+        get { transform.eulerAngles.rotation }
+        set { transform.eulerAngles = newValue.vector }
     }
 
     /// The perspective of the layer's transform (e.g. .m34).
@@ -211,8 +210,6 @@ public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
         get { transform.skew }
         set { transform.skew = newValue }
     }
-    
-   
 }
 
 public extension LayerAnimator where Layer: CAShapeLayer {
@@ -393,14 +390,13 @@ public extension LayerAnimator where Layer: CAEmitterLayer {
     }
     
     /// Adds the layer animated by fading it in.
-    public func addSublayer(_ layer: CALayer) {
-        layer.animator.removeSuperlayer = nil
-        if layer.superlayer != object {
-            Anima.nonAnimated {
-                layer.animator.opacity = 0.0
-            }
-            object.addSublayer(layer)
+    func addSublayer(_ layer: CALayer) {
+        guard layer !== object else { return }
+        layer.removeSuperlayer = nil
+        Anima.nonAnimated {
+            layer.animator.opacity = 0.0
         }
+        object.addSublayer(layer)
         layer.animator.opacity = 1.0
     }
     
@@ -409,18 +405,10 @@ public extension LayerAnimator where Layer: CAEmitterLayer {
      
      The layer is removed after the fade out animation finishes.
      */
-    public func removeFromSuperlayer() {
-        if let superlayer = object.superlayer {
-            (object as! CALayer).animator.removeSuperlayer = superlayer
-            object.animator.opacity = 0.0
-        }
-    }
-}
-
-extension PropertyAnimator<CALayer> {
-    var removeSuperlayer: CALayer? {
-        get { getAssociatedValue("removeSuperlayer", initialValue: nil) }
-        set { setAssociatedValue(weak: newValue, key: "removeSuperlayer") }
+    func removeFromSuperlayer() {
+        guard let superlayer = object.superlayer else { return }
+        object.removeSuperlayer = superlayer
+        object.animator.opacity = 0.0
     }
 }
 

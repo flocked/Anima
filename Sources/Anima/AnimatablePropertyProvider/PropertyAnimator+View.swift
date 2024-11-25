@@ -10,7 +10,6 @@
 #elseif canImport(UIKit)
     import UIKit
 #endif
-import Decomposed
 
 #if os(macOS)
     extension NSView: AnimatablePropertyProvider {}
@@ -140,10 +139,7 @@ import Decomposed
             get { object.optionalLayer?.animator.border ?? .zero }
             set {
                 object.dynamicColors.border = newValue.color
-
-                var newValue = newValue
-                newValue.color = newValue.color?.resolvedColor(for: object)
-                object.optionalLayer?.animator.border = newValue
+                object.optionalLayer?.animator.border = newValue.resolved(for: object)
             }
         }
 
@@ -163,9 +159,7 @@ import Decomposed
             get { object.optionalLayer?.animator.innerShadow ?? .none }
             set {
                 object.dynamicColors.innerShadow = newValue.color
-                var newValue = newValue
-                newValue.color = newValue.color?.resolvedColor(for: object)
-                object.optionalLayer?.animator.innerShadow = newValue
+                object.optionalLayer?.animator.innerShadow = newValue.resolved(for: object)
             }
         }
 
@@ -176,8 +170,8 @@ import Decomposed
         }
 
         /// The scale transform of the view.
-        public var scale: CGPoint {
-            get { object.optionalLayer?.animator.scale ?? CGPoint(1, 1) }
+        public var scale: Scale {
+            get { object.optionalLayer?.animator.scale ?? .none }
             set { object.optionalLayer?.animator.scale = newValue }
         }
 
@@ -188,13 +182,13 @@ import Decomposed
         }
 
         /// The rotation of the view as euler angles in degrees.
-        public var rotation: CGVector3 {
+        public var rotation: Rotation {
             get { object.optionalLayer?.animator.rotation ?? .zero }
             set { object.optionalLayer?.animator.rotation = newValue }
         }
 
         /// The rotation of the view as euler angles in radians.
-        public var rotationInRadians: CGVector3 {
+        public var rotationInRadians: Rotation {
             get { object.optionalLayer?.animator.rotationInRadians ?? .zero }
             set { object.optionalLayer?.animator.rotationInRadians = newValue }
         }
@@ -213,13 +207,12 @@ import Decomposed
         
         /// Adds the view animated by fading it in.
         public func addSubview(_ view: NSView) {
-            view.animator.removeSuperview = nil
-            if view.superview != object {
-                Anima.nonAnimated {
-                    view.animator.alpha = 0.0
-                }
-                object.addSubview(view)
+            guard view !== object else { return }
+            view.removeSuperview = nil
+            Anima.nonAnimated {
+                view.animator.alpha = 0.0
             }
+            object.addSubview(view)
             view.animator.alpha = 1.0
         }
         
@@ -229,19 +222,11 @@ import Decomposed
          The view is removed after the fade out animation finishes.
          */
         public func removeFromSuperview() {
-            if let superview = object.superview {
-                (object as! NSView).animator.removeSuperview = superview
-                object.animator.alpha = 0.0
-            }
+            guard let superview = object.superview else { return }
+            object.removeSuperview = superview
+            object.animator.alpha = 0.0
         }
     }
-
-extension PropertyAnimator<NSView> {
-    var removeSuperview: NSView? {
-        get { getAssociatedValue("removeSuperview", initialValue: nil) }
-        set { setAssociatedValue(weak: newValue, key: "removeSuperview") }
-    }
-}
 #else
     extension UIView: AnimatablePropertyProvider {}
 
@@ -367,30 +352,8 @@ extension PropertyAnimator<NSView> {
         /// The border of the view.
         public var border: BorderConfiguration {
             get { object.optionalLayer?.animator.border ?? .zero }
-            set {
-                var newValue = newValue
-                newValue.color = newValue.color?.resolvedColor(for: object)
-                object.optionalLayer?.animator.border = newValue
-            }
+            set { object.optionalLayer?.animator.border = newValue.resolved(for: object) }
         }
-
-        /*
-         /// The border color of the view.
-         public var borderColor: NSUIColor? {
-             get { object.optionalLayer?.animator.borderColor?.nsUIColor }
-             set { object.optionalLayer?.animator.borderColor = newValue?.resolvedColor(for: object).cgColor
-                 #if os(macOS)
-                 object.dynamicColors.border = newValue
-                 #endif
-             }
-         }
-
-         /// The border width of the view.
-         public var borderWidth: CGFloat {
-             get { object.optionalLayer?.animator.borderWidth ?? 0.0 }
-             set { object.optionalLayer?.animator.borderWidth = newValue }
-         }
-          */
 
         /// The shadow of the view.
         public var shadow: ShadowConfiguration {
@@ -405,11 +368,7 @@ extension PropertyAnimator<NSView> {
         /// The inner shadow of the view.
         public var innerShadow: ShadowConfiguration {
             get { object.optionalLayer?.animator.innerShadow ?? .none }
-            set {
-                var newValue = newValue
-                newValue.color = newValue.color?.resolvedColor(for: object)
-                object.optionalLayer?.animator.innerShadow = newValue
-            }
+            set { object.optionalLayer?.animator.innerShadow = newValue.resolved(for: object) }
         }
 
         /// The three-dimensional transform of the view.
@@ -419,8 +378,8 @@ extension PropertyAnimator<NSView> {
         }
 
         /// The scale transform of the view.
-        public var scale: CGPoint {
-            get { object.optionalLayer?.animator.scale ?? CGPoint(1, 1) }
+        public var scale: Scale {
+            get { object.optionalLayer?.animator.scale ?? .none }
             set { object.optionalLayer?.animator.scale = newValue }
         }
 
@@ -431,13 +390,13 @@ extension PropertyAnimator<NSView> {
         }
 
         /// The rotation of the view as euler angles in degrees.
-        public var rotation: CGVector3 {
+        public var rotation: Rotation {
             get { object.optionalLayer?.animator.rotation ?? .zero }
             set { object.optionalLayer?.animator.rotation = newValue }
         }
 
         /// The rotation of the view as euler angles in radians.
-        public var rotationInRadians: CGVector3 {
+        public var rotationInRadians: Rotation {
             get { object.optionalLayer?.animator.rotationInRadians ?? .zero }
             set { object.optionalLayer?.animator.rotationInRadians = newValue }
         }
@@ -468,13 +427,12 @@ extension PropertyAnimator<NSView> {
         
         /// Adds the view animated by fading it in.
         public func addSubview(_ view: UIView) {
-            view.animator.removeSuperview = nil
-            if view.superview != object {
-                Anima.nonAnimated {
-                    view.animator.alpha = 0.0
-                }
-                object.addSubview(view)
+            guard view !== object else { return }
+            view.removeSuperview = nil
+            Anima.nonAnimated {
+                view.animator.alpha = 0.0
             }
+            object.addSubview(view)
             view.animator.alpha = 1.0
         }
         
@@ -484,10 +442,9 @@ extension PropertyAnimator<NSView> {
          The view is removed after the fade out animation finishes.
          */
         public func removeFromSuperview() {
-            if let superview = object.superview {
-                (object as! UIView).animator.removeSuperview = superview
-                object.animator.alpha = 0.0
-            }
+            guard let superview = object.superview else { return }
+            object.removeSuperview = superview
+            object.animator.alpha = 0.0
         }
     }
 #endif
@@ -830,33 +787,6 @@ extension PropertyAnimator<NSView> {
         var progress: Float {
             get { self[\.progress] }
             set { self[\.progress] = newValue }
-        }
-    }
-
-    extension PropertyAnimator<UIView> {
-        var removeSuperview: UIView? {
-            get { getAssociatedValue("removeSuperview", initialValue: nil) }
-            set { setAssociatedValue(weak: newValue, key: "removeSuperview") }
-        }
-        
-        var preventsUserInteractions: Bool {
-            get { getAssociatedValue("preventsUserInteractions", initialValue: false) }
-            set { setAssociatedValue(newValue, key: "preventsUserInteractions") }
-        }
-
-        /// Collects the animations that are configurated to prevent user interactions. If the set isn't empty the user interactions get disabled. When all animations finishes and the collection is empty, user interaction gets enabled again.
-        var preventingUserInteractionAnimations: Set<UUID> {
-            get { getAssociatedValue("preventingAnimations", initialValue: []) }
-            set {
-                setAssociatedValue(newValue, key: "preventingAnimations")
-                if !preventingUserInteractionAnimations.isEmpty, object.isUserInteractionEnabled, !preventsUserInteractions {
-                    object.isUserInteractionEnabled = false
-                    preventsUserInteractions = true
-                } else if preventingUserInteractionAnimations.isEmpty, preventsUserInteractions {
-                    object.isUserInteractionEnabled = true
-                    preventsUserInteractions = false
-                }
-            }
         }
     }
 #endif

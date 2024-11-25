@@ -19,7 +19,7 @@ import Foundation
  easingAnimation.start()
  ```
  */
-open class EasingAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
+open class EasingAnimation<Value: AnimatableProperty>: ValueAnimation<Value> {
  
     /// The timing function of the animation.
     open var timingFunction: TimingFunction = .easeInEaseOut

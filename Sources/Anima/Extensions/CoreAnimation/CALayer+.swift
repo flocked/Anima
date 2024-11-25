@@ -160,6 +160,18 @@ extension CALayer {
         }
         return superlayer?.parentView
     }
+    
+    var removeSuperlayer: CALayer? {
+        get { getAssociatedValue("removeSuperlayer") }
+        set { setAssociatedValue(weak: newValue, key: "removeSuperlayer") }
+    }
+    
+    func removeFromSuperlayerIfNeeded() {
+        if let removeSuperlayer = removeSuperlayer, superlayer === removeSuperlayer {
+            removeFromSuperlayer()
+        }
+        removeSuperlayer = nil
+    }
 }
 
 // Runs the `CALayer` changes without any animations.

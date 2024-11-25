@@ -20,7 +20,7 @@ import SwiftUI
  springAnimation.start()
  ```
  */
-open class SpringAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
+open class SpringAnimation<Value: AnimatableProperty>: ValueAnimation<Value> {
     
     /// The spring model that determines the animation's motion.
     open var spring: Spring

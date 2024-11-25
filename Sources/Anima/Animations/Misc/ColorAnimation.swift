@@ -1,5 +1,5 @@
 //
-//  PropertyAnimationProviding.swift
+//  PropertyBaseAnimation.swift
 //  
 //
 //  Created by Florian Zand on 28.03.24.
@@ -15,7 +15,7 @@ import UIKit
 
 #if os(macOS)
 /// A wrapped animation from `CGColor` to `NSColor`.
-class ColorAnimation: PropertyAnimation<Optional<NSColor>> {
+class ColorAnimation: ValueAnimation<Optional<NSColor>> {
     public override var id: UUID { cgColorAnimation.id }
     public override var groupID: UUID? {
         get { cgColorAnimation.groupID }
@@ -25,7 +25,7 @@ class ColorAnimation: PropertyAnimation<Optional<NSColor>> {
         get { cgColorAnimation.relativePriority }
         set { cgColorAnimation.relativePriority = newValue }
     }
-    public override var state: AnimatingState {
+    public override var state: State {
         get { cgColorAnimation.state }
         set { cgColorAnimation.state = newValue }
     }
@@ -52,19 +52,19 @@ class ColorAnimation: PropertyAnimation<Optional<NSColor>> {
         cgColorAnimation.pause()
     }
     public override func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
-        cgColorAnimation.stop(at: position, immediately: immediately)
+        cgColorAnimation.stop(at: .init(rawValue: position.rawValue)!, immediately: immediately)
     }
     
-    init(_ animation: PropertyAnimation<Optional<CGColor>>) {
+    init(_ animation: ValueAnimation<Optional<CGColor>>) {
         super.init(value: .white, target: .white)
         cgColorAnimation = animation
     }
     
-    var cgColorAnimation: PropertyAnimation<Optional<CGColor>>!
+    var cgColorAnimation: ValueAnimation<Optional<CGColor>>!
 }
 #else
 /// A wrapped animation from `CGColor` to `UIColor`.
-class ColorAnimation: PropertyAnimation<Optional<UIColor>> {
+class ColorAnimation: ValueAnimation<Optional<UIColor>> {
     public override var id: UUID { cgColorAnimation.id }
     public override var groupID: UUID? {
         get { cgColorAnimation.groupID }
@@ -74,7 +74,7 @@ class ColorAnimation: PropertyAnimation<Optional<UIColor>> {
         get { cgColorAnimation.relativePriority }
         set { cgColorAnimation.relativePriority = newValue }
     }
-    public override var state: AnimatingState {
+    public override var state: State {
         get { cgColorAnimation.state }
         set { cgColorAnimation.state = newValue }
     }
@@ -101,14 +101,14 @@ class ColorAnimation: PropertyAnimation<Optional<UIColor>> {
         cgColorAnimation.pause()
     }
     public override func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
-        cgColorAnimation.stop(at: position, immediately: immediately)
+        cgColorAnimation.stop(at: .init(rawValue: position.rawValue)!, immediately: immediately)
     }
     
-    init(_ animation: PropertyAnimation<Optional<CGColor>>) {
+    init(_ animation: ValueAnimation<Optional<CGColor>>) {
         super.init(value: .white, target: .white)
         cgColorAnimation = animation
     }
     
-    var cgColorAnimation: PropertyAnimation<Optional<CGColor>>!
+    var cgColorAnimation: ValueAnimation<Optional<CGColor>>!
 }
 #endif

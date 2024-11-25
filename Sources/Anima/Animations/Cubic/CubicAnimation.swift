@@ -8,7 +8,7 @@
 import Foundation
 
 // Not working. Will be used for keyframe animations.
-class CubicAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
+class CubicAnimation<Value: AnimatableProperty>: ValueAnimation<Value> {
 
     /// The total duration (in seconds) of the animation.
     open var duration: CGFloat = 0.0

@@ -87,9 +87,9 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider>: NSObject {
     init(_ object: Provider) {
         self.object = object
     }
-
+    
     /// A dictionary containing the current animated property keys and associated animations.
-    open internal(set) var animations: [String: AnimationProviding] = [:]
+    open internal(set) var animations: [String: BaseAnimation] = [:]
 
     /**
      The current value of the property at the specified keypath.
@@ -108,13 +108,13 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider>: NSObject {
 
      - Parameter keyPath: The keypath to the animatable property.
      */
-    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> PropertyAnimation<Value>? {
+    public subscript<Value: AnimatableProperty>(animation keyPath: WritableKeyPath<Provider, Value>) -> ValueAnimation<Value>? {
         animation(for: keyPath, checkLayer: true)
     }
 
     var animationHandlers: [String: Any] = [:]
     var lastAccessedProperty: String = ""
-    var lastAccessedAnimation: AnimationProviding? {
+    var lastAccessedAnimation: BaseAnimation? {
         guard lastAccessedProperty != "" else { return nil }
         return animations[lastAccessedProperty]
     }
@@ -143,7 +143,7 @@ extension PropertyAnimator {
         guard let object = object else { return }
         let currentAnimation = animation(for: keyPath)
         guard let configuration = Anima.currentConfiguration, configuration.type != .nonAnimated else {
-            currentAnimation?.stop(at: .current, immediately: true)
+            currentAnimation?.stopAtCurrent()
             DisableActions {
                 object[keyPath: keyPath] = newValue
             }
@@ -192,7 +192,7 @@ extension PropertyAnimator {
     }
     
     /// Configurates an animation and starts it.
-    func configurateAnimation<Value>(_ animation: PropertyAnimation<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, configuration: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
+    func configurateAnimation<Value>(_ animation: ValueAnimation<Value>, target: Value, keyPath: ReferenceWritableKeyPath<Provider, Value>, configuration: Anima.AnimationConfiguration, completion: (() -> Void)? = nil) {
         
         animation.reset()
 
@@ -222,36 +222,28 @@ extension PropertyAnimator {
         }
 
         #if os(iOS) || os(tvOS)
-            if let self = self as? PropertyAnimator<UIView> {
-                if configuration.options.preventUserInteraction {
-                    self.preventingUserInteractionAnimations.insert(animation.id)
-                } else {
-                    self.preventingUserInteractionAnimations.remove(animation.id)
-                }
+        if let view = object as? UIView {
+            if configuration.options.preventUserInteraction {
+                view.preventingUserInteractionAnimations.insert(animation.id)
+            } else {
+                view.preventingUserInteractionAnimations.remove(animation.id)
             }
+        }
         #endif
         animation.completion = { [weak self] event in
             switch event {
             case .finished:
                 #if os(macOS) || os(iOS) || os(tvOS)
-                if let animator = (self as? PropertyAnimator<CALayer>) {
-                    if let layer = animator.removeSuperlayer, let superlayer = animator.object.superlayer, layer == superlayer {
-                        animator.object.removeFromSuperlayer()
-                    }
-                    animator.removeSuperlayer = nil
-                    if let viewAnimator = animator.object.parentView?.animator {
-                        if let view = viewAnimator.removeSuperview, viewAnimator.object.superview == view {
-                            viewAnimator.object.removeFromSuperview()
-                        }
-                        viewAnimator.removeSuperview = nil
-                    }
+                if let layer = self?.object as? CALayer {
+                    layer.removeFromSuperlayerIfNeeded()
+                    layer.parentView?.removeFromSuperviewIfNeeded()
                 }
                 #endif                
                 completion?()
                 self?.animations[animationKey] = nil
                 animationHandler?(animation.value, animation.velocity, true)
                 #if os(iOS) || os(tvOS)
-                    (self as? PropertyAnimator<UIView>)?.preventingUserInteractionAnimations.remove(animation.id)
+                (self?.object as? UIView)?.preventingUserInteractionAnimations.remove(animation.id)
                 #endif
                 AnimationController.shared.executeGroupHandler(uuid: animation.groupID, state: .finished)
             default:
@@ -260,7 +252,7 @@ extension PropertyAnimator {
         }
 
         if let oldAnimation = animations[animationKey], oldAnimation.id != animation.id {
-            oldAnimation.stop(at: .current, immediately: true)
+            oldAnimation.stop()
         }
         animations[animationKey] = animation
         animation.start(afterDelay: configuration.delay)
@@ -283,11 +275,11 @@ extension PropertyAnimator {
 
 extension PropertyAnimator {
     /// The current animation for the specified property, or `nil` if there isn't an animation for the keypath.
-    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Provider, Value>, checkLayer: Bool = false) -> PropertyAnimation<Value>? {
-        animation(for: keyPath.stringValue, checkLayer: checkLayer) as? PropertyAnimation<Value>
+    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Provider, Value>, checkLayer: Bool = false) -> ValueAnimation<Value>? {
+        animation(for: keyPath.stringValue, checkLayer: checkLayer) as? ValueAnimation<Value>
     }
 
-    func animation(for keyPath: String, checkLayer: Bool = false) -> AnimationProviding? {
+    func animation(for keyPath: String, checkLayer: Bool = false) -> BaseAnimation? {
         lastAccessedProperty = keyPath
         if let animation = animations[lastAccessedProperty] {
             return animation

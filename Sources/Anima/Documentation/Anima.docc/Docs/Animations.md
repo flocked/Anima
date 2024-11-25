@@ -8,9 +8,9 @@ There are three animations types: Decay, Easing and Spring. They let you animate
 
 You provide the inital and target value of the animation. 
 
-To change the state of the animation, use      ``AnimationProviding/start(afterDelay:)``, ``AnimationProviding/pause()`` and ``AnimationProviding/stop(at:immediately:)``.
+To change the state of the animation, use      ``BaseAnimation/start(afterDelay:)``, ``BaseAnimation/pause()`` and ``BaseAnimation/stop(at:immediately:)``.
 
-``PropertyAnimation/valueChanged`` gets called whenever the current value of the animation changes.
+``ValueAnimation/valueChanged`` gets called whenever the current value of the animation changes.
 
 ```swift
 let animation = SpringAnimation(spring: .bouncy, value: view.frame.size, target: CGSize(width: 500, height: 500))
@@ -20,7 +20,7 @@ animation.valueChanged = { newSize in
 animation.start(afterDelay: 0.0)
 ```
 
-``PropertyAnimation/completion`` gets called when the animation either finishes, or "re-targets" to a new target value.
+``ValueAnimation/completion`` gets called when the animation either finishes, or "re-targets" to a new target value.
 
 ```swift
 animation.completion = { event in 
@@ -91,4 +91,4 @@ decayAnimation.start()
 
 ## Create your own animations
 
-Subclassing ``PropertyAnimation`` let's you create your own animations. Itself isn't animating and your have to provide your own animation implemention.
+Subclassing ``ValueAnimation`` let's you create your own animations. Itself isn't animating and your have to provide your own animation implemention.

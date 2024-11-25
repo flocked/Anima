@@ -1,5 +1,5 @@
 //
-//  PropertyAnimation.swift
+//  ValueAnimation.swift
 //
 //
 //  Created by Florian Zand on 03.11.23.
@@ -8,51 +8,34 @@
 import Foundation
 
 /**
- Subclassing this class let's you create your own animations. the animation itself isn't animating and your have to provide your own animation implemention in your subclass.
+ An animation that animates a value to a target value.
+ 
+ ## Creating an own animation.
+ 
+ ``BaseAnimation`` itself isn't animating and you have to subclass it.
+  
+ In your subclass you have, override ``updateAnimation(deltaTime:)`` and provide the code that updates ``value`` towards ``target``.
+ 
+ Call `super` at the end of your implementation. It sends the current `value` to ``valueChanged`` and stops the animation, if the`target` is reached.
 
  ## Start and stop the animation
 
- To start your animation, use ``start(afterDelay:)``. It  changes the ``state`` to `running` and updates ``delay``.
+ To start the animation, use ``BaseAnimation/start(afterDelay:)``. It  changes the ``BaseAnimation/state-swift.property`` to `running` and updates ``BaseAnimation/delay``.
 
- To stop a running animation either use ``stop(at:immediately:)`` or change the `state` to `ended` or `inactive`.
+ To stop a running animation, use ``stop(at:immediately:)``. It changes the `state` to `ended`.
+ 
+ Calling ``BaseAnimation/pause()``, pauses a running animation and changes the `state` to `inactive`.
 
- Calling ``pause()`` changes the `state` to `inactive`.
-
- If you overwrite ``start(afterDelay:)``, ``pause()`` or ``stop(at:immediately:)`` make sure to call super.
-
- - Note: Changing `state` itself isn't starting or stopping an animation. It only reflects the state of your animation. You have to use the above functions.
+ If you overwrite ``BaseAnimation/start(afterDelay:)``, ``BaseAnimation/pause()`` or ``stop(at:immediately:)`` make sure to call `super`.
 
  ## Update animation values
 
- ``startValue`` is value when the animation starts. Make sure to update it on start as it's used as value when the position of ``stop(at:immediately:)`` is `start`.
-
- ``target`` is the target value of the animation. Your animation should stop when it reaches the animation by calling ``stop(at:immediately:)``.
-
- ``velocity`` is the velocity of the animation. If your animation doesn't use any velocity you can ignore this value. It's default value is `zero`.
-
- ``value`` is the current value of the animation.
-
- ``updateAnimation(deltaTime:)`` gets called until you stop the animation. You should update `value` inside it. Call `super` and it will send the current value to ``valueChanged`` and stops it if the value equals the target value.
+ - ``startValue`` is the value when the animation starts. Make sure to update it on start as it's used as value when the position of ``stop(at:immediately:)`` is `start`.
+ - ``target`` is the target value of the animation. Your animation should stop when it reaches the animation by calling ``stop(at:immediately:)``.
+ - ``velocity`` is the velocity of the animation. If your animation doesn't use any velocity you can ignore this value. It's default value is `zero`.
+ - ``value`` is the current value of the animation.
  */
-open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, CustomStringConvertible {
-    /// A unique identifier for the animation.
-    public var id: UUID {
-        _id
-    }
-    let _id = UUID()
-
-    /// A unique identifier that associates the animation with an grouped animation block.
-    open internal(set) var groupID: UUID?
-
-    /// The relative priority of the animation. The higher the number the higher the priority.
-    open var relativePriority: Int = 0
-
-    /// The current state of the animation.
-    open internal(set) var state: AnimatingState = .inactive
-
-    /// The delay (in seconds) after which the animations begin.
-    open internal(set) var delay: TimeInterval = 0.0
-    
+open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
     /// Additional animation options.
     open var options: Anima.AnimationOptions = []
 
@@ -61,7 +44,11 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
   
     var runningTime: TimeInterval = 0.0
 
-    /// The _current_ value of the animation. This value will change as the animation executes.
+    /**
+     The _current_ value of the animation.
+     
+     This value updates while the animation is running.
+     */
     public var value: Value {
         get { Value(_value) }
         set { _value = newValue.animatableData }
@@ -88,7 +75,11 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         didSet {
             guard oldValue != _target else { return }
             if state == .running {
-                completion?(.retargeted(from: Value(oldValue), to: target))
+                if _target == _value {
+                    stop(at: .end, immediately: true)
+                } else {
+                    completion?(.retargeted(from: Value(oldValue), to: target))
+                }
             } else if options.autoStarts, _target != _value {
                 start(afterDelay: 0.0)
             }
@@ -103,7 +94,11 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
     var _startValue: Value.AnimatableData
 
-    /// The current velocity of the animation.
+    /**
+     The _current_ velocity of the animation.
+     
+     This value might update while the animation is running.
+     */
     public var velocity: Value {
         get { Value(_velocity) }
         set { _velocity = newValue.animatableData }
@@ -117,15 +112,13 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
     }
     
     var _startVelocity: Value.AnimatableData = .zero
-
-    
     
 
-    /// The callback block to call when the animation's ``PropertyAnimation/value`` changes as it executes. Use the `currentValue` to drive your application's animations.
+    /// The callback block to call when the animation's ``ValueAnimation/value`` changes as it executes. Use the `currentValue` to drive your application's animations.
     open var valueChanged: ((_ currentValue: Value) -> Void)?
 
     /// The completion block to call when the animation either finishes, or "re-targets" to a new target value.
-    open var completion: ((_ event: AnimationEvent<Value>) -> Void)?
+    open var completion: ((_ event: AnimationEvent) -> Void)?
 
     /**
      Creates a new animation with the specified timing curve and duration, and optionally, an initial and target value.
@@ -142,14 +135,6 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         _target = target.animatableData
     }
 
-    deinit {
-        delayedStart?.cancel()
-        AnimationController.shared.stopAnimation(self)
-    }
-
-    /// The item that starts the animation delayed.
-    var delayedStart: DispatchWorkItem?
-
     /// The animation type.
     var animationType: AnimationType { .property }
 
@@ -164,52 +149,18 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
 
      - parameter deltaTime: The delta time.
      */
-    open func updateAnimation(deltaTime: TimeInterval) {
+    open override func updateAnimation(deltaTime: TimeInterval) {
         guard state == .running else { return }
         let callbackValue = options.integralizeValues ? value.scaledIntegral : value
         valueChanged?(callbackValue)
-
+        runningTime += deltaTime
         if _value == _target {
             stop(at: .end)
         }
     }
-
-    /**
-     Starts the animation from its current position with an optional delay.
-
-     - parameter delay: The amount of time (measured in seconds) to wait before starting the animation.
-     */
-    open func start(afterDelay delay: TimeInterval = 0.0) {
-        precondition(delay >= 0, "Animation start delay must be greater or equal to zero.")
-        guard state != .running else { return }
-
-        let start = { [weak self] in
-            guard let self = self else { return }
-            self.state = .running
-            AnimationController.shared.runAnimation(self)
-        }
-        
-        delayedStart?.cancel()
-        self.delay = delay
-
-        if delay == .zero {
-            start()
-        } else {
-            let task = DispatchWorkItem {
-                start()
-            }
-            delayedStart = task
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
-        }
-    }
-
-    /// Pauses the animation at the current position.
-    open func pause() {
-        guard state == .running else { return }
-        AnimationController.shared.stopAnimation(self)
-        state = .inactive
-        delayedStart?.cancel()
-        delay = 0.0
+    
+    open override func stop() {
+        stop(at: .current, immediately: true)
     }
 
     /**
@@ -219,11 +170,11 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         - position: The position at which position the animation should stop (``AnimationPosition/current``, ``AnimationPosition/start`` or ``AnimationPosition/end``). The default value is `current`.
         - immediately: A Boolean value that indicates whether the animation should stop immediately at the specified position. The default value is `true`.
      */
-    open func stop(at position: AnimationPosition = .current, immediately: Bool = true) {
+    open func stop(at position: AnimationPosition, immediately: Bool = true) {
         guard state == .running else { return }
         delayedStart?.cancel()
         delay = 0.0
-        if immediately == false {
+        if !immediately {
             switch position {
             case .start:
                 _target = _startValue
@@ -248,6 +199,30 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
             completion?(.finished(at: value))
         }
     }
+    
+    /// The position of an animation.
+    public enum AnimationPosition: String, Sendable {
+        /**
+         End position of the animation.
+         
+         Use this value to stop an animation at it's `target` value.
+         */
+        case end
+
+        /**
+         Start position of the animation.
+         
+         Use this value to stop an animation at it's `startValue`.
+         */
+        case start
+
+        /**
+         Current position of the animation.
+         
+         Use this value to stop an animation at it's current `value`.
+         */
+        case current
+    }
 
     /// Resets the animation.
     func reset() {
@@ -256,9 +231,9 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         runningTime = 0.0
     }
     
-    public var description: String {
+    public override var description: String {
         """
-        PropertyAnimation<\(Value.self)>(
+        ValueAnimation<\(Value.self)>(
             uuid: \(id)
             groupID: \(groupID?.description ?? "nil")
             priority: \(relativePriority)
@@ -280,26 +255,39 @@ open class PropertyAnimation<Value: AnimatableProperty>: AnimationProviding, Cus
         )
         """
     }
+    
+    /// Constants indicating that an animation is either retargated or finished.
+    public enum AnimationEvent {
+        /// The animation finished at the value.
+        case finished(at: Value)
+        
+        /**
+         The animation's `target` value changed in-flight while the animation is running.
+         
+         - Parameters:
+            - from: The previous `target` value of the animation.
+            - to: The new `target` value of the animation.
+         */
+        case retargeted(from: Value, to: Value)
+        
+        /// A Boolean value that indicates whether the animation is finished.
+        public var isFinished: Bool {
+            switch self {
+            case .finished: return true
+            case .retargeted: return false
+            }
+        }
+        
+        /// A Boolean value that indicates whether the animation is retargeted.
+        public var isRetargeted: Bool {
+            switch self {
+            case .finished: return false
+            case .retargeted: return true
+            }
+        }
+    }
+    
+    func stopAtCurrent(immediately: Bool = true) {
+        stop(at: .current, immediately: immediately)
+    }
 }
-
-
-/*
- /**
-  A Boolean value indicating whether a paused animation scrubs linearly or uses its specified timing information.
-
-  The default value of this property is `true`, which causes the animator to use a linear timing function during scrubbing. Setting the property to `false` causes the animator to use its specified timing curve.
-  */
- var scrubsLinearly: Bool = false
- */
-
-/*
- func updateValue() {
-     guard state != .running else { return }
-     if scrubsLinearly {
-         _value = _startValue.interpolated(towards: _target, amount: fractionComplete)
-     } else {
-         _value = _startValue.interpolated(towards: _target, amount: resolvedFractionComplete)
-     }
-     valueChanged?(value)
- }
- */

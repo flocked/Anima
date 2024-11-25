@@ -104,6 +104,12 @@ public struct ShadowConfiguration: Hashable {
 
     /// A black shadow.
     public static func black(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { Self(color: .black, opacity: opacity, radius: radius, offset: offset) }
+    
+    func resolved(for view: NSUIView) -> Self {
+        var shadow = self
+        shadow.color = shadow.color?.resolvedColor(for: view)
+        return shadow
+    }
 }
 
 extension ShadowConfiguration: AnimatableProperty, Animatable {

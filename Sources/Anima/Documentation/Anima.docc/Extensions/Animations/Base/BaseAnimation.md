@@ -1,4 +1,4 @@
-# ``AnimationProviding``
+# ``BaseAnimation``
 
 ## Topics
 
@@ -8,14 +8,19 @@
 - ``groupID``
 - ``relativePriority``
 - ``state``
+- ``State``
 
 ### Starting and stopping the animation
 
 - ``start(afterDelay:)``
-- ``stop(at:immediately:)``
+- ``stop()``
 - ``pause()``
 - ``delay``
 
 ### Updating the animation
 
 - ``updateAnimation(deltaTime:)``
+
+### Description
+
+- ``description``

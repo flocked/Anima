@@ -1,4 +1,4 @@
-# ``AnimationEvent``
+# ``Anima/ValueAnimation/AnimationEvent``
 
 ## Topics
 

@@ -63,7 +63,7 @@ There are three types of animations:
 - ``EasingAnimation``
 - ``SpringAnimation``
 
-To create an animation you provide an initial value, target value and ``PropertyAnimation/valueChanged``, a block that gets called whenever the animation's current value changes.
+To create an animation you provide an initial value, target value and ``ValueAnimation/valueChanged``, a block that gets called whenever the animation's current value changes.
 
 Example of a spring animation:
 ```swift
@@ -80,7 +80,7 @@ animation.start()
 
 #### Creating your own animations
 
-Subclassing ``PropertyAnimation`` let's you create your own animations. Itself isn't animating and your have to provide your own animation implemention.
+Subclassing ``ValueAnimation`` let's you create your own animations. Itself isn't animating and your have to provide your own animation implemention.
 
 ## Topics
 
@@ -107,10 +107,8 @@ Subclassing ``PropertyAnimation`` let's you create your own animations. Itself i
 ### Animations
 
 - <doc:Animations>
-- ``AnimationProviding``
-- ``AnimationEvent``
-- ``AnimationPosition``
-- ``AnimatingState``
+- ``BaseAnimation``
+- ``ValueAnimation``
 
 ### Decay Animation
 
@@ -127,18 +125,23 @@ Subclassing ``PropertyAnimation`` let's you create your own animations. Itself i
 - ``SpringAnimation``
 - ``Spring``
 
-### Creating Own Animations
-
-- ``PropertyAnimation``
-
 ### Additions
 
 - ``AnimationProvider``
-- ``AnimationProviding``
-- ``CAKeyframeAnimationEmittable``
-- ``CAKeyframeAnimationValueConvertible``
 - ``BorderConfiguration``
 - ``ShadowConfiguration``
 - ``FloatingPointInitializable``
 - ``Rubberband``
 - ``AnimatableArray``
+
+### CoreAnimation Additions
+
+- ``CAKeyframeAnimationEmittable``
+- ``CAKeyframeAnimationValueConvertible``
+- ``CGVector3``
+- ``CGVector4``
+- ``CGQuaternion``
+- ``Perspective``
+- ``Scale``
+- ``Skew``
+- ``Translation``

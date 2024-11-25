@@ -6,7 +6,6 @@
 //
 
 #if canImport(QuartzCore)
-    import Decomposed
     import Foundation
     import QuartzCore
 

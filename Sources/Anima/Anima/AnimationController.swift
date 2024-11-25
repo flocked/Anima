@@ -15,7 +15,7 @@ import Combine
 /// Manages the animations of ``Anima``.
 class AnimationController {
     
-    public static let shared = AnimationController()
+    static let shared = AnimationController()
 
     private var displayLink: AnyCancellable?
     private var animations: [UUID: WeakAimation] = [:]
@@ -57,7 +57,7 @@ class AnimationController {
         animationConfigurationStack.pop()
     }
 
-    public func runAnimation(_ animation: some AnimationProviding) {
+    public func runAnimation(_ animation: BaseAnimation) {
         if displayLinkIsRunning == false {
             startDisplayLink()
         }
@@ -65,7 +65,7 @@ class AnimationController {
         animation.updateAnimation(deltaTime: .zero)
     }
 
-    public func stopAnimation(_ animation: AnimationProviding) {
+    public func stopAnimation(_ animation: BaseAnimation) {
         animations[animation.id] = nil
     }
     
@@ -74,7 +74,7 @@ class AnimationController {
     }
 
     public func stopAllAnimations(immediately: Bool) {
-        animations.values.forEach { $0.animation?.stop(at: .current, immediately: immediately) }
+        animations.values.forEach { $0.animation?.stop() }
     }
 
     private func updateAnimations(_ frame: DisplayLink.Frame) {
@@ -174,9 +174,9 @@ extension AnimationController {
             animation?.relativePriority ?? 0
         }
         
-        weak var animation: (any AnimationProviding)?
+        weak var animation: BaseAnimation?
         
-        init(_ animation: some AnimationProviding) {
+        init(_ animation: BaseAnimation) {
             id = animation.id
             self.animation = animation
         }

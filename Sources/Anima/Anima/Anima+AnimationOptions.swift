@@ -21,7 +21,7 @@ public extension Anima {
         /// The animation runs backwards and forwards (must be combined with the ``repeats`` option).
         public static let autoreverse = AnimationOptions(rawValue: 1 << 2)
 
-        /// The animation automatically starts when the ``PropertyAnimation/target`` value changes.
+        /// The animation automatically starts when the ``ValueAnimation/target`` value changes.
         public static let autoStart = AnimationOptions(rawValue: 1 << 3)
         
         /**

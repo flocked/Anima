@@ -18,14 +18,14 @@ public protocol AnimationProvider: AnyObject {
     associatedtype AnimationProvider = Self
     
     /// A dictionary containing the currently animated property names and associated animations.
-    var animations: [String: AnimationProviding] { get }
+    var animations: [String: BaseAnimation] { get }
     
     /**
      The current animation for the specified property.
 
      - Parameter keyPath: The keypath to the property.
      */
-    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<AnimationProvider, Value>) -> PropertyAnimation<Value>?
+    func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<AnimationProvider, Value>) -> ValueAnimation<Value>?
 
     /**
      Sets the handler that gets called when the specified property is animated and it's value changed.
@@ -43,17 +43,17 @@ public protocol AnimationProvider: AnyObject {
 extension PropertyAnimator: AnimationProvider { }
 
 extension AnimationProvider {
-    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> PropertyAnimation<Value>? {
+    public func animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> ValueAnimation<Value>? {
         guard let animation = _animation(for: keyPath) else { return nil }
-        if let animation = animation as? PropertyAnimation<Value> {
+        if let animation = animation as? ValueAnimation<Value> {
             return animation
-        } else if type(of: Value.self) == type(of: Optional<NSUIColor>.self), let animation = animation as? PropertyAnimation<Optional<CGColor>> {
-            return ColorAnimation(animation) as? PropertyAnimation<Value>
+        } else if type(of: Value.self) == type(of: Optional<NSUIColor>.self), let animation = animation as? ValueAnimation<Optional<CGColor>> {
+            return ColorAnimation(animation) as? ValueAnimation<Value>
         }
         return nil
     }
     
-    func _animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> AnimationProviding? {
+    func _animation<Value: AnimatableProperty>(for keyPath: WritableKeyPath<Self, Value>) -> BaseAnimation? {
         guard let animator = self as? (any _PropertyAnimator) else { return nil }
         animator.lastAccessedProperty = ""
         animator.layerAnimator?.lastAccessedProperty = ""
@@ -82,9 +82,9 @@ extension AnimationProvider {
 protocol _PropertyAnimator: AnyObject {
     associatedtype Provider
     var _object: Provider? { get }
-    var animations: [String: AnimationProviding] { get }
+    var animations: [String: BaseAnimation] { get }
     var lastAccessedProperty: String { get set }
-    var lastAccessedAnimation: AnimationProviding? { get }
+    var lastAccessedAnimation: BaseAnimation? { get }
     var animationHandlers: [String: Any] { get set }
 }
 

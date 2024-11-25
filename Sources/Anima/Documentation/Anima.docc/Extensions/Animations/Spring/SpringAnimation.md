@@ -6,37 +6,38 @@
 
 - ``init(spring:value:target:initialVelocity:)``
 
-### Starting and stopping the animation
-
-- ``Anima/PropertyAnimation/start(afterDelay:)``
-- ``Anima/PropertyAnimation/stop(at:immediately:)``
-- ``Anima/PropertyAnimation/pause()``
-- ``Anima/PropertyAnimation/delay``
-- ``Anima/PropertyAnimation/state``
-
 ### Accessing spring parameters
 
 - ``settlingTime``
 - ``spring``
 
-### Accessing value, velocity and target
+### Accessing value, target and velocity
 
-- ``Anima/PropertyAnimation/target``
-- ``Anima/PropertyAnimation/value``
-- ``Anima/PropertyAnimation/velocity``
+- ``ValueAnimation/value``
+- ``ValueAnimation/target``
+- ``ValueAnimation/startValue``
+- ``ValueAnimation/velocity``
+
+### Starting and stopping the animation
+
+- ``BaseAnimation/start(afterDelay:)``
+- ``ValueAnimation/stop(at:immediately:)``
+- ``BaseAnimation/pause()``
+- ``BaseAnimation/delay``
+- ``BaseAnimation/state``
 
 ### Handling animation updates
 
-- ``Anima/PropertyAnimation/completion``
+- ``Anima/ValueAnimation/completion``
 - ``updateAnimation(deltaTime:)``
-- ``Anima/PropertyAnimation/valueChanged``
+- ``ValueAnimation/valueChanged``
 
 ### Accessing animation parameters
 
-- ``Anima/PropertyAnimation/id``
-- ``Anima/PropertyAnimation/groupID``
-- ``Anima/PropertyAnimation/relativePriority``
-- ``Anima/PropertyAnimation/options``
+- ``BaseAnimation/id``
+- ``BaseAnimation/groupID``
+- ``BaseAnimation/relativePriority``
+- ``ValueAnimation/options``
 
 ### Description
 

@@ -10,7 +10,6 @@
 #elseif canImport(UIKit)
     import UIKit
 #endif
-import Decomposed
 import SwiftUI
 
 // MARK: - AnimatableProperty

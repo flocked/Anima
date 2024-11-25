@@ -16,13 +16,10 @@ let package = Package(
             targets: ["Anima"]
         ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/b3ll/Decomposed.git", branch: "main"),
-    ],
     targets: [
         .target(
             name: "Anima",
-            dependencies: ["Decomposed"]
+            dependencies: []
         ),
         .testTarget(
             name: "AnimaTests",

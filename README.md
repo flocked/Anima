@@ -154,9 +154,9 @@ decayAnimation.start()
 let decayVelocityAnimation = DecayAnimation(value: value, velocity: velocity)
 ```
 
-#### PropertyAnimation
+#### ValueAnimation
 
-To create your own animations overwrite this `PropertyAnimation`. The class isn't animating and you have to provide your own animation logic.
+To create your own animations overwrite this `ValueAnimation`. The class isn't animating and you have to provide your own animation logic.
 
 ## Additions
 

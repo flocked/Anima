@@ -98,7 +98,7 @@ public enum Anima {
         duration: TimeInterval = 0.5,
         gestureVelocity: (any AnimatableProperty)? = nil,
         delay: TimeInterval = 0,
-        options: AnimationOptions = [.useApproximatelyEqual],
+        options: AnimationOptions = [],
         animations: () -> Void,
         completion: ((_ state: AnimationState) -> Void)? = nil
     ) {
@@ -135,7 +135,7 @@ public enum Anima {
         withSpring spring: Spring,
         gestureVelocity: (any AnimatableProperty)? = nil,
         delay: TimeInterval = 0,
-        options: AnimationOptions = [.useApproximatelyEqual],
+        options: AnimationOptions = [],
         animations: () -> Void,
         completion: ((_ state: AnimationState) -> Void)? = nil
     ) {

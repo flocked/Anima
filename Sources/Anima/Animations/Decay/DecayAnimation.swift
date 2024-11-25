@@ -33,7 +33,7 @@ import Foundation
   ```
 
   */
-open class DecayAnimation<Value: AnimatableProperty>: PropertyAnimation<Value> {
+open class DecayAnimation<Value: AnimatableProperty>: ValueAnimation<Value> {
     
     /// The rate at which the velocity decays over time.
     public var decelerationRate: Double {

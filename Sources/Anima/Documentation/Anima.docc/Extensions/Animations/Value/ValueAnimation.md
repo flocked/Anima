@@ -1,43 +1,41 @@
-# ``DecayAnimation``
+# ``ValueAnimation``
 
 ## Topics
 
 ### Creating the animation
 
-- ``init(value:target:decelerationRate:)``
-- ``init(value:velocity:decelerationRate:)``
+- ``init(value:target:)``
 
-### Accessing decay parameters
+### Accessing animation values
 
-- ``decelerationRate``
-
-### Accessing value, target and velocity
-
-- ``ValueAnimation/value``
+- ``value``
 - ``target``
-- ``ValueAnimation/startValue``
+- ``startValue``
 - ``velocity``
 
 ### Starting and stopping the animation
 
 - ``BaseAnimation/start(afterDelay:)``
-- ``ValueAnimation/stop(at:immediately:)``
+- ``stop()``
+- ``stop(at:immediately:)``
 - ``BaseAnimation/pause()``
 - ``BaseAnimation/delay``
 - ``BaseAnimation/state``
+- ``AnimationPosition``
 
 ### Handling animation updates
 
-- ``ValueAnimation/completion``
 - ``updateAnimation(deltaTime:)``
-- ``ValueAnimation/valueChanged``
+- ``valueChanged``
+- ``completion``
+- ``AnimationEvent``
 
 ### Accessing animation parameters
 
 - ``BaseAnimation/id``
 - ``BaseAnimation/groupID``
 - ``BaseAnimation/relativePriority``
-- ``ValueAnimation/options``
+- ``options``
 
 ### Description
 
