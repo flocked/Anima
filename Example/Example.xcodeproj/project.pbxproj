@@ -9,24 +9,24 @@
 /* Begin PBXBuildFile section */
 		726D5BB42B51E50E00E4E272 /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726D5BB32B51E50E00E4E272 /* WindowController.swift */; };
 		72A0C7BD2B4FADAD00779BA0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A0C7BC2B4FADAD00779BA0 /* AppDelegate.swift */; };
-		72A0C7BF2B4FADAD00779BA0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A0C7BE2B4FADAD00779BA0 /* ViewController.swift */; };
 		72A0C7C12B4FADAF00779BA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72A0C7C02B4FADAF00779BA0 /* Assets.xcassets */; };
 		72A0C7C42B4FADAF00779BA0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72A0C7C22B4FADAF00779BA0 /* Main.storyboard */; };
 		72A0C7CD2B4FADF100779BA0 /* Anima in Frameworks */ = {isa = PBXBuildFile; productRef = 72A0C7CC2B4FADF100779BA0 /* Anima */; };
 		72A0C7CF2B4FAE6D00779BA0 /* CoreGraphics+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A0C7CE2B4FAE6C00779BA0 /* CoreGraphics+.swift */; };
 		72A0C7D42B4FAF3D00779BA0 /* NSView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A0C7D32B4FAF3D00779BA0 /* NSView+.swift */; };
+		72B640C92D8E0D5F003C9EA9 /* ExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B640C82D8E0D5F003C9EA9 /* ExampleViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		726D5BB32B51E50E00E4E272 /* WindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		72A0C7B92B4FADAD00779BA0 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		72A0C7BC2B4FADAD00779BA0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		72A0C7BE2B4FADAD00779BA0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		72A0C7C02B4FADAF00779BA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72A0C7C32B4FADAF00779BA0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		72A0C7C52B4FADAF00779BA0 /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
 		72A0C7CE2B4FAE6C00779BA0 /* CoreGraphics+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreGraphics+.swift"; sourceTree = "<group>"; };
 		72A0C7D32B4FAF3D00779BA0 /* NSView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+.swift"; sourceTree = "<group>"; };
+		72B640C82D8E0D5F003C9EA9 /* ExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				72A0C7BC2B4FADAD00779BA0 /* AppDelegate.swift */,
-				72A0C7BE2B4FADAD00779BA0 /* ViewController.swift */,
+				72B640C82D8E0D5F003C9EA9 /* ExampleViewController.swift */,
 				726D5BB32B51E50E00E4E272 /* WindowController.swift */,
 				72A0C7D02B4FAE7300779BA0 /* Extensions */,
 				72A0C7C02B4FADAF00779BA0 /* Assets.xcassets */,
@@ -156,11 +156,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72A0C7BF2B4FADAD00779BA0 /* ViewController.swift in Sources */,
 				726D5BB42B51E50E00E4E272 /* WindowController.swift in Sources */,
 				72A0C7BD2B4FADAD00779BA0 /* AppDelegate.swift in Sources */,
 				72A0C7CF2B4FAE6D00779BA0 /* CoreGraphics+.swift in Sources */,
 				72A0C7D42B4FAF3D00779BA0 /* NSView+.swift in Sources */,
+				72B640C92D8E0D5F003C9EA9 /* ExampleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="ajK-Zh-Krh">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22690"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -695,140 +695,140 @@
                         </connections>
                     </window>
                     <connections>
-                        <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
+                        <segue destination="ajK-Zh-Krh" kind="relationship" relationship="window.shadowedContentViewController" id="IEI-hy-sia"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="69" y="164"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="hIz-AP-VOD">
+        <!--Example View Controller-->
+        <scene sceneID="yqt-cB-Lvw">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="m2S-Jp-Qdl">
+                <viewController id="ajK-Zh-Krh" customClass="ExampleViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="tJv-S7-gzM">
                         <rect key="frame" x="0.0" y="0.0" width="700" height="460"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" id="Zcz-BM-boH">
-                                <rect key="frame" x="18" y="20" width="64" height="18"/>
+                            <button verticalHuggingPriority="750" id="XS3-Gt-5LD">
+                                <rect key="frame" x="18" y="22" width="64" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="check" title="Frame" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Yi9-F9-iFI">
+                                <buttonCell key="cell" type="check" title="Frame" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Q5Y-z5-tHC">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
-                            <button verticalHuggingPriority="750" id="HBs-v4-afU">
-                                <rect key="frame" x="88" y="20" width="52" height="18"/>
+                            <button verticalHuggingPriority="750" id="510-in-26u">
+                                <rect key="frame" x="88" y="22" width="52" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="check" title="Size" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="eZH-zG-8zp">
+                                <buttonCell key="cell" type="check" title="Size" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fcD-wJ-yUI">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="HH7-Cr-4Ya">
-                                <rect key="frame" x="20" y="45" width="75" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="18c-VV-C0o">
+                                <rect key="frame" x="20" y="47" width="75" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Animating:" id="dGo-gc-Om8">
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Animating:" id="Bhf-XW-f8a">
                                     <font key="font" metaFont="systemBold"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="NfQ-P8-S0l">
-                                <rect key="frame" x="548" y="45" width="134" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="rx0-Cr-7K7">
+                                <rect key="frame" x="548" y="47" width="134" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Animation Duration:" id="URJ-Jl-adI">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Animation Duration:" id="n2e-ed-hGg">
                                     <font key="font" metaFont="systemBold"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="XwI-tQ-clh">
-                                <rect key="frame" x="637" y="21" width="45" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Y0r-yk-Vkg">
+                                <rect key="frame" x="637" y="23" width="45" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="0.75s" id="MFP-fT-gz9">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="0.75s" id="76v-7C-BY1">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <action selector="durationSliderChanged:" target="ajK-Zh-Krh" id="OVy-8b-TUy"/>
+                                </connections>
                             </textField>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="7y2-Nt-Vf9">
-                                <rect key="frame" x="18" y="424" width="120" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="g1Q-a3-Bz7">
+                                <rect key="frame" x="18" y="426" width="120" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="To Animate press:" id="aqL-5A-hQg">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="To Animate press:" id="CGh-jB-uba">
                                     <font key="font" metaFont="systemBold"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="VIf-j1-e4C">
-                                <rect key="frame" x="52" y="396" width="109" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="RaJ-qc-5Rq">
+                                <rect key="frame" x="52" y="398" width="109" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Spacebar: Spring" id="z5a-eW-6pT">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Spacebar: Spring" id="AJM-GB-Ad7">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="SFG-uf-a2D">
-                                <rect key="frame" x="52" y="372" width="58" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="RDQ-xx-pZr">
+                                <rect key="frame" x="52" y="374" width="58" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="1: Easing" id="j63-mb-IpV">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="1: Easing" id="K2a-eV-mg5">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Om8-xN-uDp">
-                                <rect key="frame" x="52" y="348" width="58" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="lHq-pq-rzN">
+                                <rect key="frame" x="52" y="350" width="58" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="2: Decay" id="wHg-Vr-UCN">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="2: Decay" id="nHt-qx-Iqx">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <slider verticalHuggingPriority="750" id="3sW-wK-1R8">
-                                <rect key="frame" x="547" y="12" width="96" height="28"/>
+                            <slider verticalHuggingPriority="750" id="cyT-7w-Gl3">
+                                <rect key="frame" x="547" y="14" width="96" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.5" maxValue="4" doubleValue="0.75" tickMarkPosition="above" numberOfTickMarks="15" allowsTickMarkValuesOnly="YES" sliderType="linear" id="hnP-8T-SKD">
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.5" maxValue="4" doubleValue="0.75" tickMarkPosition="above" numberOfTickMarks="15" allowsTickMarkValuesOnly="YES" sliderType="linear" id="cvj-r9-ZlU">
                                     <font key="font" size="12" name="Helvetica"/>
                                 </sliderCell>
-                                <connections>
-                                    <action selector="durationSliderChanged:" target="XfG-lQ-9wD" id="N2P-vt-VSq"/>
-                                </connections>
                             </slider>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="zsM-oc-dCO">
-                                <rect key="frame" x="188" y="396" width="48" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Di5-5e-3h9">
+                                <rect key="frame" x="188" y="398" width="48" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="S: Stop" id="ZhE-gm-tr5">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="S: Stop" id="xGI-ky-yp9">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="F83-ia-aem">
-                                <rect key="frame" x="188" y="372" width="178" height="16"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="YMI-Ch-srZ">
+                                <rect key="frame" x="188" y="374" width="178" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="D: Stop, keeping the velocity" id="jh6-we-hsS">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="D: Stop, keeping the velocity" id="9e1-yJ-UvM">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button verticalHuggingPriority="750" id="OnI-hQ-Rhu">
-                                <rect key="frame" x="146" y="20" width="135" height="18"/>
+                            <button verticalHuggingPriority="750" id="TBH-UL-GKu">
+                                <rect key="frame" x="146" y="22" width="135" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="check" title="Background Color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="nvO-X5-z8w">
+                                <buttonCell key="cell" type="check" title="Background Color" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GFt-n2-BBr">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
-                            <button verticalHuggingPriority="750" id="BEs-G2-69o">
-                                <rect key="frame" x="287" y="20" width="112" height="18"/>
+                            <button verticalHuggingPriority="750" id="iG3-F1-nfr">
+                                <rect key="frame" x="287" y="22" width="112" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="check" title="Corner Radius" bezelStyle="regularSquare" imagePosition="left" inset="2" id="45R-9K-Bdc">
+                                <buttonCell key="cell" type="check" title="Corner Radius" bezelStyle="regularSquare" imagePosition="left" inset="2" id="WVj-ol-2ui">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -836,17 +836,17 @@
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="backgroundColorCheckButton" destination="OnI-hQ-Rhu" id="dgE-0H-gbk"/>
-                        <outlet property="cornerRadiusCheckButton" destination="BEs-G2-69o" id="LpG-Pu-c9L"/>
-                        <outlet property="durationSlider" destination="3sW-wK-1R8" id="jOp-JS-BEs"/>
-                        <outlet property="durationTextField" destination="XwI-tQ-clh" id="2jY-PG-ydN"/>
-                        <outlet property="frameCheckButton" destination="Zcz-BM-boH" id="PnQ-dl-u6d"/>
-                        <outlet property="sizeCheckButton" destination="HBs-v4-afU" id="uXK-CD-UPd"/>
+                        <outlet property="backgroundColorCheckButton" destination="TBH-UL-GKu" id="zmw-pc-xr7"/>
+                        <outlet property="cornerRadiusCheckButton" destination="iG3-F1-nfr" id="E3d-Si-zkO"/>
+                        <outlet property="durationSlider" destination="cyT-7w-Gl3" id="5k6-mh-3Up"/>
+                        <outlet property="durationTextField" destination="Y0r-yk-Vkg" id="kRS-IU-Ttn"/>
+                        <outlet property="frameCheckButton" destination="XS3-Gt-5LD" id="KVX-1a-byW"/>
+                        <outlet property="sizeCheckButton" destination="510-in-26u" id="pbS-86-KKT"/>
                     </connections>
                 </viewController>
-                <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="a4W-3b-PkK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="69" y="755"/>
+            <point key="canvasLocation" x="69" y="1329"/>
         </scene>
     </scenes>
 </document>

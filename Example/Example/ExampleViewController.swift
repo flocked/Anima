@@ -1,14 +1,14 @@
 //
-//  ViewController.swift
+//  ExampleViewController.swift
 //  Example
 //
-//  Created by Florian Zand on 11.01.24.
+//  Created by Florian Zand on 21.03.25.
 //
 
 import Cocoa
 import Anima
 
-class ViewController: NSViewController {
+class ExampleViewController: NSViewController {
 
     let animatedView = NSView()
     @IBOutlet weak var frameCheckButton: NSButton!
