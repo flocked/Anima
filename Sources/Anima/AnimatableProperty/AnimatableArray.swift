@@ -124,9 +124,7 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
         -  subrange: The subrange of the collection to replace. The bounds of the range must be valid indices of the collection.
         -  newElements: The new elements to add to the collection.
      */
-    public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
-        where C: Collection, R: RangeExpression, Element == C.Element, Int == R.Bound
-    {
+    public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C) where C: Collection, R: RangeExpression, Element == C.Element, Int == R.Bound {
         elements.replaceSubrange(subrange, with: newElements)
     }
 }
@@ -164,14 +162,10 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
             return AnimatableArray<Double>(vDSP.add(lhs[0 ..< count], rhs[0 ..< count])) as! Self
         }
         var lhs = lhs
-        for index in 0 ..< count {
+        for index in 0..<count {
             lhs[index] += rhs[index]
         }
         return lhs
-    }
-
-    public static func += (lhs: inout AnimatableArray, rhs: AnimatableArray) {
-        lhs = lhs + rhs
     }
 
     public static func - (lhs: AnimatableArray, rhs: AnimatableArray) -> AnimatableArray {
@@ -180,14 +174,10 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
             return AnimatableArray<Double>(vDSP.subtract(lhs[0 ..< count], rhs[0 ..< count])) as! Self
         }
         var lhs = lhs
-        for index in 0 ..< count {
-            lhs[index] += rhs[index]
+        for index in 0..<count {
+            lhs[index] -= rhs[index]
         }
         return lhs
-    }
-
-    public static func -= (lhs: inout Self, rhs: Self) {
-        lhs = lhs - rhs
     }
 
     public mutating func scale(by rhs: Double) {
