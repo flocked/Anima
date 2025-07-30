@@ -158,8 +158,10 @@ extension AnimatableArray: Hashable where Element: Hashable {
 extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     public static func + (lhs: AnimatableArray, rhs: AnimatableArray) -> AnimatableArray {
         let count = Swift.min(lhs.count, rhs.count)
-        if let lhs = lhs as? AnimatableArray<Double>, let rhs = rhs as? AnimatableArray<Double> {
-            return AnimatableArray<Double>(vDSP.add(lhs[0 ..< count], rhs[0 ..< count])) as! Self
+        if Element.self == Double.self {
+            let lhsD = cast(lhs.elements)
+            let rhsD = cast(rhs.elements)
+            return Self(uncast(lhs.count == rhs.count ? vDSP.add(lhsD, rhsD) : vDSP.add(lhsD[0..<count], rhsD[0..<count])))
         }
         var lhs = lhs
         for index in 0..<count {
@@ -170,8 +172,10 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
 
     public static func - (lhs: AnimatableArray, rhs: AnimatableArray) -> AnimatableArray {
         let count = Swift.min(lhs.count, rhs.count)
-        if let lhs = lhs as? AnimatableArray<Double>, let rhs = rhs as? AnimatableArray<Double> {
-            return AnimatableArray<Double>(vDSP.subtract(lhs[0 ..< count], rhs[0 ..< count])) as! Self
+        if Element.self == Double.self {
+            let lhsD = cast(lhs.elements)
+            let rhsD = cast(rhs.elements)
+            return Self(uncast(lhs.count == rhs.count ? vDSP.subtract(lhsD, rhsD) : vDSP.subtract(lhsD[0..<count], rhsD[0..<count])))
         }
         var lhs = lhs
         for index in 0..<count {
@@ -181,8 +185,8 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     }
 
     public mutating func scale(by rhs: Double) {
-        if let self = self as? AnimatableArray<Double> {
-            elements = vDSP.multiply(rhs, self.elements) as! [Element]
+        if Element.self == Double.self {
+            elements = Self.uncast(vDSP.multiply(rhs, Self.cast(elements)))
         } else {
             for index in startIndex ..< endIndex {
                 self[index].scale(by: rhs)
@@ -191,8 +195,9 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     }
 
     public var magnitudeSquared: Double {
-        if let self = self as? AnimatableArray<Double> {
-            return vDSP.sum(vDSP.multiply(self.elements, self.elements))
+        if Element.self == Double.self {
+            let elements = Self.cast(elements)
+            return vDSP.sum(vDSP.multiply(elements, elements))
         }
         return reduce(into: 0.0) { result, new in
             result += new.magnitudeSquared
@@ -200,6 +205,14 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
     }
 
     public static var zero: Self { .init() }
+    
+    private static func cast(_ elements: [Element]) -> [Double] {
+        unsafeBitCast(elements, to: [Double].self)
+    }
+    
+    private static func uncast(_ elements: [Double]) -> [Element] {
+        unsafeBitCast(elements, to: [Element].self)
+    }
 }
 
 extension AnimatableArray: ApproximateEquatable where Element: FloatingPointInitializable {
