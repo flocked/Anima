@@ -204,9 +204,6 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
 
 extension AnimatableArray: ApproximateEquatable where Element: FloatingPointInitializable {
     public func isApproximatelyEqual(to other: Self, epsilon: Element) -> Bool {
-        for index in 0..<count {
-            guard let other = other[safe: index], self[index].isApproximatelyEqual(to: other, epsilon: epsilon) else { return false }
-        }
-        return true
+        count <= other.count && zip(self, other).allSatisfy({ $0.0.isApproximatelyEqual(to: $0.1, epsilon: epsilon) })
     }
  }
