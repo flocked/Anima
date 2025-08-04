@@ -587,6 +587,19 @@ private struct UnitBezierSolver {
     func solve(x: Double, eps: Double) -> Double {
         sampleCurveY(t: solveCurveX(x: x, eps: eps))
     }
+    
+    func velocity(x: Double, eps: Double = 1e-6) -> Double {
+        let t = solveCurveX(x: x, eps: eps)
+        let dx = sampleCurveDerivativeX(t: t)
+        let dy = sampleCurveDerivativeY(t: t)
+
+        guard dx != 0 else { return 0.0 }
+        return dy / dx
+    }
+
+    private func sampleCurveDerivativeY(t: Double) -> Double {
+        (3.0 * ay * t + 2.0 * by) * t + cy
+    }
 
     private func sampleCurveX(t: Double) -> Double {
         ((ax * t + bx) * t + cx) * t
