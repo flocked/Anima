@@ -80,12 +80,7 @@ extension CGRect {
      - Returns: The scaled integral rect.
      */
     public var scaledIntegral: CGRect {
-        CGRect(
-            x: origin.x.scaledIntegral,
-            y: origin.y.scaledIntegral,
-            width: size.width.scaledIntegral,
-            height: size.height.scaledIntegral
-        )
+        CGRect(origin: origin.scaledIntegral, size: size.scaledIntegral)
     }
 
     /// The center point of the rectangle.

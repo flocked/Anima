@@ -251,6 +251,10 @@ extension CGAffineTransform: AnimatableProperty, Animatable {
     public static var zero: CGAffineTransform {
         CGAffineTransform()
     }
+    
+    public var scaledIntegral: Self {
+        Self(a.scaledIntegral, b.scaledIntegral, c.scaledIntegral, d.scaledIntegral, tx.scaledIntegral, ty.scaledIntegral)
+    }
 }
 
 extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
@@ -261,6 +265,10 @@ extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
     public var animatableData: AnimatableArray<Double> {
         get { [top, bottom, leading, trailing] }
         set { self = .init(newValue) }
+    }
+    
+    public var scaledIntegral: Self {
+        Self(top: top.scaledIntegral, leading: leading.scaledIntegral, bottom: bottom.scaledIntegral, trailing: trailing.scaledIntegral)
     }
 }
 
@@ -274,6 +282,10 @@ extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
         public init(_ animatableData: AnimatableArray<Double>) {
             self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
         }
+        
+        public var scaledIntegral: Self {
+            Self(top: top.scaledIntegral, left: left.scaledIntegral, bottom: bottom.scaledIntegral, right: right.scaledIntegral)
+        }
     }
 #else
     extension UIEdgeInsets: AnimatableProperty, Animatable {
@@ -284,6 +296,10 @@ extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
 
         public init(_ animatableData: AnimatableArray<Double>) {
             self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
+        }
+        
+        public var scaledIntegral: Self {
+            Self(top: top.scaledIntegral, left: left.scaledIntegral, bottom: bottom.scaledIntegral, right: right.scaledIntegral)
         }
     }
 #endif
@@ -297,6 +313,10 @@ extension CGVector: AnimatableProperty, Animatable {
     public init(_ animatableData: AnimatableArray<Double>) {
         self.init(dx: animatableData[0], dy: animatableData[1])
     }
+    
+    public var scaledIntegral: CGVector {
+        Self(dx: dx.scaledIntegral, dy: dy.scaledIntegral)
+    }
 }
 
 extension CATransform3D: AnimatableProperty, Animatable {
@@ -307,6 +327,10 @@ extension CATransform3D: AnimatableProperty, Animatable {
     public var animatableData: AnimatableArray<Double> {
         get { [m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44] }
         set { self = .init(newValue) }
+    }
+    
+    public var scaledIntegral: Self {
+        Self(m11: m11.scaledIntegral, m12: m12.scaledIntegral, m13: m13.scaledIntegral, m14: m14.scaledIntegral, m21: m21.scaledIntegral, m22: m22.scaledIntegral, m23: m23.scaledIntegral, m24: m24.scaledIntegral, m31: m31.scaledIntegral, m32: m32.scaledIntegral, m33: m33.scaledIntegral, m34: m34.scaledIntegral, m41: m41.scaledIntegral, m42: m42.scaledIntegral, m43: m43.scaledIntegral, m44: m44.scaledIntegral)
     }
 }
 
@@ -323,6 +347,10 @@ extension CGQuaternion: AnimatableProperty, Animatable {
     public static var zero: CGQuaternion {
         CGQuaternion(angle: 0, axis: .init(0, 0, 0))
     }
+    
+    public var scaledIntegral: Self {
+        Self(angle: angle.scaledIntegral, axis: axis.scaledIntegral)
+    }
 }
 
 extension CGVector3: AnimatableProperty, Animatable {
@@ -338,6 +366,10 @@ extension CGVector3: AnimatableProperty, Animatable {
     public static var zero: CGVector3 {
         CGVector3(0, 0, 0)
     }
+    
+    public var scaledIntegral: Self {
+        Self(x.scaledIntegral, y.scaledIntegral, z.scaledIntegral)
+    }
 }
 
 extension CGVector4: AnimatableProperty, Animatable {
@@ -352,6 +384,10 @@ extension CGVector4: AnimatableProperty, Animatable {
 
     public static var zero: CGVector4 {
         CGVector4(0, 0, 0, 0)
+    }
+    
+    public var scaledIntegral: Self {
+        Self(m14.scaledIntegral, m24.scaledIntegral, m34.scaledIntegral, m44.scaledIntegral)
     }
 }
 
@@ -509,6 +545,3 @@ extension Array: AnimatableCollection where Self: AnimatableProperty {
         return diff > 0 ? (self + Array(repeating: .zero, count: diff)) : self
     }
 }
-
-typealias AnimatablePairCGFloat = AnimatablePair<CGFloat, CGFloat>
-typealias AnimatablePairCGRect = AnimatablePair<AnimatablePair<CGFloat, CGFloat>, AnimatablePair<CGFloat, CGFloat>>
