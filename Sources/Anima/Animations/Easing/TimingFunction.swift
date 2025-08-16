@@ -538,8 +538,8 @@ extension TimingFunction {
          Calculates the resulting `y` for given `x`.
 
          - Parameters:
-         - x: The value to solve for.
-         - epsilon: The required precision of the result (where `x * epsilon` is the maximum time segment to be evaluated).
+            - x: The value to solve for.
+            - epsilon: The required precision of the result (where `x * epsilon` is the maximum time segment to be evaluated).
          - Returns: The solved `y` value.
          */
         public func solve(x: Double, epsilon: Double) -> Double {
@@ -550,8 +550,8 @@ extension TimingFunction {
          Calculates the resulting `y` for given `x`.
 
          - Parameters:
-         - x: The value to solve for.
-         - duration: The duration of the solving value. It is used to calculate the required precision of the result.
+            - x: The value to solve for.
+            - duration: The duration of the solving value. It is used to calculate the required precision of the result.
          - Returns: The solved `y` value.
          */
         public func solve(x: Double, duration: Double) -> Double {

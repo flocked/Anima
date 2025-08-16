@@ -45,8 +45,7 @@ public struct DecayFunction: Hashable {
     /**
      Initializes a decay function.
 
-     - Parameters:
-        - decelerationRate: The rate at which the velocity decays over time. Defaults to ``ScrollViewDecelerationRate``.
+     - Parameter decelerationRate: The rate at which the velocity decays over time. Defaults to ``ScrollViewDecelerationRate``.
      */
     public init(decelerationRate: Double = ScrollViewDecelerationRate) {
         self.decelerationRate = decelerationRate
