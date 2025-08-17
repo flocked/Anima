@@ -6,9 +6,9 @@
 //
 
 #if os(macOS)
-    import AppKit
+import AppKit
 #elseif canImport(UIKit)
-    import UIKit
+import UIKit
 #endif
 import SwiftUI
 
@@ -17,11 +17,11 @@ public struct ShadowConfiguration: Hashable {
     // MARK: - Configurating the shadow
 
     #if os(macOS)
-        /// The color of the shadow.
-        public var color: NSColor? = .black
+    /// The color of the shadow.
+    public var color: NSColor? = .black
     #else
-        /// The color of the shadow.
-        public var color: UIColor? = .black
+    /// The color of the shadow.
+    public var color: UIColor? = .black
     #endif
 
     /// The opacity of the shadow.
@@ -41,60 +41,60 @@ public struct ShadowConfiguration: Hashable {
     // MARK: - Creating the shadow configuration
 
     #if os(macOS)
-        /**
-         Creates a shadow configuration.
+    /**
+     Creates a shadow configuration.
 
-         - Parameters:
-            - color: The shadow color. The default value is `black`.
-            - opacity: The shadow opacity. The default value is `0.3`.
-            - radius: The shadow radius. The default value is `2.0`.
-            - offset: The shadow offset. The default value is `CGPoint(x: 1.0, y: -1.5)`.
-         */
-        public init(
-            color: NSColor? = .black,
-            opacity: CGFloat = 0.3,
-            radius: CGFloat = 2.0,
-            offset: CGPoint = CGPoint(x: 1.0, y: -1.5)
-        ) {
-            self.color = color
-            self.opacity = opacity
-            self.radius = radius
-            self.offset = offset
-        }
+     - Parameters:
+        - color: The shadow color. The default value is `black`.
+        - opacity: The shadow opacity. The default value is `0.3`.
+        - radius: The shadow radius. The default value is `2.0`.
+        - offset: The shadow offset. The default value is `CGPoint(x: 1.0, y: -1.5)`.
+     */
+    public init(
+        color: NSColor? = .black,
+        opacity: CGFloat = 0.3,
+        radius: CGFloat = 2.0,
+        offset: CGPoint = CGPoint(x: 1.0, y: -1.5)
+    ) {
+        self.color = color
+        self.opacity = opacity
+        self.radius = radius
+        self.offset = offset
+    }
 
-        /// A colored shadow.
-        public static func color(_ color: NSColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
-            Self(color: color, opacity: opacity, radius: radius, offset: offset)
-        }
+    /// A colored shadow.
+    public static func color(_ color: NSColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
+        Self(color: color, opacity: opacity, radius: radius, offset: offset)
+    }
 
-        /// A shadow with control accent color.
-        public static func controlAccent(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { Self(color: .controlAccentColor, opacity: opacity, radius: radius, offset: offset) }
+    /// A shadow with control accent color.
+    public static func controlAccent(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { Self(color: .controlAccentColor, opacity: opacity, radius: radius, offset: offset) }
     #else
-        /**
-         Creates a shadow configuration.
+    /**
+     Creates a shadow configuration.
 
-         - Parameters:
-            - color: The shadow color. The default value is `black`.
-            - opacity: The shadow opacity. The default value is `0.3`.
-            - radius: The shadow radius. The default value is `2.0`.
-            - offset: The shadow offset. The default value is `CGPoint(x: 1.0, y: -1.5)`.
-         */
-        public init(
-            color: UIColor? = .black,
-            opacity: CGFloat = 0.3,
-            radius: CGFloat = 2.0,
-            offset: CGPoint = CGPoint(x: 1.0, y: -1.5)
-        ) {
-            self.color = color
-            self.opacity = opacity
-            self.radius = radius
-            self.offset = offset
-        }
+     - Parameters:
+        - color: The shadow color. The default value is `black`.
+        - opacity: The shadow opacity. The default value is `0.3`.
+        - radius: The shadow radius. The default value is `2.0`.
+        - offset: The shadow offset. The default value is `CGPoint(x: 1.0, y: -1.5)`.
+     */
+    public init(
+        color: UIColor? = .black,
+        opacity: CGFloat = 0.3,
+        radius: CGFloat = 2.0,
+        offset: CGPoint = CGPoint(x: 1.0, y: -1.5)
+    ) {
+        self.color = color
+        self.opacity = opacity
+        self.radius = radius
+        self.offset = offset
+    }
 
-        /// A colored shadow.
-        public static func color(_ color: UIColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
-            Self(color: color, opacity: opacity, radius: radius, offset: offset)
-        }
+    /// A colored shadow.
+    public static func color(_ color: UIColor, opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self {
+        Self(color: color, opacity: opacity, radius: radius, offset: offset)
+    }
     #endif
 
     // MARK: - Built-in shadow configurations
@@ -104,7 +104,7 @@ public struct ShadowConfiguration: Hashable {
 
     /// A black shadow.
     public static func black(opacity: CGFloat = 0.3, radius: CGFloat = 2.0, offset: CGPoint = CGPoint(x: 1.0, y: -1.5)) -> Self { Self(color: .black, opacity: opacity, radius: radius, offset: offset) }
-    
+
     func resolved(for view: NSUIView) -> Self {
         var shadow = self
         shadow.color = shadow.color?.resolvedColor(for: view)
@@ -129,7 +129,7 @@ extension ShadowConfiguration: AnimatableProperty, Animatable {
 
 extension CALayer {
     /// The shadow of the layer.
-    var shadow: ShadowConfiguration {
+    @objc dynamic var shadow: ShadowConfiguration {
         get { .init(color: shadowColor?.nsUIColor, opacity: CGFloat(shadowOpacity), radius: shadowRadius, offset: shadowOffset.point) }
         set {
             masksToBounds = false
@@ -141,7 +141,7 @@ extension CALayer {
     }
 
     /// The inner shadow of the layer.
-    var innerShadow: ShadowConfiguration {
+    @objc dynamic var innerShadow: ShadowConfiguration {
         get { innerShadowLayer?.configuration ?? .none }
         set {
             if newValue.isInvisible {
@@ -160,5 +160,57 @@ extension CALayer {
 
     var innerShadowLayer: InnerShadowLayer? {
         firstSublayer(type: InnerShadowLayer.self)
+    }
+}
+
+/// The Objective-C class for ``ShadowConfiguration``.
+public class __ShadowConfiguration: NSObject, NSCopying {
+    let configuration: ShadowConfiguration
+
+    public init(configuration: ShadowConfiguration) {
+        self.configuration = configuration
+    }
+
+    public func copy(with zone: NSZone? = nil) -> Any {
+        __ShadowConfiguration(configuration: configuration)
+    }
+
+    public override func isEqual(_ object: Any?) -> Bool {
+        configuration == (object as? __ShadowConfiguration)?.configuration
+    }
+}
+
+extension ShadowConfiguration: ReferenceConvertible {
+    /// The Objective-C type for the configuration.
+    public typealias ReferenceType = __ShadowConfiguration
+
+    public func _bridgeToObjectiveC() -> __ShadowConfiguration {
+        return __ShadowConfiguration(configuration: self)
+    }
+
+    public static func _forceBridgeFromObjectiveC(_ source: __ShadowConfiguration, result: inout ShadowConfiguration?) {
+        result = source.configuration
+    }
+
+    public static func _conditionallyBridgeFromObjectiveC(_ source: __ShadowConfiguration, result: inout ShadowConfiguration?) -> Bool {
+        _forceBridgeFromObjectiveC(source, result: &result)
+        return true
+    }
+
+    public static func _unconditionallyBridgeFromObjectiveC(_ source: __ShadowConfiguration?) -> ShadowConfiguration {
+        if let source = source {
+            var result: ShadowConfiguration?
+            _forceBridgeFromObjectiveC(source, result: &result)
+            return result!
+        }
+        return ShadowConfiguration()
+    }
+
+    public var description: String {
+        "(color: \(color?.description ?? "-"), opacity: \(opacity), radius: \(radius), offset: \(offset))"
+    }
+
+    public var debugDescription: String {
+        description
     }
 }

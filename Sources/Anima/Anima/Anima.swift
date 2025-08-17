@@ -279,4 +279,8 @@ public enum Anima {
     static func nonAnimated(animations: () -> Void) {
         AnimationController.shared.runAnimationGroup(configuration: AnimationConfiguration(type: .nonAnimated), animations: animations)
     }
+    
+    static func animate(withConfiguration configuration: AnimationConfiguration, animations: () -> Void, completion: ((_ state: AnimationState) -> Void)? = nil) {
+        AnimationController.shared.runAnimationGroup(configuration: configuration, animations: animations, completion: completion)
+    }
 }

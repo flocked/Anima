@@ -131,7 +131,10 @@ extension NSView {
     }
 }
 #else
-extension UIView {
+
+#endif
+
+extension NSUIView {
     var preventsUserInteractions: Bool {
         get { getAssociatedValue("preventsUserInteractions", initialValue: false) }
         set { setAssociatedValue(newValue, key: "preventsUserInteractions") }
@@ -141,6 +144,9 @@ extension UIView {
     var preventingUserInteractionAnimations: Set<UUID> {
         get { getAssociatedValue("preventingAnimations", initialValue: []) }
         set {
+            #if os(macOS)
+            guard self is NSControl else { return }
+            #endif
             setAssociatedValue(newValue, key: "preventingAnimations")
             if !newValue.isEmpty, isUserInteractionEnabled, !preventsUserInteractions {
                 isUserInteractionEnabled = false
@@ -151,5 +157,11 @@ extension UIView {
             }
         }
     }
+    
+    #if os(macOS)
+    var isUserInteractionEnabled: Bool {
+        get { !((self as? NSControl)?.refusesFirstResponder ?? false) }
+        set { (self as? NSControl)?.refusesFirstResponder = !newValue }
+    }
+    #endif
 }
-#endif

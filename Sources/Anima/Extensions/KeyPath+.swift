@@ -21,4 +21,9 @@ extension PartialKeyPath {
         keyPathValue = keyPathValue.replacingOccurrences(of: "?", with: "")
         return keyPathValue
     }
+    
+    /// The `KVO` name of the key path, or `nil` if the property isn't key value observable.
+    var kvcStringValue: String? {
+        _kvcKeyPathString
+    }
 }

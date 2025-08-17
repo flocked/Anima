@@ -105,6 +105,29 @@ class KeyValueObserver<Object>: NSObject where Object: NSObject {
     open func add(_ keypath: String, sendInitalValue: Bool = false, handler: @escaping (_ oldValue: Any, _ newValue: Any, _ isInital: Bool) -> Void) {
         add(keypath, sendInitalValue: sendInitalValue, uniqueValues: false, handler: handler)
     }
+    
+    open func add<Value>(_ keypath: String, type: Value.Type, sendInitalValue: Bool = false, handler: @escaping (_ oldValue: Value, _ newValue: Value) -> Void) {
+        add(keypath, sendInitalValue: sendInitalValue, uniqueValues: false) { old, new, isInitial in
+            guard let new = new as? Value else { return }
+            if let old = old as? Value {
+                handler(old, new)
+            } else {
+                handler(new, new)
+            }
+        }
+    }
+    
+    open func add<Value: Equatable>(_ keypath: String, type: Value.Type, sendInitalValue: Bool = false, uniqueValues: Bool = true, handler: @escaping (_ oldValue: Value, _ newValue: Value) -> Void) {
+        add(keypath, sendInitalValue: sendInitalValue, uniqueValues: uniqueValues) { old, new, isInitial in
+            guard let new = new as? Value else { return }
+            if let old = old as? Value {
+                guard !uniqueValues || old != new else { return }
+                handler(old, new)
+            } else {
+                handler(new, new)
+            }
+        }
+    }
 
     func add(_ keypath: String, sendInitalValue: Bool = false, uniqueValues: Bool = false, handler: @escaping (_ oldValue: Any, _ newValue: Any, _ isInital: Bool) -> Void) {
         if observers[keypath] == nil || observers[keypath]?.sendInital != sendInitalValue || observers[keypath]?.sendUnique != uniqueValues {

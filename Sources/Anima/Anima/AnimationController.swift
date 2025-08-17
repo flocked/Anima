@@ -24,6 +24,7 @@ class AnimationController {
     var currentAnimationConfiguration: Anima.AnimationConfiguration? {
         animationConfigurationStack.current
     }
+    var lastAccess: (provider: any NSObject & AnimatablePropertyProvider, keyPath: String)?
 
     /// The preferred rame rate of the animations.
     @available(macOS 14.0, iOS 15.0, tvOS 15.0, *)
@@ -138,7 +139,6 @@ class AnimationController {
         guard let uuid = uuid, var block = groupAnimationCompletionBlocks[uuid] else {
             return
         }
-        Swift.print(block.count)
         block.count -= 1
         groupAnimationCompletionBlocks[uuid] = block
         if state == .retargeted {
