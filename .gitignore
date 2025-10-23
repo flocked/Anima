@@ -1,10 +1,34 @@
+## macOS
 .DS_Store
-/.build
-/Packages
-xcuserdata/
-DerivedData/
-.swiftpm/configuration/registries.json
-.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
-*.resolved
+
+## Obj-C/Swift specific
+*.hmap
+
+## Xcode
+xcuserdata/
+.build/
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Swift Package Manager
+Packages/
 Package.resolved
+Package.pins
+.swiftpm
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+## Carthage
+Carthage/Build/
+
+## fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
