@@ -34,10 +34,6 @@ extension Anima {
         case luv
         /// HPLUV.
         case hpluv
-        /// Grayscale.
-        case gray
-        /// Generic CMYK.
-        case cmyk
         /// Display P3.
         case displayP3
         /// HWB.
@@ -73,8 +69,6 @@ extension Anima {
             case .lch:       return "LCH"
             case .luv:       return "Luv"
             case .hpluv:     return "HPLuv"
-            case .gray:      return "Grayscale"
-            case .cmyk:      return "CMYK"
             case .displayP3: return "Display P3"
             case .hwb:       return "HWB"
             case .lchuv:     return "LCHuv"

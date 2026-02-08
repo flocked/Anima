@@ -763,8 +763,6 @@ extension ColorMath {
         case .jzazbz:
             let xyz = jzazbzToXYZ(color)
             return xyzToRGB(xyz)
-        case .gray, .cmyk:
-            return color
         }
     }
     
@@ -824,8 +822,6 @@ extension ColorMath {
         case .jzazbz:
             let xyz = rgbToXYZ(color)
             return xyzToJZAZBZ(xyz)
-        case .gray, .cmyk:
-            return color
         }
     }
 
