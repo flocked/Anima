@@ -118,11 +118,11 @@ extension ShadowConfiguration: AnimatableProperty, Animatable {
     }
 
     public init(_ animatableData: AnimatableArray<Double>) {
-        self.init(color: .init([animatableData[0], animatableData[1], animatableData[2], animatableData[3]]), opacity: animatableData[4], radius: animatableData[5], offset: .init(animatableData[6], animatableData[7]))
+        self.init(color: NSUIColor(.init([animatableData[0], animatableData[1], animatableData[2], animatableData[3], animatableData[4]], .srgb)), opacity: animatableData[5], radius: animatableData[6], offset: .init(animatableData[7], animatableData[8]))
     }
 
     public var animatableData: AnimatableArray<Double> {
-        get { (color ?? .zero).animatableData + [opacity, radius, offset.x, offset.y] }
+        get { (color ?? .zero).animatableData.elements + [opacity, radius, offset.x, offset.y] }
         set { self = .init(newValue) }
     }
 }

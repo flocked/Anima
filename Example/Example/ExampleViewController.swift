@@ -17,23 +17,30 @@ class ExampleViewController: NSViewController {
     @IBOutlet weak var cornerRadiusCheckButton: NSButton!
     @IBOutlet weak var durationSlider: NSSlider!
     @IBOutlet weak var durationTextField: NSTextField!
-     
+    @IBOutlet weak var colorSpacePopUpButton: NSPopUpButton!
+
     func decayAnimate() {
-        Anima.animate(withDecay: .value) {
+        Anima.animate(withDecay: .value, options: animationOptions) {
             animate()
         }
     }
     
     func easeAnimate() {
-        Anima.animate(withEasing: .easeInEaseOut, duration: durationSlider.doubleValue) {
+        Anima.animate(withEasing: .easeInEaseOut, duration: durationSlider.doubleValue, options: animationOptions) {
             animate()
         }
     }
     
     func springAnimate() {
-        Anima.animate(withSpring: .bouncy(duration: durationSlider.doubleValue)) {
+        Anima.animate(withSpring: .bouncy(duration: durationSlider.doubleValue), options: animationOptions) {
             animate()
         }
+    }
+    
+    var animationOptions: Anima.AnimationOptions {
+        var options: Anima.AnimationOptions = []
+        options.colorSpace = .init(rawValue: UInt(colorSpacePopUpButton.indexOfSelectedItem)) ?? .srgb
+        return options
     }
     
     func stopAnimation(immediately: Bool) {
@@ -41,7 +48,7 @@ class ExampleViewController: NSViewController {
     }
     
     var animationPosition: Int = 0
-    var backgroundColors: [NSColor] = [.systemOrange, .systemRed, .controlAccentColor]
+    var backgroundColors: [NSColor] = [.systemOrange, .systemRed, .controlAccentColor, .green]
     func animate() {
         animationPosition += 1
         if animationPosition == 5 {
@@ -94,6 +101,10 @@ class ExampleViewController: NSViewController {
     
     override func viewDidAppear() {
         super.viewDidAppear()
+        
+        colorSpacePopUpButton.removeAllItems()
+        colorSpacePopUpButton.addItems(withTitles: Anima.ColorSpace.allCases.map(\.description))
+        colorSpacePopUpButton.selectItem(withTitle: Anima.ColorSpace.srgb.description)
                 
         setupKeyDownMonitor()
         

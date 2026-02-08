@@ -178,66 +178,6 @@ extension CGRect: AnimatableProperty {
     }
 }
 
-#if os(macOS)
-    public extension AnimatableProperty where Self: NSColor {
-        init(_ animatableData: AnimatableArray<Double>) {
-            #if os(macOS)
-                self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
-            #else
-                self.init(red: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
-            #endif
-        }
-    }
-
-    extension NSColor: AnimatableProperty {
-        public var animatableData: AnimatableArray<Double> {
-            let rgba = rgbaComponents()
-            return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
-        }
-
-        public static var zero: Self {
-            Self(red: 0, green: 0, blue: 0, alpha: 0)
-        }
-    }
-#else
-    public extension AnimatableProperty where Self: UIColor {
-        init(_ animatableData: AnimatableArray<Double>) {
-            #if os(macOS)
-                self.init(deviceRed: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
-            #else
-                self.init(red: animatableData[0], green: animatableData[1], blue: animatableData[2], alpha: animatableData[3])
-            #endif
-        }
-    }
-
-    extension UIColor: AnimatableProperty {
-        public var animatableData: AnimatableArray<Double> {
-            let rgba = rgbaComponents()
-            return [rgba.red, rgba.green, rgba.blue, rgba.alpha]
-        }
-
-        public static var zero: Self {
-            Self(red: 0, green: 0, blue: 0, alpha: 0)
-        }
-    }
-#endif
-
-public extension AnimatableProperty where Self: CGColor {
-    init(_ animatableData: AnimatableArray<Double>) {
-        self = NSUIColor(animatableData).cgColor as! Self
-    }
-}
-
-extension CGColor: AnimatableProperty {
-    public var animatableData: AnimatableArray<Double> {
-        nsUIColor?.animatableData ?? [0, 0, 0, 0]
-    }
-
-    public static var zero: Self {
-        Self(red: 0, green: 0, blue: 0, alpha: 0)
-    }
-}
-
 extension CGAffineTransform: AnimatableProperty, Animatable {
     @inlinable public init(_ animatableData: AnimatableArray<Double>) {
         self.init(animatableData[0], animatableData[1], animatableData[2], animatableData[3], animatableData[4], animatableData[5])
@@ -464,28 +404,72 @@ extension ClosedRange: AnimatableProperty where Bound: VectorArithmetic {
 
 // MARK: - AnimatableColor
 
-// Updates colors for better interpolation/animations.
+#if os(macOS)
+extension NSColor: AnimatableProperty {
+    public var animatableData: AnimatableArray<Double> {
+        cgColor.animatableData
+    }
+
+    public static var zero: Self {
+        Self(red: 0, green: 0, blue: 0, alpha: 0)
+    }
+}
+
+public extension AnimatableProperty where Self: NSColor {
+    init(_ animatableData: AnimatableArray<Double>) {
+        self = Self.init(cgColor: CGColor(animatableData))!
+    }
+}
+#else
+extension UIColor: AnimatableProperty {
+    public var animatableData: AnimatableArray<Double> {
+        let rgba = rgbaComponents()
+        cgColor.animatableData
+    }
+
+    public static var zero: Self {
+        Self(red: 0, green: 0, blue: 0, alpha: 0)
+    }
+}
+
+public extension AnimatableProperty where Self: UIColor {
+    init(_ animatableData: AnimatableArray<Double>) {
+        self = Self.init(cgColor: CGColor(animatableData))
+    }
+}
+#endif
+
+extension CGColor: AnimatableProperty {
+    public var animatableData: AnimatableArray<Double> {
+        let rgb = ((self.colorSpace == ._extendedSRGB ? self : converted(to: ._extendedSRGB, intent: .defaultIntent, options: nil))?.components ?? [0,0,0,0,0]).map(Double.init)
+        return AnimatableArray(SIMD4(rgb), .srgb)
+    }
+
+    public static var zero: Self {
+        Self(red: 0, green: 0, blue: 0, alpha: 0)
+    }
+}
+
+public extension AnimatableProperty where Self: CGColor {
+    init(_ animatableData: AnimatableArray<Double>) {
+        self = Self(colorSpace: ._extendedSRGB, components: animatableData.toRGB().scalars.map({CGFloat($0)}))!
+    }
+}
+
 protocol AnimatableColor: AnimatableProperty where AnimatableData == AnimatableArray<Double> {
     var alpha: CGFloat { get }
     func animatable(to other: any AnimatableColor) -> Self
 }
 
+extension CGColor: AnimatableColor { }
+extension NSUIColor: AnimatableColor { }
+
 extension AnimatableColor {
     func animatable(to other: any AnimatableColor) -> Self {
-        if alpha == 0.0 {
-            var animatableData = other.animatableData
-            animatableData[safe: 3] = 0.0
-            return Self(animatableData)
-        }
-        return self
-    }
-}
-
-extension CGColor: AnimatableColor {}
-
-extension NSUIColor: AnimatableColor {
-    var alpha: CGFloat {
-        alphaComponent
+        guard alpha == 0.0 else { return self }
+        var animatableData = other.animatableData
+        animatableData.elements[3] = 0.0
+        return Self(animatableData)
     }
 }
 

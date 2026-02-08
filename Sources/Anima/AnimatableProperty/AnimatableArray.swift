@@ -18,6 +18,7 @@ import SwiftUI
  */
 public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
     var elements: [Element] = []
+    var colorSpace: Anima.ColorSpace = .srgb
 
     /// Creates a new, empty array.
     public init() {}
@@ -38,6 +39,11 @@ public struct AnimatableArray<Element: VectorArithmetic & AdditiveArithmetic> {
      */
     public init<S>(_ elements: S) where S: Sequence, Element == S.Element {
         self.elements = .init(elements)
+    }
+    
+    init<S>(_ elements: S, _ colorSpace: Anima.ColorSpace) where S: Sequence, Element == S.Element {
+        self.elements = .init(elements)
+        self.colorSpace = colorSpace
     }
 
     /**
@@ -161,7 +167,7 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
         if Element.self == Double.self {
             let lhsD = castDouble(lhs.elements)
             let rhsD = castDouble(rhs.elements)
-            return Self(uncastDouble(lhs.count == rhs.count ? vDSP.add(lhsD, rhsD) : vDSP.add(lhsD[0..<count], rhsD[0..<count])))
+            return Self(uncastDouble(lhs.count == rhs.count ? vDSP.add(lhsD, rhsD) : vDSP.add(lhsD[0..<count], rhsD[0..<count])), lhs.colorSpace)
         }
         var lhs = lhs
         for index in 0..<count {
@@ -175,7 +181,7 @@ extension AnimatableArray: VectorArithmetic & AdditiveArithmetic {
         if Element.self == Double.self {
             let lhsD = castDouble(lhs.elements)
             let rhsD = castDouble(rhs.elements)
-            return Self(uncastDouble(lhs.count == rhs.count ? vDSP.subtract(lhsD, rhsD) : vDSP.subtract(lhsD[0..<count], rhsD[0..<count])))
+            return Self(uncastDouble(lhs.count == rhs.count ? vDSP.subtract(lhsD, rhsD) : vDSP.subtract(lhsD[0..<count], rhsD[0..<count])), lhs.colorSpace)
         }
         if Element.self == Float.self {
             let lhsD = castFloat(lhs.elements)

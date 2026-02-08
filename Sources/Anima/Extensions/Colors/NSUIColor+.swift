@@ -12,24 +12,18 @@
 #endif
 
 extension NSUIColor {
-    /// Returns the RGBA (red, green, blue, alpha) components.
-    final func rgbaComponents() -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-
-        #if os(iOS) || os(tvOS)
-            getRed(&r, green: &g, blue: &b, alpha: &a)
-
-            return (r, g, b, a)
-        #elseif os(macOS)
-            guard let rgbaColor = usingColorSpace(.deviceRGB) else {
-                fatalError("Could not convert color to RGBA.")
-            }
-
-            rgbaColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-
-            return (r, g, b, a)
-        #endif
+    func toRGBVector() -> SIMD4<Double> {
+        cgColor.toRGBVector()
     }
+    
+    static func fromRGBVector(_ rgb: SIMD4<Double>) -> Self {
+        Self(cgColor: .fromRGBVector(rgb))!
+    }
+    
+    var alpha: CGFloat {
+        alphaComponent
+    }
+    
 
     /**
      Generates the resolved color for the specified view,.

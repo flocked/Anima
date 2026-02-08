@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="ajK-Zh-Krh">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="ajK-Zh-Krh">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22690"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -795,7 +796,7 @@
                             <slider verticalHuggingPriority="750" id="cyT-7w-Gl3">
                                 <rect key="frame" x="547" y="14" width="96" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.5" maxValue="4" doubleValue="0.75" tickMarkPosition="above" numberOfTickMarks="15" allowsTickMarkValuesOnly="YES" sliderType="linear" id="cvj-r9-ZlU">
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.5" maxValue="16" doubleValue="0.75" tickMarkPosition="above" numberOfTickMarks="15" allowsTickMarkValuesOnly="YES" sliderType="linear" id="cvj-r9-ZlU">
                                     <font key="font" size="12" name="Helvetica"/>
                                 </sliderCell>
                             </slider>
@@ -833,10 +834,26 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="94d-E6-p5v">
+                                <rect key="frame" x="407" y="19" width="101" height="24"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="787-nZ-lSa" id="bYA-B1-Y3D">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="Mby-aq-WUC">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="787-nZ-lSa"/>
+                                            <menuItem title="Item 2" id="3aM-qF-Eng"/>
+                                            <menuItem title="Item 3" id="kw0-UT-jGL"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="backgroundColorCheckButton" destination="TBH-UL-GKu" id="zmw-pc-xr7"/>
+                        <outlet property="colorSpacePopUpButton" destination="94d-E6-p5v" id="lTG-Wz-lgY"/>
                         <outlet property="cornerRadiusCheckButton" destination="iG3-F1-nfr" id="E3d-Si-zkO"/>
                         <outlet property="durationSlider" destination="cyT-7w-Gl3" id="5k6-mh-3Up"/>
                         <outlet property="durationTextField" destination="Y0r-yk-Vkg" id="kRS-IU-Ttn"/>

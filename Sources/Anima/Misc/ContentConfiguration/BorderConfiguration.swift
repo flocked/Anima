@@ -95,11 +95,11 @@ extension BorderConfiguration: AnimatableProperty, Animatable {
     }
 
     public init(_ animatableData: AnimatableArray<Double>) {
-        self.init(color: .init([animatableData[0], animatableData[1], animatableData[2], animatableData[3]]), width: animatableData[4])
+        self.init(color: NSUIColor(.init([animatableData[0], animatableData[1], animatableData[2], animatableData[3], animatableData[4]], .srgb)), width: animatableData[5])
     }
 
     public var animatableData: AnimatableArray<Double> {
-        get { (color ?? .zero).animatableData + [width] }
+        get { (color ?? .zero).animatableData.elements + [width] }
         set { self = .init(newValue) }
     }
 }

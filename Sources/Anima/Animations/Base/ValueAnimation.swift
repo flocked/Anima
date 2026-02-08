@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AppKit
 
 /**
  An animation that animates a value to a target value.
@@ -37,7 +38,12 @@ import Foundation
  */
 open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
     /// Additional animation options.
-    open var options: Anima.AnimationOptions = []
+    open var options: Anima.AnimationOptions = [] {
+        didSet {
+            guard oldValue.colorSpace != options.colorSpace else { return }
+            reencodeColorData(to: options.colorSpace)
+        }
+    }
 
     /// A Boolean value indicating whether the animation is running in the reverse direction.
     var isReversed: Bool = false
@@ -50,8 +56,8 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
      This value updates while the animation is running.
      */
     public var value: Value {
-        get { Value(_value) }
-        set { _value = newValue.animatableData }
+        get { decodeValue(_value, updateHueCache: true) }
+        set { _value = encodeValue(newValue) }
     }
 
     var _value: Value.AnimatableData {
@@ -67,8 +73,8 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
      You may modify this value while the animation is in-flight to "retarget" to a new target value.
      */
     public var target: Value {
-        get { Value(_target) }
-        set { _target = newValue.animatableData }
+        get { decodeValue(_target, updateHueCache: false) }
+        set { _target = encodeValue(newValue) }
     }
 
     var _target: Value.AnimatableData {
@@ -88,8 +94,8 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
 
     /// The start value of the animation.
     public var startValue: Value {
-        get { Value(_startValue) }
-        set { _startValue = newValue.animatableData }
+        get { decodeValue(_startValue, updateHueCache: false) }
+        set { _startValue = encodeValue(newValue) }
     }
 
     var _startValue: Value.AnimatableData
@@ -100,15 +106,15 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
      This value might update while the animation is running.
      */
     public var velocity: Value {
-        get { Value(_velocity) }
-        set { _velocity = newValue.animatableData }
+        get { decodeValue(_velocity, updateHueCache: false) }
+        set { _velocity = encodeValue(newValue) }
     }
 
     var _velocity: Value.AnimatableData = .zero
 
     var startVelocity: Value {
-        get { Value(_startVelocity)  }
-        set { _startVelocity = newValue.animatableData }
+        get { decodeValue(_startVelocity, updateHueCache: false)  }
+        set { _startVelocity = encodeValue(newValue) }
     }
     
     var _startVelocity: Value.AnimatableData = .zero
@@ -133,6 +139,7 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
         _value = value.animatableData
         _startValue = _value
         _target = target.animatableData
+        super.init()
     }
 
     /// The animation type.
@@ -142,6 +149,30 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
     func configure(with configuration: Anima.AnimationConfiguration) {
         groupID = configuration.groupID
         options = configuration.options
+    }
+    
+    private var lastHueVector: (x: Double, y: Double)?
+    
+    private func encodeValue(_ value: Value) -> Value.AnimatableData {
+        let animatable = value.animatableData
+        if Value.self is AnimatableColor.Type, options.colorSpace != .srgb, let animatable = animatable as? AnimatableArray<Double> {
+            return animatable.convert(to: options.colorSpace) as! Value.AnimatableData
+        }
+        return animatable
+        /*
+        guard Value.self is AnimatableColor.Type, let colorValue = value as? any AnimatableColor else {
+            return value.animatableData
+        }
+        return colorValue.toAnimatable(in: options.colorSpace) as! Value.AnimatableData
+         */
+    }
+    
+    private func decodeValue(_ animatableData: Value.AnimatableData, updateHueCache: Bool) -> Value {
+        guard let colorType = Value.self as? AnimatableColor.Type, let data = animatableData as? AnimatableArray<Double> else {
+            return Value(animatableData)
+        }
+        return Value(animatableData)
+       // let stabilized = updateHueCache ? stabilizeHueVectorIfNeeded(data) : data
     }
 
     /**
@@ -289,5 +320,64 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
     
     func stopAtCurrent(immediately: Bool = true) {
         stop(at: .current, immediately: immediately)
+    }
+}
+
+/// ValueAnimation Color additions.
+extension ValueAnimation {
+    private func reencodeColorData(to newColorSpace: Anima.ColorSpace) {
+        guard Value.self is AnimatableColor.Type else { return }
+        _value = reencodeColorData(_value, to: newColorSpace)
+        _startValue = reencodeColorData(_startValue, to: newColorSpace)
+        _target = reencodeColorData(_target, to: newColorSpace)
+        _velocity = reencodeColorData(_velocity, to: newColorSpace)
+        _startVelocity = reencodeColorData(_startVelocity, to: newColorSpace)
+        lastHueVector = nil
+    }
+    
+    private func reencodeColorData(_ data: Value.AnimatableData, to newColorSpace: Anima.ColorSpace) -> Value.AnimatableData {
+        guard let data = data as? AnimatableArray<Double> else { return data }
+        return data.convert(to: newColorSpace) as! Value.AnimatableData
+    }
+    
+    private func stabilizeHueVectorIfNeeded(_ data: AnimatableArray<Double>) -> AnimatableArray<Double> {
+        guard let hueIndex = data.colorSpace.hueIndex else { return data }
+        let vectorIndex = 4
+        var output = data
+        let x = output.elements[safe: hueIndex] ?? 0
+        let y = output.elements[safe: vectorIndex] ?? 0
+        let mag = sqrt(x * x + y * y)
+        let epsilon = 1e-6
+        
+        if mag > epsilon {
+            let nx = x / mag
+            let ny = y / mag
+            output.elements[hueIndex] = nx
+            output.elements[vectorIndex] = ny
+            lastHueVector = (nx, ny)
+            return output
+        }
+        
+        if let lastHueVector {
+            output.elements[hueIndex] = lastHueVector.x
+            output.elements[vectorIndex] = lastHueVector.y
+            return output
+        }
+        
+        if let target = _target as? AnimatableArray<Double> {
+            let tx = target.elements[safe: hueIndex] ?? 0
+            let ty = target.elements[safe: vectorIndex] ?? 0
+            let tmag = sqrt(tx * tx + ty * ty)
+            if tmag > epsilon {
+                let nx = tx / tmag
+                let ny = ty / tmag
+                output.elements[hueIndex] = nx
+                output.elements[vectorIndex] = ny
+                lastHueVector = (nx, ny)
+                return output
+            }
+        }
+        
+        return output
     }
 }
