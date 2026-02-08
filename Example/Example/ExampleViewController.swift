@@ -38,9 +38,7 @@ class ExampleViewController: NSViewController {
     }
     
     var animationOptions: Anima.AnimationOptions {
-        var options: Anima.AnimationOptions = []
-        options.colorSpace = .init(rawValue: UInt(colorSpacePopUpButton.indexOfSelectedItem)) ?? .srgb
-        return options
+        .colorSpace(.init(rawValue: UInt(colorSpacePopUpButton.indexOfSelectedItem)) ?? .srgb)
     }
     
     func stopAnimation(immediately: Bool) {

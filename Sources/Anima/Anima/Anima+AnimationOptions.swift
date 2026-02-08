@@ -52,12 +52,15 @@ public extension Anima {
         /// Prevents the user to interact with views while they are being animated.
         public static let preventUserInteraction = AnimationOptions(rawValue: 1 << 7)
         
-        private static let colorSpaceMask: UInt = 0b1_1111 << 8
-
         /// The color space for animating colors.
-        public var colorSpace: ColorSpace {
-            get { ColorSpace(rawValue: (rawValue & Self.colorSpaceMask) >> 8) ?? .srgb }
-            set {  self = Self(rawValue: (rawValue & ~Self.colorSpaceMask) | (newValue.rawValue << 8)) }
+        public static func colorSpace(_ colorSpace: ColorSpace) -> Self {
+            Self(rawValue: (0 & ~Self.colorSpaceMask) | (colorSpace.rawValue << 8))
+        }
+        
+        private static let colorSpaceMask: UInt = 0b1_1111 << 8
+        
+        var colorSpace: ColorSpace {
+            ColorSpace(rawValue: (rawValue & Self.colorSpaceMask) >> 8) ?? .srgb
         }
 
         /// Creates a structure that represents animation options.
