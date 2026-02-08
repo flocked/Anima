@@ -178,7 +178,7 @@ extension CGRect: AnimatableProperty {
     }
 }
 
-extension CGAffineTransform: AnimatableProperty, Animatable {
+extension CGAffineTransform: AnimatableProperty {
     @inlinable public init(_ animatableData: AnimatableArray<Double>) {
         self.init(animatableData[0], animatableData[1], animatableData[2], animatableData[3], animatableData[4], animatableData[5])
     }
@@ -423,7 +423,6 @@ public extension AnimatableProperty where Self: NSColor {
 #else
 extension UIColor: AnimatableProperty {
     public var animatableData: AnimatableArray<Double> {
-        let rgba = rgbaComponents()
         cgColor.animatableData
     }
 

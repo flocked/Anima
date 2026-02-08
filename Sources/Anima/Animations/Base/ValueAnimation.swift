@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import AppKit
 
 /**
  An animation that animates a value to a target value.
@@ -155,24 +154,21 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
     
     private func encodeValue(_ value: Value) -> Value.AnimatableData {
         let animatable = value.animatableData
-        if Value.self is AnimatableColor.Type, options.colorSpace != .srgb, let animatable = animatable as? AnimatableArray<Double> {
+        if Value.self is (any AnimatableColor).Type, options.colorSpace != .srgb, let animatable = animatable as? AnimatableArray<Double> {
             return animatable.convert(to: options.colorSpace) as! Value.AnimatableData
         }
         return animatable
-        /*
-        guard Value.self is AnimatableColor.Type, let colorValue = value as? any AnimatableColor else {
-            return value.animatableData
-        }
-        return colorValue.toAnimatable(in: options.colorSpace) as! Value.AnimatableData
-         */
     }
     
     private func decodeValue(_ animatableData: Value.AnimatableData, updateHueCache: Bool) -> Value {
-        guard let colorType = Value.self as? AnimatableColor.Type, let data = animatableData as? AnimatableArray<Double> else {
+        Value(animatableData)
+        /*
+        guard let colorType = Value.self as? any AnimatableColor.Type, let data = animatableData as? AnimatableArray<Double> else {
             return Value(animatableData)
         }
+         let stabilized = updateHueCache ? stabilizeHueVectorIfNeeded(data) : data
         return Value(animatableData)
-       // let stabilized = updateHueCache ? stabilizeHueVectorIfNeeded(data) : data
+         */
     }
 
     /**
@@ -326,7 +322,7 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
 /// ValueAnimation Color additions.
 extension ValueAnimation {
     private func reencodeColorData(to newColorSpace: Anima.ColorSpace) {
-        guard Value.self is AnimatableColor.Type else { return }
+        guard Value.self is (any AnimatableColor).Type else { return }
         _value = reencodeColorData(_value, to: newColorSpace)
         _startValue = reencodeColorData(_startValue, to: newColorSpace)
         _target = reencodeColorData(_target, to: newColorSpace)

@@ -17,15 +17,10 @@ extension CGColor {
         NSUIColor(cgColor: self)
     }
     
-    func toRGBVector() -> SIMD4<Double> {
+    func rgb() -> SIMD4<Double> {
         let components = ((self.colorSpace == ._extendedSRGB ? self : converted(to: ._extendedSRGB, intent: .defaultIntent, options: nil))?.components ?? [0,0,0,0]).map(Double.init)
         return SIMD4(components)
     }
-    
-    static func fromRGBVector(_ rgb: SIMD4<Double>) -> Self {
-        Self(colorSpace: ._extendedSRGB, components: [rgb.x, rgb.y, rgb.z, rgb.w])!
-    }
-    
     #if canImport(UIKit)
     /// The clear color in the Generic gray color space.
     static var clear: CGColor { CGColor(gray: 0, alpha: 0) }
