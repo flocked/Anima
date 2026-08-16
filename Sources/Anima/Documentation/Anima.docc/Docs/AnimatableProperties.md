@@ -52,11 +52,11 @@ extension AnimatableStruct: AnimatableProperty {
 }
 ```
 
-You can optionally also provide ``AnimatableProperty/scaledIntegral``, a scaled integral of the value. It is used to integralize the value to the screen's pixel boundaries on animations where ``Anima/AnimationOptions/integralizeValues`` is active. This helps prevent drawing frames between pixels, causing aliasing issues.
+You can optionally also provide ``AnimatableProperty/scaledIntegral(for:)``, a scaled integral of the value. It is used to integralize the value to the screen's pixel boundaries on animations where ``Anima/AnimationOptions/integralizeValues`` is active. This helps prevent drawing frames between pixels, causing aliasing issues.
 
 ```swift
-var scaledIntegral: MyStruct {
-    let scaledIntegralPoint = CGPoint(x: point.x.scaledIntegral, y: y.scaledIntegral)
-    return MyStruct(value: value.scaledIntegral, point: scaledIntegralPoint)
+func scaledIntegral(for scale: CGFloat) -> MyStruct {
+    let scaledIntegralPoint = CGPoint(x: point.x.scaledIntegral(for: scale), y: point.y.scaledIntegral(for: scale))
+    return MyStruct(value: value.scaledIntegral(for: scale), point: scaledIntegralPoint)
 }
 ```

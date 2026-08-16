@@ -52,18 +52,68 @@ public protocol AnimatableProperty: Equatable {
     /// Initializes the value with the specified animatable representation of the value.
     init(_ animatableData: AnimatableData)
 
-    /// The scaled integral representation of this value. The default implementation returns the non-integral value.
-    var scaledIntegral: Self { get }
+    /// Returns this value rounded to integral pixel boundaries for the specified scale.
+    func scaledIntegral(for scale: CGFloat) -> Self
 
     /// The zero value.
     static var zero: Self { get }
 }
 
 public extension AnimatableProperty {
-    var scaledIntegral: Self {
+    func scaledIntegral(for scale: CGFloat) -> Self {
         self
     }
 }
+
+extension AnimatableProperty {
+    func scaledIntegral(for scale: CGFloat?) -> Self {
+        #if os(macOS)
+        scaledIntegral(for: scale ?? NSScreen.main?.backingScaleFactor ?? 1.0)
+        #elseif os(iOS) || os(tvOS)
+        scaledIntegral(for: scale ?? UIScreen.main?.scale ?? 1.0)
+        #else
+        scaledIntegral(for: scale ?? 1.0)
+        #endif
+    }
+
+    #if os(macOS)
+    func scaledIntegral(for application: NSApplication) -> Self {
+        scaledIntegral(for: application.backingScaleFactor)
+    }
+
+    func scaledIntegral(for view: NSView) -> Self {
+        scaledIntegral(for: view.backingScaleFactor)
+    }
+
+    func scaledIntegral(for screen: NSScreen) -> Self {
+        scaledIntegral(for: screen.backingScaleFactor)
+    }
+    #elseif os(iOS) || os(tvOS)
+    func scaledIntegral(for screen: UIScreen) -> Self {
+        scaledIntegral(for: screen.scale)
+    }
+    #endif
+}
+
+#if os(macOS)
+extension NSView {
+    var backingScaleFactor: CGFloat? {
+        window?.screen?.backingScaleFactor ?? window?.backingScaleFactor
+    }
+}
+
+extension NSApplication {
+    var backingScaleFactor: CGFloat {
+        (keyWindow ?? mainWindow ?? windows.first(where: { $0.isVisible }))?.backingScaleFactor ?? (NSScreen.main ?? .screens.first)?.backingScaleFactor ?? 1.0
+    }
+}
+#elseif os(iOS) || os(tvOS)
+extension UIView {
+    var backingScaleFactor: CGFloat {
+        window?.screen.scale ?? 1.0
+    }
+}
+#endif
 
 extension Optional: AnimatableProperty where Wrapped: AnimatableProperty {
     public var animatableData: Wrapped.AnimatableData {
@@ -90,15 +140,8 @@ public extension AnimatableProperty where Self.AnimatableData == Self {
 }
 
 extension Float: AnimatableProperty {
-    public var scaledIntegral: Self {
-        #if os(macOS)
-            let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
-        #elseif os(iOS) || os(tvOS)
-        let scale = Float(UIScreen.main?.scale ?? 1.0)
-        #else
-            let scale: Float = 1.0
-        #endif
-        return rounded(toNearest: 1.0 / scale)
+    public func scaledIntegral(for scale: CGFloat) -> Float {
+        rounded(toNearest: 1.0 / scale)
     }
 }
 
@@ -111,15 +154,8 @@ extension Double: AnimatableProperty {
         self = animatableData
     }
 
-    public var scaledIntegral: Self {
-        #if os(macOS)
-            let scale = Self(NSScreen.main?.backingScaleFactor ?? 1.0)
-        #elseif os(iOS) || os(tvOS)
-        let scale = UIScreen.main?.scale ?? 1.0
-        #else
-            let scale = 1.0
-        #endif
-        return rounded(toNearest: 1.0 / scale)
+    public func scaledIntegral(for scale: CGFloat) -> Double {
+        rounded(toNearest: 1.0 / scale)
     }
 }
 
@@ -132,15 +168,8 @@ extension CGFloat: AnimatableProperty {
         self = animatableData
     }
 
-    public var scaledIntegral: Self {
-        #if os(macOS)
-            let scale = NSScreen.main?.backingScaleFactor ?? 1.0
-        #elseif os(iOS) || os(tvOS)
-        let scale = UIScreen.main?.scale ?? 1.0
-        #else
-            let scale = 1.0
-        #endif
-        return rounded(toNearest: 1.0 / scale)
+    public func scaledIntegral(for scale: CGFloat) -> CGFloat {
+        rounded(toNearest: 1.0 / scale)
     }
 }
 
@@ -192,8 +221,8 @@ extension CGAffineTransform: AnimatableProperty {
         CGAffineTransform()
     }
     
-    public var scaledIntegral: Self {
-        Self(a.scaledIntegral, b.scaledIntegral, c.scaledIntegral, d.scaledIntegral, tx.scaledIntegral, ty.scaledIntegral)
+    public func scaledIntegral(for scale: CGFloat) -> Self {
+        Self(a.scaledIntegral(for: scale), b.scaledIntegral(for: scale), c.scaledIntegral(for: scale), d.scaledIntegral(for: scale), tx.scaledIntegral(for: scale), ty.scaledIntegral(for: scale))
     }
 }
 
@@ -207,8 +236,8 @@ extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
         set { self = .init(newValue) }
     }
     
-    public var scaledIntegral: Self {
-        Self(top: top.scaledIntegral, leading: leading.scaledIntegral, bottom: bottom.scaledIntegral, trailing: trailing.scaledIntegral)
+    public func scaledIntegral(for scale: CGFloat) -> Self {
+        Self(top: top.scaledIntegral(for: scale), leading: leading.scaledIntegral(for: scale), bottom: bottom.scaledIntegral(for: scale), trailing: trailing.scaledIntegral(for: scale))
     }
 }
 
@@ -223,8 +252,8 @@ extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
             self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
         }
         
-        public var scaledIntegral: Self {
-            Self(top: top.scaledIntegral, left: left.scaledIntegral, bottom: bottom.scaledIntegral, right: right.scaledIntegral)
+        public func scaledIntegral(for scale: CGFloat) -> Self {
+            Self(top: top.scaledIntegral(for: scale), left: left.scaledIntegral(for: scale), bottom: bottom.scaledIntegral(for: scale), right: right.scaledIntegral(for: scale))
         }
     }
 #else
@@ -238,8 +267,8 @@ extension NSDirectionalEdgeInsets: AnimatableProperty, Animatable {
             self.init(top: animatableData[0], left: animatableData[1], bottom: animatableData[2], right: animatableData[3])
         }
         
-        public var scaledIntegral: Self {
-            Self(top: top.scaledIntegral, left: left.scaledIntegral, bottom: bottom.scaledIntegral, right: right.scaledIntegral)
+        public func scaledIntegral(for scale: CGFloat) -> Self {
+            Self(top: top.scaledIntegral(for: scale), left: left.scaledIntegral(for: scale), bottom: bottom.scaledIntegral(for: scale), right: right.scaledIntegral(for: scale))
         }
     }
 #endif
@@ -254,8 +283,8 @@ extension CGVector: AnimatableProperty, Animatable {
         self.init(dx: animatableData[0], dy: animatableData[1])
     }
     
-    public var scaledIntegral: CGVector {
-        Self(dx: dx.scaledIntegral, dy: dy.scaledIntegral)
+    public func scaledIntegral(for scale: CGFloat) -> CGVector {
+        Self(dx: dx.scaledIntegral(for: scale), dy: dy.scaledIntegral(for: scale))
     }
 }
 
@@ -269,8 +298,8 @@ extension CATransform3D: AnimatableProperty, Animatable {
         set { self = .init(newValue) }
     }
     
-    public var scaledIntegral: Self {
-        Self(m11: m11.scaledIntegral, m12: m12.scaledIntegral, m13: m13.scaledIntegral, m14: m14.scaledIntegral, m21: m21.scaledIntegral, m22: m22.scaledIntegral, m23: m23.scaledIntegral, m24: m24.scaledIntegral, m31: m31.scaledIntegral, m32: m32.scaledIntegral, m33: m33.scaledIntegral, m34: m34.scaledIntegral, m41: m41.scaledIntegral, m42: m42.scaledIntegral, m43: m43.scaledIntegral, m44: m44.scaledIntegral)
+    public func scaledIntegral(for scale: CGFloat) -> Self {
+        Self(m11: m11.scaledIntegral(for: scale), m12: m12.scaledIntegral(for: scale), m13: m13.scaledIntegral(for: scale), m14: m14.scaledIntegral(for: scale), m21: m21.scaledIntegral(for: scale), m22: m22.scaledIntegral(for: scale), m23: m23.scaledIntegral(for: scale), m24: m24.scaledIntegral(for: scale), m31: m31.scaledIntegral(for: scale), m32: m32.scaledIntegral(for: scale), m33: m33.scaledIntegral(for: scale), m34: m34.scaledIntegral(for: scale), m41: m41.scaledIntegral(for: scale), m42: m42.scaledIntegral(for: scale), m43: m43.scaledIntegral(for: scale), m44: m44.scaledIntegral(for: scale))
     }
 }
 
@@ -288,8 +317,8 @@ extension CGQuaternion: AnimatableProperty, Animatable {
         CGQuaternion(angle: 0, axis: .init(0, 0, 0))
     }
     
-    public var scaledIntegral: Self {
-        Self(angle: angle.scaledIntegral, axis: axis.scaledIntegral)
+    public func scaledIntegral(for scale: CGFloat) -> Self {
+        Self(angle: angle.scaledIntegral(for: scale), axis: axis.scaledIntegral(for: scale))
     }
 }
 
@@ -307,8 +336,8 @@ extension CGVector3: AnimatableProperty, Animatable {
         CGVector3(0, 0, 0)
     }
     
-    public var scaledIntegral: Self {
-        Self(x.scaledIntegral, y.scaledIntegral, z.scaledIntegral)
+    public func scaledIntegral(for scale: CGFloat) -> Self {
+        Self(x.scaledIntegral(for: scale), y.scaledIntegral(for: scale), z.scaledIntegral(for: scale))
     }
 }
 
@@ -326,8 +355,8 @@ extension CGVector4: AnimatableProperty, Animatable {
         CGVector4(0, 0, 0, 0)
     }
     
-    public var scaledIntegral: Self {
-        Self(m14.scaledIntegral, m24.scaledIntegral, m34.scaledIntegral, m44.scaledIntegral)
+    public func scaledIntegral(for scale: CGFloat) -> Self {
+        Self(m14.scaledIntegral(for: scale), m24.scaledIntegral(for: scale), m34.scaledIntegral(for: scale), m44.scaledIntegral(for: scale))
     }
 }
 
@@ -358,8 +387,8 @@ extension Array: AnimatableProperty, AdditiveArithmetic, VectorArithmetic where 
         self.animatableData.magnitudeSquared
     }
     
-    public var scaledIntegral: Array {
-        self.compactMap({$0.scaledIntegral})
+    public func scaledIntegral(for scale: CGFloat) -> Array {
+        compactMap { $0.scaledIntegral(for: scale) }
     }
     
     subscript(safe index: Index) -> Element? {

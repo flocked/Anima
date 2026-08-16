@@ -9,16 +9,6 @@ import CoreGraphics
 import Foundation
 
 extension CGPoint {
-    /**
-     Returns the scaled integral point of the current CGPoint.
-     The x and y values are scaled based on the current device's screen scale.
-
-     - Returns: The scaled integral CGPoint.
-     */
-    public var scaledIntegral: CGPoint {
-        CGPoint(x: x.scaledIntegral, y: y.scaledIntegral)
-    }
-
     /// Creates a point with the specified x and y value.
     init(_ x: CGFloat, _ y: CGFloat) {
         self.init(x: x, y: y)
@@ -51,16 +41,6 @@ extension CGPoint: Hashable {
 }
 
 extension CGSize {
-    /**
-     Returns the scaled integral size of the size.
-     The width and height values are scaled based on the current device's screen scale.
-
-     - Returns: The scaled integral size of the size.
-     */
-    public var scaledIntegral: CGSize {
-        CGSize(width: width.scaledIntegral, height: height.scaledIntegral)
-    }
-
     /// Creates a size with the specified width and height.
     init(_ width: CGFloat, _ height: CGFloat) {
         self.init(width: width, height: height)
@@ -73,16 +53,6 @@ extension CGSize {
 }
 
 extension CGRect {
-    /**
-     Returns the scaled integral rect based on the current rect.
-     The origin and size values are scaled based on the current device's screen scale.
-
-     - Returns: The scaled integral rect.
-     */
-    public var scaledIntegral: CGRect {
-        CGRect(origin: origin.scaledIntegral, size: size.scaledIntegral)
-    }
-
     /// The center point of the rectangle.
     var center: CGPoint {
         get { CGPoint(x: centerX, y: centerY) }

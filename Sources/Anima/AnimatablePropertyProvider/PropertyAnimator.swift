@@ -95,6 +95,21 @@ open class PropertyAnimator<Provider: AnimatablePropertyProvider>: NSObject {
     open internal(set) var animations: [String: BaseAnimation] = [:]
 
     /**
+     The backing scale factor of the object, used when animating with animation options that contain ``Anima/AnimationOptions/integralizeValues``.
+
+     The default value is `nil`, which uses the platform default backing scale factor.
+     
+     For example:
+     
+     ```swift
+     Anima.animate(withSpring: .bouncy, options: .integralizeValues) {
+        view.animator.frame.origin.x = 120.0
+     }
+     ```
+     */
+    open var backingScaleFactor: CGFloat? { nil }
+
+    /**
      The current value of the property at the specified keypath.
 
      Assigning a new value inside a ``Anima`` animation block animates to the new value. Changing the value outside an animation block, stops it's animation and updates the value imminently.
@@ -148,13 +163,14 @@ extension PropertyAnimator {
         stopPropertyObservation(of: keyPath)
         guard let object = object else { return }
         let currentAnimation = animation(for: keyPath)
-        guard let configuration = Anima.currentConfiguration, configuration.type != .nonAnimated else {
+        guard var configuration = Anima.currentConfiguration, configuration.type != .nonAnimated else {
             currentAnimation?.stopAtCurrent()
             DisableActions {
                 object[keyPath: keyPath] = newValue
             }
             return
         }
+        configuration.backingScaleFactor = backingScaleFactor
         
         guard value(for: keyPath) != newValue || configuration.type.animation != currentAnimation?.animationType else {
             return

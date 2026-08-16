@@ -68,6 +68,23 @@
     public class ViewAnimator<View: NSView>: PropertyAnimator<View> {
         // MARK: - Animatable Properties
 
+        /**
+         The backing scale factor of the view, used when animating with animation options that contain ``Anima/AnimationOptions/integralizeValues``.
+
+         The default value is `nil`, which uses the platform default backing scale factor.
+         
+         For example:
+         
+         ```swift
+         Anima.animate(withSpring: .bouncy, options: .integralizeValues) {
+            view.animator.frame.origin.x = 120.0
+         }
+         ```
+         */
+        public override var backingScaleFactor: CGFloat? {
+            object.backingScaleFactor
+        }
+
         /// The bounds of the view.
         public var bounds: CGRect {
             get { self[\.bounds] }
@@ -283,6 +300,23 @@
      */
     public class ViewAnimator<View: UIView>: PropertyAnimator<View> {
         // MARK: - Animatable Properties
+        
+        /**
+         The backing scale factor of the view, used when animating with animation options that contain ``Anima/AnimationOptions/integralizeValues``.
+
+         The default value is `nil`, which uses the platform default backing scale factor.
+         
+         For example:
+         
+         ```swift
+         Anima.animate(withSpring: .bouncy, options: .integralizeValues) {
+            view.animator.frame.origin.x = 120.0
+         }
+         ```
+         */
+        public override var backingScaleFactor: CGFloat? {
+            object.backingScaleFactor
+        }
 
         /// The bounds of the view.
         public var bounds: CGRect {

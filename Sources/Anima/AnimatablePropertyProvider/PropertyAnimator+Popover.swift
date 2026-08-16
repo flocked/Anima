@@ -61,6 +61,23 @@ public class PopoverAnimator: PropertyAnimator<NSPopover> {
         get { self[\.contentSize] }
         set { self[\.contentSize] = newValue }
     }
+
+    /**
+     The backing scale factor of the popover’s window, used when animating with animation options that contain ``Anima/AnimationOptions/integralizeValues``.
+
+     The default value is `nil`, which uses the platform default backing scale factor.
+
+     For example:
+
+     ```swift
+     Anima.animate(withSpring: .bouncy, options: .integralizeValues) {
+         popover.animator.contentSize.width = 400.0
+     }
+     ```
+     */
+    public override var backingScaleFactor: CGFloat? {
+        object.contentViewController?.view.backingScaleFactor
+    }
 }
 
 

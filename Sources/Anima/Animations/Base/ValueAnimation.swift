@@ -44,6 +44,13 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
         }
     }
 
+    /**
+     The backing scale factor used to round animated values to pixel boundaries when ``options`` contains ``Anima/AnimationOptions/integralizeValues``.
+
+     The default value is `nil`, which uses the platform default.
+     */
+    open internal(set) var backingScaleFactor: CGFloat?
+
     /// A Boolean value indicating whether the animation is running in the reverse direction.
     var isReversed: Bool = false
   
@@ -148,6 +155,7 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
     func configure(with configuration: Anima.AnimationConfiguration) {
         groupID = configuration.groupID
         options = configuration.options
+        backingScaleFactor = configuration.backingScaleFactor
     }
     
     private var lastHueVector: (x: Double, y: Double)?
@@ -178,7 +186,7 @@ open class ValueAnimation<Value: AnimatableProperty>: BaseAnimation {
      */
     open override func updateAnimation(deltaTime: TimeInterval) {
         guard state == .running else { return }
-        let callbackValue = options.integralizeValues ? value.scaledIntegral : value
+        let callbackValue = options.integralizeValues ? value.scaledIntegral(for: backingScaleFactor) : value
         valueChanged?(callbackValue)
         runningTime += deltaTime
         if _value == _target {

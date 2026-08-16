@@ -98,7 +98,7 @@ open class SpringAnimation<Value: AnimatableProperty>: ValueAnimation<Value> {
             runningTime = 0.0
         }
 
-        let callbackValue = options.integralizeValues ? value.scaledIntegral : value
+        let callbackValue = options.integralizeValues ? value.scaledIntegral(for: backingScaleFactor) : value
         valueChanged?(callbackValue)
 
         if animationFinished, !options.repeats || !isAnimated {

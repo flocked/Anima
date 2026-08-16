@@ -58,8 +58,25 @@
         let value = animation.value
      }
      ```
-     */
+    */
     public class WindowAnimator: PropertyAnimator<NSWindow> {
+        /**
+         The backing scale factor of the window, used when animating with animation options that contain ``Anima/AnimationOptions/integralizeValues``.
+
+         The default value is `nil`, which uses the platform default backing scale factor.
+
+         For example:
+
+         ```swift
+         Anima.animate(withSpring: .bouncy, options: .integralizeValues) {
+             window.animator.frame.origin.x = 120.0
+         }
+         ```
+         */
+        public override var backingScaleFactor: CGFloat? {
+            object.backingScaleFactor
+        }
+
         /// The frame of the window.
         public var frame: CGRect {
             get { self[\._frame] }

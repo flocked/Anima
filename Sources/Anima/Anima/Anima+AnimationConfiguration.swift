@@ -15,6 +15,7 @@ extension Anima {
         let delay: CGFloat
         let options: AnimationOptions
         var animation: AnimationParameters?
+        var backingScaleFactor: CGFloat? = nil
         
         enum GroupType: Int {
             /// Spring animation.

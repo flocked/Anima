@@ -65,4 +65,21 @@ public class LayoutAnimator: PropertyAnimator<NSLayoutConstraint> {
         get { self[\.constant] }
         set { self[\.constant] = newValue }
     }
+    
+    #if os(macOS)
+    /**
+     The backing scale factor of the main window, used when animating with animation options that contain ``Anima/AnimationOptions/integralizeValues``.
+
+     The default value is `nil`, which uses the platform default backing scale factor.
+     
+     For example:
+     
+     ```swift
+     Anima.animate(withSpring: .bouncy, options: .integralizeValues) {
+        layoutConstraint.animator.constant = 120.0
+     }
+     ```
+     */
+    public override var backingScaleFactor: CGFloat? { nil }
+    #endif
 }

@@ -69,6 +69,23 @@ public extension AnimatablePropertyProvider where Self: CALayer {
 public class LayerAnimator<Layer: CALayer>: PropertyAnimator<Layer> {
     // MARK: - Animatable Properties
 
+    /**
+     The backing scale factor of the layer, used when animating with animation options that contain ``Anima/AnimationOptions/integralizeValues``.
+
+     The default value is `nil`, which uses the platform default backing scale factor.
+
+     For example:
+
+     ```swift
+     Anima.animate(withSpring: .bouncy, options: .integralizeValues) {
+         layer.animator.frame.origin.x = 120.0
+     }
+     ```
+     */
+    public override var backingScaleFactor: CGFloat? {
+        object.parentView?.backingScaleFactor
+    }
+    
     /// The bounds of the layer.
     public var bounds: CGRect {
         get { self[\.bounds] }
