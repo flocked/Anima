@@ -187,11 +187,23 @@ extension NSNumber: AnimatableProperty {
     public static var zero: Self {
         Self(value: 0.0)
     }
+    
+    public func scaledIntegral(for scale: CGFloat) -> Self {
+        switch String(cString: objCType) {
+        case "f": Self(value: floatValue.scaledIntegral(for: scale))
+        case "d": Self(value: doubleValue.scaledIntegral(for: scale))
+        default: self
+        }
+    }
 }
 
 extension CGPoint: AnimatableProperty {
     public init(_ animatableData: AnimatablePair<CGFloat, CGFloat>) {
         self.init(animatableData.first, animatableData.second)
+    }
+    
+    public func scaledIntegral(for scale: CGFloat) -> CGPoint {
+        CGPoint(x: x.scaledIntegral(for: scale), y: y.scaledIntegral(for: scale))
     }
 }
 
@@ -199,11 +211,19 @@ extension CGSize: AnimatableProperty {
     public init(_ animatableData: AnimatablePair<CGFloat, CGFloat>) {
         self.init(width: animatableData.first, height: animatableData.second)
     }
+    
+    public func scaledIntegral(for scale: CGFloat) -> CGSize {
+        CGSize(width: width.scaledIntegral(for: scale), height: height.scaledIntegral(for: scale))
+    }
 }
 
 extension CGRect: AnimatableProperty {
     public init(_ animatableData: AnimatablePair<CGPoint.AnimatableData, CGSize.AnimatableData>) {
         self.init(origin: CGPoint(animatableData.first), size: CGSize(animatableData.second))
+    }
+    
+    public func scaledIntegral(for scale: CGFloat) -> CGRect {
+        CGRect(origin: origin.scaledIntegral(for: scale), size: size.scaledIntegral(for: scale))
     }
 }
 
@@ -361,34 +381,36 @@ extension CGVector4: AnimatableProperty, Animatable {
 }
 
 extension Array: AnimatableProperty, AdditiveArithmetic, VectorArithmetic where Element: AnimatableProperty {
-    public init(_ animatableData: AnimatableArray<Element.AnimatableData>) {
-        self.init(animatableData.elements.compactMap { Element($0) })
+    public init(_ animatableData: AnimatableData) {
+        self = animatableData.elements.map { Element($0) }
     }
 
-    public var animatableData: AnimatableArray<Element.AnimatableData> { AnimatableArray<Element.AnimatableData>(compactMap({$0.animatableData})) }
+    public var animatableData: AnimatableArray<Element.AnimatableData> {
+        .init(map({ $0.animatableData }))
+    }
 
     public static var zero: [Element] {
         Self()
     }
     
-    public static func + (lhs: Array, rhs: Array) -> Array {
-        .init(lhs.animatableData + rhs.animatableData)
+    public static func + (lhs: Array, rhs: Array) -> Self {
+        Self(lhs.animatableData + rhs.animatableData)
     }
     
-    public static func - (lhs: Array, rhs: Array) -> Array {
-        .init(lhs.animatableData - rhs.animatableData)
+    public static func - (lhs: Array, rhs: Array) -> Self {
+        Self(lhs.animatableData - rhs.animatableData)
     }
     
     public mutating func scale(by rhs: Double) {
-        self = .init(animatableData.scaled(by: rhs))
+        self = Self(animatableData.scaled(by: rhs))
     }
     
     public var magnitudeSquared: Double {
-        self.animatableData.magnitudeSquared
+        animatableData.magnitudeSquared
     }
     
-    public func scaledIntegral(for scale: CGFloat) -> Array {
-        compactMap { $0.scaledIntegral(for: scale) }
+    public func scaledIntegral(for scale: CGFloat) -> Self {
+        map { $0.scaledIntegral(for: scale) }
     }
     
     subscript(safe index: Index) -> Element? {
@@ -409,7 +431,7 @@ extension Range: AnimatableProperty where Bound: VectorArithmetic {
     }
     
     public init(_ animatableData: AnimatableArray<Bound>) {
-        self = animatableData[0]..<animatableData[1]
+        self.init(uncheckedBounds: (animatableData[0], animatableData[1]))
     }
     
     public static var zero: Range {
@@ -423,7 +445,7 @@ extension ClosedRange: AnimatableProperty where Bound: VectorArithmetic {
     }
     
     public init(_ animatableData: AnimatableArray<Bound>) {
-        self = animatableData[0]...animatableData[1]
+        self.init(uncheckedBounds: (animatableData[0], animatableData[1]))
     }
     
     public static var zero: ClosedRange {
@@ -438,7 +460,7 @@ extension NSColor: AnimatableProperty {
     public var animatableData: AnimatableArray<Double> {
         cgColor.animatableData
     }
-
+    
     public static var zero: Self {
         Self(red: 0, green: 0, blue: 0, alpha: 0)
     }
@@ -446,7 +468,7 @@ extension NSColor: AnimatableProperty {
 
 public extension AnimatableProperty where Self: NSColor {
     init(_ animatableData: AnimatableArray<Double>) {
-        self = Self.init(cgColor: CGColor(animatableData))!
+        self.init(cgColor: CGColor(animatableData))!
     }
 }
 #else
@@ -462,7 +484,7 @@ extension UIColor: AnimatableProperty {
 
 public extension AnimatableProperty where Self: UIColor {
     init(_ animatableData: AnimatableArray<Double>) {
-        self = Self.init(cgColor: CGColor(animatableData))
+        self.init(cgColor: CGColor(animatableData))
     }
 }
 #endif
@@ -480,7 +502,7 @@ extension CGColor: AnimatableProperty {
 
 public extension AnimatableProperty where Self: CGColor {
     init(_ animatableData: AnimatableArray<Double>) {
-        self = Self(colorSpace: ._extendedSRGB, components: animatableData.toRGB().scalars.map({CGFloat($0)}))!
+        self.init(colorSpace: ._extendedSRGB, components: animatableData.toRGB().scalars.map({CGFloat($0)}))!
     }
 }
 
